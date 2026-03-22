@@ -1,0 +1,275 @@
+/* Container Principal da Aba */
+.checklist-container {
+    padding: 1rem 0;
+    animation: fadeIn 0.4s ease;
+}
+
+/* Card de Alerta (Pendente) */
+.checklist-status-card {
+    border-left: 5px solid #ef4444;
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.checklist-status-card.completed {
+    border-left-color: #10b981;
+    background: #f0fdf4;
+}
+
+#statusTitle {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+/* --- ESTILOS DO WIZARD (DENTRO DA MODAL) --- */
+
+.wizard-modal-container {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: #0f172a;
+}
+
+/* Barra de Progresso */
+.wizard-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+.wizard-progress::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e2e8f0;
+    z-index: 1;
+}
+
+.wizard-step {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 30px;
+    border: 2px solid #cbd5e1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #1e293b;
+    transition: all 0.3s;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.wizard-step.active {
+    border-color: #2563eb;
+    background: #2563eb;
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.wizard-step.completed {
+    border-color: #10b981;
+    background: #10b981;
+    color: #fff;
+}
+
+/* Painéis de Conteúdo */
+.wizard-panel {
+    display: none;
+    animation: slideUp 0.3s ease-out;
+}
+
+.wizard-panel.active {
+    display: block;
+}
+
+/* Formulários */
+.form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/* Labels - agora em cinza escuro legível */
+.form-group label,
+.form-check label,
+.wizard-panel label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e293b; /* cinza bem escuro (quase preto) */
+}
+
+/* Inputs, selects e textareas - texto escuro */
+.form-input,
+.form-control,
+select,
+textarea {
+    padding: 0.6rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #0f172a; /* preto suave */
+    background-color: #ffffff;
+}
+
+/* Placeholders em cinza escuro médio */
+.form-input::placeholder,
+.form-control::placeholder,
+textarea::placeholder {
+    color: #475569; /* cinza escuro médio - perfeitamente legível */
+    opacity: 1;
+}
+
+/* Opções dos selects - garantindo contraste */
+select option {
+    color: #0f172a;
+    background: #fff;
+}
+
+/* Títulos de seção (ex: "Verificação Rápida Sob Capô") */
+.wizard-panel h4 {
+    color: #0f172a;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Upload de Fotos */
+.photo-dropzone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: border 0.2s;
+}
+
+.photo-dropzone:hover {
+    border-color: #2563eb;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.photo-item {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Canvas de Assinatura */
+.signature-pad-wrapper {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #fff;
+    height: 140px;
+    margin: 0.5rem 0;
+}
+
+.signature-pad {
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+/* Textos do resumo (card inferior) */
+.text-label {
+    font-size: 0.75rem;
+    color: #1e293b;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+}
+
+.text-value {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #0f172a;
+}
+
+/* Ajustes para textos pequenos e dicas */
+.text-muted,
+small {
+    color: #475569 !important;
+    font-weight: 400;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge-warning {
+    background: #fef3c7;
+    color: #78350f;
+}
+
+.badge-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+/* Cores de perigo */
+.text-danger {
+    color: #b91c1c !important;
+}
+
+/* Botões secundários (ex: Limpar) */
+.btn-outline-secondary {
+    color: #1e293b;
+    border-color: #cbd5e1;
+    background: transparent;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.btn-outline-secondary:hover {
+    background: #f1f5f9;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

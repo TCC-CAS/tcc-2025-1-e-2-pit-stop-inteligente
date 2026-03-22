@@ -1,0 +1,195 @@
+<!-- front_end/src/modulos/modulo_oficina/ordem_servico/checklist/components/checklist-tab.html -->
+<link rel="stylesheet" href="../../checklist/style/checklist-tab.css">
+
+<div class="checklist-container">
+    
+    <div id="checklistStatusCard" class="checklist-status-card">
+        <div class="status-info">
+            <h2 id="statusTitle"><i class="fas fa-exclamation-circle"></i> Checklist Pendente</h2>
+            <p id="statusDesc">
+                A O.S. está <strong>bloqueada</strong>. O preenchimento e assinatura são obrigatórios para liberar as demais etapas.
+            </p>
+        </div>
+        <button id="btnOpenChecklist" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Preencher Checklist
+        </button>
+    </div>
+
+    <div class="card-resumo">
+        <h3 style="margin-top:0; margin-bottom: 1.5rem; font-size: 1.1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
+            Resumo do Recebimento
+        </h3>
+        
+        <div class="row">
+            <div class="col-4">
+                <label class="text-label">Status</label>
+                <div id="summaryStatus" class="badge badge-warning">Pendente</div>
+            </div>
+            <div class="col-4">
+                <label class="text-label">Data do Recebimento</label>
+                <div id="summaryDate" class="text-value">-</div>
+            </div>
+            <div class="col-4">
+                <label class="text-label">Consultor Responsável</label>
+                <div id="summaryResponsible" class="text-value">-</div>
+            </div>
+        </div>
+        
+        <div class="row" style="margin-top: 1.5rem;">
+            <div class="col-6">
+                <label class="text-label">Assinatura do Cliente</label>
+                <div id="summarySignClient" class="text-value text-danger">
+                    <i class="fas fa-times-circle"></i> Não assinado
+                </div>
+            </div>
+            <div class="col-6">
+                <label class="text-label">Assinatura do Técnico</label>
+                <div id="summarySignTech" class="text-value text-danger">
+                    <i class="fas fa-times-circle"></i> Não assinado
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 1.5rem;">
+             <div class="col-12">
+                 <label class="text-label">Fotos Anexadas</label>
+                 <div id="summaryPhotosCount" class="text-value">0 fotos</div>
+             </div>
+        </div>
+    </div>
+</div>
+
+<template id="wizardTemplate">
+    <div class="wizard-progress">
+        <div class="wizard-step" data-step="1">1. Veículo</div>
+        <div class="wizard-step" data-step="2">2. Externo</div>
+        <div class="wizard-step" data-step="3">3. Interno</div>
+        <div class="wizard-step" data-step="4">4. Mecânica</div>
+        <div class="wizard-step" data-step="5">5. Fotos</div>
+        <div class="wizard-step" data-step="6">6. Assinar</div>
+    </div>
+
+    <form id="checklistForm">
+        
+        <div class="wizard-panel active" data-step="1">
+            <div class="row">
+                <div class="col-6">
+                    <label>Data de Recebimento *</label>
+                    <input type="date" name="data_recebimento" class="form-control" required>
+                </div>
+                <div class="col-6">
+                    <label>Consultor Responsável *</label>
+                    <input type="text" name="consultor" class="form-control" placeholder="Nome do consultor" required>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-6">
+                    <label>Quilometragem (km) *</label>
+                    <input type="number" name="km" class="form-control" required placeholder="Ex: 45000">
+                </div>
+                <div class="col-6">
+                    <label>Nível de Combustível</label>
+                    <select name="fuel" class="form-control">
+                        <option value="reserva">Reserva</option>
+                        <option value="1/4">1/4</option>
+                        <option value="1/2">1/2 (Meio Tanque)</option>
+                        <option value="3/4">3/4</option>
+                        <option value="cheio">Cheio</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-12">
+                    <label>Observações Iniciais</label>
+                    <input type="text" name="obs_inicial" class="form-control" placeholder="Barulhos relatados, luzes acesas no painel...">
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-panel" data-step="2">
+            <h4 style="font-size:1rem; margin-bottom:1rem;">Inspeção Visual Externa</h4>
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>Lataria / Pintura</label>
+                        <textarea name="ext_body" class="form-control" rows="3" placeholder="Descreva arranhões, amassados..."></textarea>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>Vidros e Faróis</label>
+                        <textarea name="ext_glass" class="form-control" rows="3" placeholder="Trincas, quebras..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-panel" data-step="3">
+            <h4 style="font-size:1rem; margin-bottom:1rem;">Inspeção Interna</h4>
+            <div class="form-check mb-2">
+                <input type="checkbox" id="chk_manual" name="has_manual">
+                <label for="chk_manual">Manual e Livrete a bordo?</label>
+            </div>
+            <div class="form-check mb-2">
+                <input type="checkbox" id="chk_step" name="has_step">
+                <label for="chk_step">Estepe/Macaco presentes?</label>
+            </div>
+            <div class="form-group mt-3">
+                <label>Observações do Interior</label>
+                <textarea name="int_obs" class="form-control" rows="2" placeholder="Estofamento, cheiros, pertences do cliente..."></textarea>
+            </div>
+        </div>
+
+        <div class="wizard-panel" data-step="4">
+            <h4 style="font-size:1rem; margin-bottom:1rem;">Verificação Rápida Sob Capô</h4>
+            <div class="row">
+                <div class="col-6">
+                    <label>Nível Óleo Motor</label>
+                    <select name="mech_oil" class="form-control">
+                        <option value="ok">Nível Normal</option>
+                        <option value="low">Baixo</option>
+                        <option value="crit">Crítico/Vazio</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label>Fluido Arrefecimento</label>
+                    <select name="mech_coolant" class="form-control">
+                        <option value="ok">Nível Normal</option>
+                        <option value="low">Baixo</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-panel" data-step="5">
+            <div class="photo-dropzone" id="dropZone">
+                <i class="fas fa-camera fa-2x" style="color:#cbd5e1; margin-bottom:10px;"></i>
+                <p style="margin:0; font-weight:600;">Clique ou Arraste fotos aqui</p>
+                <small class="text-muted">Mínimo obrigatório: 4 fotos (Frente, Traseira, Laterais)</small>
+            </div>
+            <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+            
+            <div class="photo-grid" id="photoPreviewGrid">
+                <!-- As miniaturas aparecerão aqui -->
+            </div>
+        </div>
+
+        <div class="wizard-panel" data-step="6">
+            <div class="signature-box">
+                <label>Assinatura do Cliente *</label>
+                <div class="signature-pad-wrapper">
+                    <canvas id="sigClient" class="signature-pad"></canvas>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.clearSig('sigClient')">Limpar</button>
+            </div>
+
+            <div class="signature-box">
+                <label>Assinatura do Consultor/Técnico *</label>
+                <div class="signature-pad-wrapper">
+                    <canvas id="sigTech" class="signature-pad"></canvas>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.clearSig('sigTech')">Limpar</button>
+            </div>
+        </div>
+    </form>
+</template>

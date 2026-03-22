@@ -1,0 +1,107 @@
+<link rel="stylesheet" href="/front_end/src/modulos/modulo_oficina/ordem_servico/diagnostico_orcamento/style/diagnostico-tab.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="tab-card fade-in">
+    <div class="tab-card-header">
+        <h3 class="tab-card-title">Itens do Orçamento</h3>
+        <button class="btn btn-primary btn-sm" id="btnNovoItem">
+            <i class="fas fa-plus"></i> Adicionar Item
+        </button>
+    </div>
+
+    <!-- Abas de filtro -->
+    <div class="item-filter-tabs">
+        <button type="button" class="filter-tab active" data-filter="todos">Todos</button>
+        <button type="button" class="filter-tab" data-filter="peca">Peças</button>
+        <button type="button" class="filter-tab" data-filter="servico">Serviços</button>
+    </div>
+
+    <div class="table-container">
+        <table id="tabelaOrcamento">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Descrição / Peça</th>
+                    <th>Qtd / Dificuldade</th>
+                    <th>Valor Unit.</th>
+                    <th>Total</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="listaItensBody"></tbody>
+        </table>
+    </div>
+
+    <div class="orcamento-footer">
+        <strong>Total Geral: <span id="totalGeralOrcamento">R$ 0,00</span></strong>
+    </div>
+</div>
+
+<div class="orcamento-actions">
+    <div class="action-group-left">
+        <button class="btn btn-secondary" id="btnGerarPDF"><i class="fas fa-file-pdf"></i> Gerar PDF</button>
+    </div>
+    <div class="action-group-right">
+        <button class="btn btn-success" id="btnEnviarAprovacao"><i class="fas fa-paper-plane"></i> Enviar para Aprovação</button>
+    </div>
+</div>
+
+<template id="tmplModalItem">
+    <div class="modal-tabs">
+        <button type="button" class="modal-tab active" data-type="peca">Peças</button>
+        <button type="button" class="modal-tab" data-type="servico">Serviços</button>
+    </div>
+    
+    <form id="formItemOrcamento">
+        <input type="hidden" id="itemId">
+        <input type="hidden" id="itemTipo" value="peca">
+
+        <div id="camposPeca" class="campos-group">
+            <div class="form-group">
+                <label for="pecaNome">Nome da Peça *</label>
+                <input type="text" id="pecaNome" class="form-control" placeholder="Ex: Filtro de Óleo">
+            </div>
+            
+            <div class="form-group">
+                <label for="pecaDescricao">Descrição</label>
+                <textarea id="pecaDescricao" class="form-control" rows="2"></textarea>
+            </div>
+            
+            <div class="grid-col-2">
+                <div class="form-group">
+                    <label for="pecaQtd">Quantidade *</label>
+                    <input type="text" id="pecaQtd" class="form-control numero-inteiro" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="pecaValor">Valor Unitário (R$)</label>
+                    <input type="text" id="pecaValor" class="form-control monetario" placeholder="0,00">
+                </div>
+            </div>
+        </div>
+
+        <div id="camposServico" class="campos-group hidden">
+            <div class="form-group">
+                <label for="servicoDescricao">Descrição do Serviço *</label>
+                <input type="text" id="servicoDescricao" class="form-control" placeholder="Ex: Troca de pastilhas">
+            </div>
+            
+            <div class="grid-col-2">
+                <div class="form-group">
+                    <label for="servicoDificuldade">Dificuldade</label>
+                    <select id="servicoDificuldade" class="form-control">
+                        <option value="Carros Populares">Carros Populares</option>
+                        <option value="Carros Elétricos">Carros Elétricos</option>
+                        <option value="Carros de Luxo">Carros de Luxo</option>
+                        <option value="Esportivos">Esportivos</option>
+                        <option value="Utilitários e Comerciais">Utilitários e Comerciais</option>
+                        <option value="Minivans e Familiares">Minivans e Familiares</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="servicoPreco">Preço do Serviço (R$) *</label>
+                    <input type="text" id="servicoPreco" class="form-control monetario" placeholder="0,00">
+                </div>
+            </div>
+        </div>
+    </form>
+</template>

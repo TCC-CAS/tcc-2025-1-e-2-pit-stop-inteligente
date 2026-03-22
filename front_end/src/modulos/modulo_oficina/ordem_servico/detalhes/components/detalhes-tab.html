@@ -1,0 +1,54 @@
+<link rel="stylesheet" href="../../detalhes/style/detalhes-tab.css">
+<!-- detalhes-tab.html -->
+<div class="tab-card fade-in">
+    <div class="tab-card-header">
+        <h3 class="tab-card-title">Dados do Veículo e Cliente</h3>
+    </div>
+    
+    <div class="grid-col-2">
+        <div class="info-group">
+            <div class="info-label">Cliente</div>
+            <div class="info-value" id="detalhe-cliente-nome">--</div>
+        </div>
+        <div class="info-group">
+            <div class="info-label">CPF/CNPJ</div>
+            <div class="info-value" id="detalhe-cliente-doc">--</div>
+        </div>
+        <div class="info-group">
+            <div class="info-label">Veículo</div>
+            <div class="info-value" id="detalhe-veiculo-modelo">--</div>
+        </div>
+        <div class="info-group">
+            <div class="info-label">Placa</div>
+            <div class="info-value" id="detalhe-veiculo-placa">--</div>
+        </div>
+        <div class="info-group">
+            <div class="info-label">KM Atual</div>
+            <div class="info-value" id="detalhe-veiculo-km">--</div>
+        </div>
+        <div class="info-group">
+            <div class="info-label">Ano/Cor</div>
+            <div class="info-value" id="detalhe-veiculo-ano-cor">--</div>
+        </div>
+    </div>
+</div>
+
+<div class="tab-card">
+    <div class="tab-card-header">
+        <h3 class="tab-card-title">Checklist de Recebimento</h3>
+    </div>
+    <div class="table-container">
+        <table id="tabelaChecklistRecebimento">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Status</th>
+                    <th>Observações</th>
+                </tr>
+            </thead>
+            <tbody id="checklist-body">
+                <!-- preenchido via JS -->
+            </tbody>
+        </table>
+    </div>
+</div>

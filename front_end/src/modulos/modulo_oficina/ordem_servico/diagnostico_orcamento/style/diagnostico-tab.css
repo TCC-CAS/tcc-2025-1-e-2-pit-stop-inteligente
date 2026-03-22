@@ -1,0 +1,403 @@
+/* ================================================= */
+/* ESTILOS GERAIS DA ABA DE DIAGNÓSTICO/ORÇAMENTO    */
+/* ================================================= */
+
+.tab-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.tab-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.tab-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+/* Abas de filtro */
+.item-filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.5rem;
+}
+
+.filter-tab {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1e293b;
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.2s;
+}
+
+.filter-tab:hover {
+    background-color: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+}
+
+.filter-tab.active {
+    color: #2563eb;
+    border-bottom: 2px solid #2563eb;
+    font-weight: 600;
+}
+
+/* Tabela */
+.table-container {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+/* Cabeçalhos centralizados */
+th {
+    background-color: #f8fafc;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+/* Células de conteúdo centralizadas */
+td {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
+    vertical-align: middle;
+    text-align: center;               /* Centraliza todo o conteúdo */
+}
+
+/* Célula de ações mantém centralização */
+td.actions-cell {
+    text-align: center;
+    white-space: nowrap;
+    min-width: 120px;
+}
+
+/* Badges */
+.badge-info {
+    background-color: #dbeafe;
+    color: #1e40af;
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-warning {
+    background-color: #fef3c7;
+    color: #92400e;
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* Botões de ação */
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.3rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.btn-icon .btn-text {
+    font-size: 0.9rem;
+}
+
+/* Em telas grandes, mostrar texto junto com ícone */
+@media (min-width: 1024px) {
+    .btn-icon {
+        width: auto;
+        padding: 0.5rem 1rem;
+    }
+    .btn-icon .btn-text {
+        display: inline;
+    }
+}
+
+/* Em telas menores, mostrar só ícone por padrão, mas texto no hover */
+@media (max-width: 1023px) {
+    .btn-icon .btn-text {
+        display: none;
+    }
+    .btn-icon:hover .btn-text {
+        display: inline;
+    }
+}
+
+.btn-edit {
+    color: #2563eb;
+}
+.btn-edit:hover {
+    background-color: #dbeafe;
+}
+
+.btn-delete {
+    color: #dc2626;
+}
+.btn-delete:hover {
+    background-color: #fee2e2;
+}
+
+/* Rodapé do orçamento (total geral) */
+.orcamento-footer {
+    padding: 1.5rem;
+    text-align: right;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    margin-top: -1px;
+}
+
+.orcamento-footer strong {
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.orcamento-footer span {
+    color: #2563eb;
+    font-size: 1.3rem;
+    margin-left: 0.5rem;
+}
+
+/* Ações abaixo da tabela (PDF e Enviar) */
+.orcamento-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.action-group-left,
+.action-group-right {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+/* Para telas muito pequenas, centralizar os grupos */
+@media (max-width: 640px) {
+    .orcamento-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .action-group-left,
+    .action-group-right {
+        justify-content: center;
+    }
+}
+
+/* Botões padrão */
+.btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.btn i {
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: #2563eb;
+    color: white;
+}
+.btn-primary:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-success {
+    background-color: #10b981;
+    color: white;
+}
+.btn-success:hover {
+    background-color: #059669;
+}
+
+.btn-secondary {
+    background-color: #e2e8f0;
+    color: #1e293b;
+    border: 1px solid #cbd5e1;
+}
+.btn-secondary:hover {
+    background-color: #cbd5e1;
+}
+
+.btn-sm {
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+}
+
+/* ================================================= */
+/* ESTILOS DA MODAL (FORMULÁRIO E ABAS)              */
+/* ================================================= */
+
+.modal-tabs {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+}
+
+.modal-tab {
+    background: none;
+    border: none;
+    padding: 0.8rem 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1e293b;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+}
+
+.modal-tab:hover {
+    color: #2563eb;
+}
+
+.modal-tab.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+    font-weight: 700;
+}
+
+/* Controle de Visibilidade */
+.hidden {
+    display: none !important;
+}
+
+.campos-group {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Inputs e Labels */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #1e293b;
+    font-size: 0.9rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #0f172a;
+    box-sizing: border-box;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.grid-col-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Ajustes para o modal dentro do componente */
+oficina-modal [slot="body"] {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+/* Responsividade mobile */
+@media (max-width: 767px) {
+    .actions-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        align-items: center;
+        min-width: auto;
+    }
+    
+    .btn-icon {
+        width: auto;
+        height: auto;
+        padding: 0.5rem 1rem;
+        margin: 0;
+        justify-content: center;
+    }
+    
+    .btn-icon i {
+        margin-right: 0.5rem;
+    }
+    
+    .btn-icon .btn-text {
+        display: inline; /* Sempre visível no mobile */
+    }
+
+    .item-filter-tabs {
+        flex-wrap: wrap;
+    }
+
+    .filter-tab {
+        flex: 1 1 auto;
+        text-align: center;
+    }
+}

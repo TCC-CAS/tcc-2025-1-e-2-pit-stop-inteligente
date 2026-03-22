@@ -1,0 +1,394 @@
+/* ============================================
+   diagnóstico-tab.css
+   Estilos para a aba "Itens do Orçamento" (Diagnóstico)
+   ============================================ */
+
+/* ---- Variáveis (caso não sejam herdadas do global) ---- */
+:root {
+    --primary: #2563eb;
+    --secondary: #4b5563;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --info: #3b82f6;
+    --bg-light: #f9fafb;
+    --text-light: #111827;
+    --border-light: #e5e7eb;
+    --gray: #6b7280;
+}
+
+/* ---- Card da Aba ---- */
+.tab-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.tab-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.tab-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin: 0;
+}
+
+/* ---- Filtros (abas) ---- */
+.item-filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem 0 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.filter-tab {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--secondary);
+    cursor: pointer;
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+}
+
+.filter-tab:hover {
+    background-color: #f3f4f6;
+    color: var(--primary);
+}
+
+.filter-tab.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+/* ---- Tabela ---- */
+.table-container {
+    overflow-x: auto;
+    margin: 1.5rem;
+}
+
+#tabelaOrcamento {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+#tabelaOrcamento th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background-color: #f8fafc;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--secondary);
+    border-bottom: 2px solid var(--border-light);
+}
+
+#tabelaOrcamento td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.badge-info {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-warning {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* ---- Rodapé do orçamento ---- */
+.orcamento-footer {
+    background-color: #f8fafc;
+    border-top: 1px solid var(--border-light);
+    padding: 1rem 1.5rem;
+    text-align: right;
+    font-size: 1rem;
+}
+
+/* ---- Botões de ação (inferiores) ---- */
+.orcamento-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.action-group-left,
+.action-group-right {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* ---- Botões de ícone (Editar / Excluir) - igual ao módulo de serviços ---- */
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.3rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.btn-icon .btn-text {
+    font-size: 0.9rem;
+}
+
+/* Em telas grandes, mostrar texto junto com ícone */
+@media (min-width: 1024px) {
+    .btn-icon {
+        width: auto;
+        padding: 0.5rem 1rem;
+    }
+    .btn-icon .btn-text {
+        display: inline;
+    }
+}
+
+/* Em telas menores, mostrar só ícone por padrão, mas texto no hover */
+@media (max-width: 1023px) {
+    .btn-icon .btn-text {
+        display: none;
+    }
+    .btn-icon:hover .btn-text {
+        display: inline;
+    }
+}
+
+.btn-edit {
+    color: #2563eb;
+}
+.btn-edit:hover {
+    background-color: #dbeafe;
+}
+
+.btn-delete {
+    color: #dc2626;
+}
+.btn-delete:hover {
+    background-color: #fee2e2;
+}
+
+/* ---- Célula de ações na tabela ---- */
+.actions-cell {
+    white-space: nowrap;
+}
+
+/* ---- Modal (estilos compartilhados) ---- */
+/* Se os estilos do modal estiverem em um arquivo global, esses podem ser omitidos.
+   Caso contrário, inclua aqui os estilos mínimos para funcionamento. */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 1rem;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-box {
+    background: white;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 550px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--text-light);
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--gray);
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.25rem;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background-color: #fee2e2;
+    color: var(--danger);
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    background-color: #f8fafc;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* ---- Campos do formulário dentro do modal ---- */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--secondary);
+    margin-bottom: 0.25rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-light);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+}
+
+.grid-col-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.hidden {
+    display: none;
+}
+
+.modal-tabs {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.modal-tab {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--secondary);
+    cursor: pointer;
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+}
+
+.modal-tab.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+.modal-tab:hover:not(.active) {
+    background-color: #f3f4f6;
+    color: var(--primary);
+}
+
+/* ---- Animações ---- */
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

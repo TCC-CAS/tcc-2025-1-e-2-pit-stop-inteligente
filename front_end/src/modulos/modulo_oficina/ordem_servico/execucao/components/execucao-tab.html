@@ -1,0 +1,27 @@
+<!-- execucao-tab.html -->
+<link rel="stylesheet" href="../../execucao/style/execucao-tab.css">
+
+<div class="tab-card fade-in">
+    <div class="tab-card-header">
+        <h3 class="tab-card-title">Tarefas da O.S</h3>
+        <button class="btn btn-success" id="btnFinalizarOS">Finalizar O.S</button>
+    </div>
+
+    <div class="tarefas-wrapper">
+        <div class="tarefas-controls">
+            <button class="btn btn-secondary btn-sm" id="btnIncluirTarefa">
+                <i class="fas fa-plus"></i> Incluir Tarefa
+            </button>
+        </div>
+
+        <!-- Cabeçalho da lista de tarefas -->
+        <div class="task-list-header">
+            <div class="header-status">Status</div>
+            <div class="header-descricao">Descrição</div>
+            <div class="header-acoes">Ações</div>
+        </div>
+
+        <!-- Lista de tarefas será preenchida dinamicamente -->
+        <ul class="task-list" id="listaTarefas"></ul>
+    </div>
+</div>

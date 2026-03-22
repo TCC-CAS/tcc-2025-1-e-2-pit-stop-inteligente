@@ -1,0 +1,215 @@
+/* front_end/src/modulos/modulo_oficina/ordem_servico/shared/components/os-list.css */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fff;
+    color: #333;
+}
+
+.header {
+    padding: 1.2rem;
+    border-bottom: 1px solid #ddd;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #222;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+.btn-primary:hover { background-color: #0056b3; }
+
+.search-box {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+}
+
+.actions-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.filter-select {
+    flex-grow: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    color: #333;
+    font-size: 0.9rem;
+    height: 36px;
+}
+
+.btn-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #555;
+    transition: all 0.2s;
+}
+.btn-icon:hover {
+    background-color: #e2e6ea;
+    color: #000;
+}
+.btn-icon i { font-size: 1rem; transition: transform 0.5s; }
+
+.list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: #fff;
+}
+
+.loading, .error-message, .empty-message {
+    padding: 2rem;
+    text-align: center;
+    color: #555;
+}
+.error-message { color: #dc3545; }
+.empty-message i { font-size: 2rem; color: #ccc; margin-bottom: 10px; }
+
+.os-card {
+    position: relative;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1rem 2.8rem 1rem 1rem;
+    margin-bottom: 0.8rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid transparent;
+}
+.os-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-color: #b3d7ff;
+}
+.os-card.selected {
+    background-color: #e7f1ff;
+    border-left: 4px solid #007bff;
+}
+
+/* Cores de borda por status */
+.os-card[data-status="pendente"] {
+    border-left-color: #ffc107;
+}
+.os-card[data-status="execucao"] {
+    border-left-color: #17a2b8;
+}
+.os-card[data-status="concluido"] {
+    border-left-color: #28a745;
+}
+
+.os-card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    padding-right: 5px;
+}
+
+.os-id {
+    font-weight: bold;
+    color: #555;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+}
+
+.os-status {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.status-pendente { background: #fff3cd; color: #856404; }
+.status-execucao { background: #cce5ff; color: #004085; }
+.status-concluido { background: #d4edda; color: #155724; }
+
+.os-info strong {
+    display: block;
+    color: #222;
+    font-size: 0.95rem;
+}
+.os-info span {
+    color: #666;
+    font-size: 0.85rem;
+}
+.os-client {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.delete-os-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s;
+    z-index: 2;
+}
+.delete-os-btn:hover {
+    color: #dc3545;
+}
+
+/* Ajuste para telas muito pequenas */
+@media (max-width: 400px) {
+    .os-card {
+        padding-right: 2.2rem;
+    }
+    .os-id {
+        max-width: 60%;
+    }
+}

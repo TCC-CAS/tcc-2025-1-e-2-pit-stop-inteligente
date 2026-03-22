@@ -1,0 +1,331 @@
+/* login-page.css - Modal Overlay + Layout Aprimorado */
+
+/* Overlay fixo que cobre toda a tela */
+.login-body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: transparent; /* Fundo transparente para mostrar a tela anterior */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Sombreamento (overlay escuro) */
+.login-body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px); /* efeito sutil de desfoque */
+    z-index: -1;
+}
+
+/* Container do modal */
+.login-container {
+    width: 100%;
+    max-width: 440px;
+    padding: 20px;
+    box-sizing: border-box;
+    animation: fadeInUp 0.4s ease-out;
+}
+
+/* Card principal */
+.login-card {
+    background: #ffffff;
+    padding: 2.5rem 2rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Cabeçalho */
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo-placeholder {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    margin: 0 auto 1rem;
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.25);
+}
+
+.login-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.25rem;
+}
+
+.login-subtitle {
+    font-size: 0.9rem;
+    color: #5b6e8c;
+    margin: 0;
+}
+
+/* Grupos com ícone e label flutuante */
+.floating-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.floating-group .input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 1rem;
+    transition: color 0.2s;
+    z-index: 2;
+}
+
+.floating-group .form-control {
+    width: 100%;
+    height: 56px;
+    padding: 20px 40px 6px 42px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background-color: #f9fafb;
+    font-size: 1rem;
+    color: #1e293b;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.floating-group .form-control:focus {
+    border-color: #2563eb;
+    background-color: #ffffff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.floating-group .form-control:focus ~ .input-icon {
+    color: #2563eb;
+}
+
+.floating-group label {
+    position: absolute;
+    left: 42px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 1rem;
+    pointer-events: none;
+    transition: all 0.2s ease-out;
+}
+
+.floating-group .form-control:focus ~ label,
+.floating-group .form-control:not(:placeholder-shown) ~ label {
+    top: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #2563eb;
+    background: #ffffff;
+    padding: 0 6px;
+    left: 36px;
+}
+
+/* Botão de mostrar/ocultar senha */
+.btn-toggle-pass {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: color 0.2s;
+}
+
+.btn-toggle-pass:hover {
+    color: #2563eb;
+}
+
+/* Mensagens de erro */
+.error-msg {
+    font-size: 0.7rem;
+    color: #e53e3e;
+    margin-top: 4px;
+    display: block;
+    padding-left: 42px;
+}
+
+/* Linha de ações (lembrar e esqueci) */
+.form-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #4b5563;
+}
+
+.custom-checkbox input {
+    display: none;
+}
+
+.checkmark {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #fff;
+    transition: all 0.2s;
+}
+
+.custom-checkbox input:checked + .checkmark {
+    background-color: #2563eb;
+    border-color: #2563eb;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='18px' height='18px'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3E%3C/svg%3E");
+    background-size: 12px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.forgot-password {
+    font-size: 0.85rem;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Botão primário */
+.btn {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Alinha ao centro */
+    gap: 8px;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-spinner {
+    margin-left: 8px;
+}
+
+/* Divisor */
+.login-divider {
+    text-align: center;
+    margin: 1.5rem 0 1.2rem;
+    position: relative;
+}
+
+.login-divider span {
+    background: #fff;
+    padding: 0 12px;
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.login-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e2e8f0;
+    z-index: -1;
+}
+
+/* Botão Google */
+.btn-google {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 40px;
+    padding: 10px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #1e293b;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-google:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.google-logo {
+    width: 20px;
+    height: 20px;
+}
+
+/* Animações */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeInUp 0.3s ease-out;
+}

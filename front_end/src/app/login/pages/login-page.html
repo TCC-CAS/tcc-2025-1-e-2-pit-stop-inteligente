@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pit Stop Inteligente - Login</title>
+    
+    <link rel="stylesheet" href="../../../shared/styles/variables.css">
+    <link rel="stylesheet" href="../../../shared/styles/global.css">
+    <link rel="stylesheet" href="../style/login-page.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="login-body">
+
+    <main class="login-container fade-in">
+        <div class="login-card">
+            
+            <div class="login-header">
+                <div class="logo-placeholder">
+                    <i class="fas fa-car-side"></i>
+                </div>
+                <h1 class="login-title">Pit Stop Inteligente</h1>
+                <p class="login-subtitle">Bem-vindo de volta! Acesse sua conta.</p>
+            </div>
+
+            <form id="formLogin" class="login-form" novalidate>
+                
+                <div class="form-group floating-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="username" class="form-control" placeholder=" " required aria-required="true">
+                    <label for="username">E-mail ou Usuário</label>
+                    <span class="error-msg" id="error-username"></span>
+                </div>
+
+                <div class="form-group floating-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="password" class="form-control" placeholder=" " required aria-required="true">
+                    <label for="password">Senha</label>
+                    <button type="button" class="btn-toggle-pass" id="btnTogglePass" aria-label="Mostrar senha">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <span class="error-msg" id="error-password"></span>
+                </div>
+
+                <div class="form-actions-row">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">Lembrar de mim</span>
+                    </label>
+                    <a href="#" class="forgot-password">Esqueceu a senha?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="btnEntrar">
+                    <span class="btn-text">Entrar</span>
+                    <i class="fas fa-circle-notch fa-spin btn-spinner" style="display: none;"></i>
+                </button>
+            </form>
+
+            <div class="login-divider">
+                <span>ou continue com</span>
+            </div>
+
+            <button type="button" class="btn-google btn-block" id="btnGoogleLogin">
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="google-logo">
+                    <g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g>
+                </svg>
+                Entrar com o Google
+            </button>
+            
+        </div>
+    </main>
+
+    <script type="module" src="../components/login-page.js"></script>
+</body>
+</html>
