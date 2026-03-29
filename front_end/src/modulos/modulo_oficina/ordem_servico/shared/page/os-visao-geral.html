@@ -61,8 +61,7 @@
             </oficina-tabs>
 
             <div id="content-area" class="fade-in">
-                <!-- conteúdo carregado dinamicamente -->
-            </div>
+                </div>
 
         </main>
 
@@ -71,7 +70,6 @@
         </aside>
     </div>
 
-    <!-- Modal Nova OS -->
     <oficina-modal id="modalNovaOS">
         <span slot="title">Nova Ordem de Serviço</span>
         <div slot="body">
@@ -81,15 +79,17 @@
                 </h4>
                 <div class="row">
                     <div class="col-6">
-                        <div class="form-group">
+                        <div class="form-group" style="position: relative;">
                             <label for="cliente">Cliente *</label>
-                            <input type="text" id="cliente" class="form-control" placeholder="Nome completo" required>
+                            <input type="text" id="cliente" class="form-control" placeholder="Nome completo" required autocomplete="off">
+                            <div id="cliente-suggestions" class="autocomplete-suggestions d-none"></div>
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="form-group">
+                        <div class="form-group" style="position: relative;">
                             <label for="cpf_cnpj">CPF/CNPJ *</label>
-                            <input type="text" id="cpf_cnpj" class="form-control" placeholder="000.000.000-00" required>
+                            <input type="text" id="cpf_cnpj" class="form-control" placeholder="000.000.000-00" required autocomplete="off">
+                            <div id="cpf-cnpj-suggestions" class="autocomplete-suggestions d-none"></div>
                         </div>
                     </div>
                 </div>
@@ -179,7 +179,6 @@
         </div>
     </oficina-modal>
 
-    <!-- Modal do Checklist -->
     <oficina-modal id="modalChecklist">
         <span slot="title">Checklist de Recebimento</span>
         <div slot="body" id="checklist-wizard-body" style="min-height: 400px;"></div>
@@ -191,7 +190,6 @@
         </div>
     </oficina-modal>
 
-    <!-- Modal para adicionar item (Diagnóstico) -->
     <oficina-modal id="modalNovoItem">
         <span slot="title">Adicionar Item ao Orçamento</span>
         <div slot="body"></div>
@@ -201,7 +199,6 @@
         </div>
     </oficina-modal>
 
-    <!-- Modal para gerenciar aprovação -->
     <oficina-modal id="modalGerenciarAprovacao">
         <span slot="title">Gerenciar Aprovação</span>
         <div slot="body"></div>

@@ -5,8 +5,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalNovaOS = document.getElementById('modalNovaOS');
     const osList = document.querySelector('os-list');
 
-    // Função para formatar CPF/CNPJ
+    // =========================================================
+    // VARIÁVEIS DO AUTOCOMPLETE
+    // =========================================================
+    const inputCliente = document.getElementById('cliente');
+    const inputCpfCnpj = document.getElementById('cpf_cnpj');
+    const inputTelefone = document.getElementById('telefone');
+    const inputEmail = document.getElementById('email');
+    const clienteSuggestions = document.getElementById('cliente-suggestions');
+    const cpfCnpjSuggestions = document.getElementById('cpf-cnpj-suggestions');
+    let debounceTimeout;
+
+    // =========================================================
+    // FUNÇÕES UTILITÁRIAS
+    // =========================================================
     function formatarCPFouCNPJ(valor) {
+        if (!valor) return '';
         const numeros = valor.replace(/\D/g, '');
         if (numeros.length === 11) {
             return numeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
@@ -16,7 +30,95 @@ document.addEventListener('DOMContentLoaded', () => {
         return valor;
     }
 
-    // ========== NOVA FUNÇÃO: Exibe mensagem quando nenhuma OS está selecionada ==========
+    // =========================================================
+    // LÓGICA DE AUTOCOMPLETE DE CLIENTES
+    // =========================================================
+    async function buscarClientes(termo, suggestionsContainer) {
+        if (!termo || termo.length < 3) {
+            suggestionsContainer.innerHTML = '';
+            suggestionsContainer.classList.add('d-none');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/oficina/clientes/?search=${termo}`);
+            if (!response.ok) throw new Error('Erro ao buscar clientes');
+            
+            const clientes = await response.json();
+            suggestionsContainer.innerHTML = '';
+            
+            const listaClientes = Array.isArray(clientes) ? clientes : (clientes.results || []);
+
+            if (listaClientes.length === 0) {
+                suggestionsContainer.classList.add('d-none');
+                return;
+            }
+
+            listaClientes.forEach(cliente => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                
+                const docFormatado = cliente.documento ? formatarCPFouCNPJ(cliente.documento) : 'N/A';
+                
+                div.innerHTML = `
+                    <span class="suggestion-title">${cliente.nome}</span>
+                    <span class="suggestion-subtitle">Doc: ${docFormatado} | Tel: ${cliente.telefone || 'N/A'}</span>
+                `;
+                
+                div.addEventListener('click', () => {
+                    preencherDadosCliente(cliente);
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.classList.add('d-none');
+                });
+                
+                suggestionsContainer.appendChild(div);
+            });
+            
+            suggestionsContainer.classList.remove('d-none');
+            
+        } catch (error) {
+            console.error('Erro no autocomplete:', error);
+        }
+    }
+
+    function preencherDadosCliente(cliente) {
+        if (inputCliente) inputCliente.value = cliente.nome || '';
+        if (inputCpfCnpj) inputCpfCnpj.value = cliente.documento ? formatarCPFouCNPJ(cliente.documento) : '';
+        if (inputTelefone) inputTelefone.value = cliente.telefone || '';
+        if (inputEmail) inputEmail.value = cliente.email || '';
+    }
+
+    function handleAutocompleteInput(e, suggestionsContainer) {
+        clearTimeout(debounceTimeout);
+        const termo = e.target.id === 'cpf_cnpj' ? e.target.value.replace(/\D/g, '') : e.target.value;
+        
+        debounceTimeout = setTimeout(() => {
+            buscarClientes(termo, suggestionsContainer);
+        }, 500);
+    }
+
+    // Registra os eventos do Autocomplete
+    if (inputCliente && clienteSuggestions) {
+        inputCliente.addEventListener('input', (e) => handleAutocompleteInput(e, clienteSuggestions));
+    }
+
+    if (inputCpfCnpj && cpfCnpjSuggestions) {
+        inputCpfCnpj.addEventListener('input', (e) => handleAutocompleteInput(e, cpfCnpjSuggestions));
+    }
+
+    // Fecha sugestões ao clicar fora
+    document.addEventListener('click', (e) => {
+        if (inputCliente && e.target !== inputCliente && !clienteSuggestions.contains(e.target)) {
+            clienteSuggestions.classList.add('d-none');
+        }
+        if (inputCpfCnpj && e.target !== inputCpfCnpj && !cpfCnpjSuggestions.contains(e.target)) {
+            cpfCnpjSuggestions.classList.add('d-none');
+        }
+    });
+
+    // =========================================================
+    // LÓGICA GERAL DA TELA (ABAS E ESTADOS)
+    // =========================================================
     function mostrarMensagemNenhumaOS() {
         const contentArea = document.getElementById('content-area');
         if (!contentArea) return;
@@ -32,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // Botão para abrir modal de nova OS
         const btnNova = document.getElementById('empty-state-nova-os');
         if (btnNova) {
             btnNova.addEventListener('click', () => {
@@ -41,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Limpa cabeçalho da OS
         document.getElementById('header-os-id').textContent = '---';
         document.getElementById('header-veiculo').textContent = 'Nenhum veículo';
         document.getElementById('header-placa').textContent = '---';
@@ -51,14 +151,12 @@ document.addEventListener('DOMContentLoaded', () => {
             statusBadge.className = 'badge badge-secondary';
         }
 
-        // Bloqueia todas as abas (se o componente tabs existir)
         if (tabsComponent) {
             const tabs = tabsComponent.querySelectorAll('.tab');
             tabs.forEach(tab => tab.classList.add('locked'));
         }
     }
 
-    // Mapeamento de abas para seus módulos de inicialização
     const tabModules = {
         'checklist': () => import('../../checklist/components/checklist-tab.js'),
         'detalhes': () => import('../../detalhes/components/detalhes-tab.js'),
@@ -70,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     async function loadTabContent(tabName) {
-        // Se não houver OS selecionada, não tenta carregar conteúdo
         if (!window.osSelecionadoId) {
             mostrarMensagemNenhumaOS();
             return;
@@ -105,7 +202,6 @@ document.addEventListener('DOMContentLoaded', () => {
             contentArea.innerHTML = '';
             contentArea.appendChild(tempDiv);
 
-            // Inicializar o módulo da aba
             if (tabModules[tabName]) {
                 const module = await tabModules[tabName]();
                 if (module.initDetalhes && tabName === 'detalhes') {
@@ -132,19 +228,18 @@ document.addEventListener('DOMContentLoaded', () => {
         tabsComponent.addEventListener('os:tab-change', (e) => loadTabContent(e.detail.targetId));
     }
 
-    // Carrega a aba checklist por padrão (apenas se houver OS)
     if (window.osSelecionadoId) {
         loadTabContent('checklist');
     } else {
         mostrarMensagemNenhumaOS();
     }
 
-    // Listener para abrir modal de nova OS quando evento for disparado
     if (osList) {
         osList.addEventListener('os:create-new', () => {
             if (modalNovaOS && typeof modalNovaOS.open === 'function') {
                 modalNovaOS.open();
-                // Aplica máscara ao campo CPF/CNPJ quando o modal abrir
+                
+                // Reaplica a máscara se não estiver no autocomplete
                 setTimeout(() => {
                     const cpfCnpjInput = document.getElementById('cpf_cnpj');
                     if (cpfCnpjInput) {
@@ -153,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             let value = e.target.value;
                             let numeros = value.replace(/\D/g, '');
                             if (numeros.length > 14) numeros = numeros.slice(0, 14);
+                            // Somente mascara se não houver autocomplete ativo em foco
                             e.target.value = formatarCPFouCNPJ(numeros);
                         };
                         window.mascaraCPFCNPJHandler = handler;
@@ -167,7 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
         osList.addEventListener('os:select', async (e) => {
             const os = e.detail;
 
-            // Se não houver OS selecionada, exibe a mensagem e reseta o estado
             if (!os || !os.id) {
                 window.osSelecionadoId = null;
                 mostrarMensagemNenhumaOS();
@@ -194,7 +289,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 window.osSelecionadoId = osDetalhes.id;
 
-                // Verificar status do checklist para desbloquear abas
                 if (tabsComponent) {
                     try {
                         const checklistResponse = await fetch(`http://127.0.0.1:8000/api/oficina/checklist/${osId}/`);
@@ -202,8 +296,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             const checklistData = await checklistResponse.json();
                             const concluido = checklistData && checklistData.concluido === true;
                             tabsComponent.setLockedByChecklist(concluido);
-                        } else if (checklistResponse.status === 404) {
-                            tabsComponent.setLockedByChecklist(false);
                         } else {
                             tabsComponent.setLockedByChecklist(false);
                         }
@@ -213,7 +305,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // Carregar a aba atualmente ativa
                 const tabAtiva = document.querySelector('oficina-tabs .tab.active');
                 if (tabAtiva) {
                     const target = tabAtiva.dataset.target;
@@ -229,6 +320,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // =========================================================
+    // SALVAR NOVA ORDEM DE SERVIÇO
+    // =========================================================
     const btnCriar = document.getElementById('btnCriarOS');
     if (btnCriar) {
         btnCriar.addEventListener('click', async () => {
