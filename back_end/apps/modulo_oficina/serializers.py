@@ -68,12 +68,3 @@ class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
         fields = '__all__'
-
-    def validate_cpf_cnpj(self, value):
-        """Validação simples para remover caracteres especiais do CPF/CNPJ"""
-        import re
-        # Remove tudo que não for número
-        clean_value = re.sub(r'\D', '', value)
-        if not clean_value:
-            raise serializers.ValidationError("CPF/CNPJ inválido.")
-        return clean_value
