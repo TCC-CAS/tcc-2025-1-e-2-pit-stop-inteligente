@@ -5,6 +5,27 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, DestroyAPIView
 from .models import Cliente, Veiculo, OrdemServico, ItemOrcamento
 from .serializers import (OrdemServicoSerializer, OrdemServicoListaSerializer, 
                           ItemOrcamentoSerializer, ClienteSerializer, VeiculoSerializer)
+from .models import Cliente
+from .serializers import ClienteSerializer
+
+class ClienteListCreateAPIView(generics.ListCreateAPIView):
+    """
+    GET: Lista todos os clientes (com suporte a busca por nome ou CPF).
+    POST: Cria um novo cliente.
+    """
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['nome', 'cpf_cnpj', 'telefone']  # Permite buscar na barra de pesquisa
+
+class ClienteRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retorna os detalhes de um cliente específico.
+    PUT/PATCH: Atualiza um cliente.
+    DELETE: Exclui um cliente.
+    """
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
 
 class CriarOrdemServicoAPIView(APIView):
     def post(self, request):
