@@ -7,6 +7,9 @@ from .serializers import (OrdemServicoSerializer, OrdemServicoListaSerializer,
                           ItemOrcamentoSerializer, ClienteSerializer, VeiculoSerializer)
 from .models import Cliente
 from .serializers import ClienteSerializer
+from rest_framework import generics, filters
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 class ClienteListCreateAPIView(generics.ListCreateAPIView):
     """

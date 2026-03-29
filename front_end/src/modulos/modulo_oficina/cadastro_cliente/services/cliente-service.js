@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api/clientes'; // Ajuste conforme sua API
+const API_URL = 'http://localhost:8000/api/clientes/'; // Usar a porta padrão do Django (8000)
 
 export const ClienteService = {
     // Buscar todos os clientes
@@ -15,7 +15,7 @@ export const ClienteService = {
 
     // Buscar cliente por ID
     async buscarPorId(id) {
-        const response = await fetch(`${API_URL}/${id}`);
+        const response = await fetch(`${API_URL}${id}/`);
         if (!response.ok) throw new Error('Cliente não encontrado');
         return await response.json();
     },
@@ -27,24 +27,30 @@ export const ClienteService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(cliente)
         });
-        if (!response.ok) throw new Error('Erro ao criar cliente');
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(JSON.stringify(errorData)); // Retorna os erros de validação do DRF
+        }
         return await response.json();
     },
 
     // Atualizar cliente existente
     async atualizar(id, cliente) {
-        const response = await fetch(`${API_URL}/${id}`, {
+        const response = await fetch(`${API_URL}${id}/`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(cliente)
         });
-        if (!response.ok) throw new Error('Erro ao atualizar cliente');
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(JSON.stringify(errorData));
+        }
         return await response.json();
     },
 
     // Excluir cliente
     async excluir(id) {
-        const response = await fetch(`${API_URL}/${id}`, {
+        const response = await fetch(`${API_URL}${id}/`, {
             method: 'DELETE'
         });
         if (!response.ok) throw new Error('Erro ao excluir cliente');
@@ -61,7 +67,7 @@ export const ClienteService = {
             const data = await response.json();
             return data.erro ? null : data;
         } catch (error) {
-            console.error("Erro no ViaCEP", error);
+            console.error('Erro na consulta do CEP', error);
             return null;
         }
     }

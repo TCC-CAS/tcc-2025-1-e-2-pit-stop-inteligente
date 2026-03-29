@@ -1,13 +1,9 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.conf import settings
 
+# ------------------------------------------------------------
+# CHECKLIST DE RECEBIMENTO
+# ------------------------------------------------------------
 class ChecklistRecebimento(models.Model):
     os = models.OneToOneField('OrdemServico', models.DO_NOTHING, blank=True, null=True)
     concluido = models.BooleanField(blank=True, null=True)
@@ -20,17 +16,47 @@ class ChecklistRecebimento(models.Model):
         db_table = 'checklist_recebimento'
 
 
+# ------------------------------------------------------------
+# CLIENTE (VERSÃO FINAL — MANTER APENAS ESTE!)
+# ------------------------------------------------------------
 class Cliente(models.Model):
-    nome = models.CharField(max_length=255)
-    cpf_cnpj = models.CharField(unique=True, max_length=20)
+    # Dados Pessoais
+    nome = models.CharField(max_length=255, verbose_name="Nome Completo")
+    cpf_cnpj = models.CharField(max_length=20, unique=True, verbose_name="CPF/CNPJ")
     telefone = models.CharField(max_length=20, blank=True, null=True)
-    criado_em = models.DateTimeField(blank=True, null=True)
+    email = models.EmailField(max_length=255, blank=True, null=True)
+
+    # Endereço
+    cep = models.CharField(max_length=10, blank=True, null=True)
+    logradouro = models.CharField(max_length=255, blank=True, null=True)
+    numero = models.CharField(max_length=20, blank=True, null=True)
+    complemento = models.CharField(max_length=100, blank=True, null=True)
+    bairro = models.CharField(max_length=100, blank=True, null=True)
+    cidade = models.CharField(max_length=100, blank=True, null=True)
+    uf = models.CharField(max_length=2, blank=True, null=True)
+
+    # Preferências
+    preferencias = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Preferências de contato: whatsapp, email, sms"
+    )
+
+    criado_em = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'cliente'
+        ordering = ['-criado_em']
+
+    def __str__(self):
+        return f"{self.nome} ({self.cpf_cnpj})"
 
 
+# ------------------------------------------------------------
+# DOCUMENTO OS
+# ------------------------------------------------------------
 class DocumentoOs(models.Model):
     os = models.ForeignKey('OrdemServico', models.DO_NOTHING, blank=True, null=True)
     nome = models.CharField(max_length=255)
@@ -42,6 +68,9 @@ class DocumentoOs(models.Model):
         db_table = 'documento_os'
 
 
+# ------------------------------------------------------------
+# FOTO CHECKLIST
+# ------------------------------------------------------------
 class FotoChecklist(models.Model):
     checklist = models.ForeignKey(ChecklistRecebimento, models.DO_NOTHING, blank=True, null=True)
     imagem = models.CharField(max_length=500)
@@ -52,6 +81,9 @@ class FotoChecklist(models.Model):
         db_table = 'foto_checklist'
 
 
+# ------------------------------------------------------------
+# ITEM ORÇAMENTO
+# ------------------------------------------------------------
 class ItemOrcamento(models.Model):
     os = models.ForeignKey('OrdemServico', models.DO_NOTHING, blank=True, null=True)
     tipo = models.CharField(max_length=10, blank=True, null=True)
@@ -66,6 +98,9 @@ class ItemOrcamento(models.Model):
         db_table = 'item_orcamento'
 
 
+# ------------------------------------------------------------
+# ORDEM DE SERVIÇO
+# ------------------------------------------------------------
 class OrdemServico(models.Model):
     veiculo = models.ForeignKey('Veiculo', models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(max_length=20, blank=True, null=True)
@@ -78,6 +113,9 @@ class OrdemServico(models.Model):
         db_table = 'ordem_servico'
 
 
+# ------------------------------------------------------------
+# TAREFAS DA EXECUÇÃO
+# ------------------------------------------------------------
 class TarefaExecucao(models.Model):
     STATUS_CHOICES = [
         ('pendente', 'Pendente'),
@@ -90,7 +128,6 @@ class TarefaExecucao(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
     atualizado_em = models.DateTimeField(auto_now=True)
 
-    # Opcional: propriedade para compatibilidade com código antigo que espera 'concluida'
     @property
     def concluida(self):
         return self.status == 'concluido'
@@ -99,6 +136,9 @@ class TarefaExecucao(models.Model):
         return f"{self.descricao} ({self.get_status_display()})"
 
 
+# ------------------------------------------------------------
+# VEÍCULO
+# ------------------------------------------------------------
 class Veiculo(models.Model):
     cliente = models.ForeignKey(Cliente, models.DO_NOTHING, blank=True, null=True)
     placa = models.CharField(unique=True, max_length=10)
@@ -110,11 +150,15 @@ class Veiculo(models.Model):
         managed = False
         db_table = 'veiculo'
 
+
+# ------------------------------------------------------------
+# DOCUMENTOS DA OS (UPLOAD)
+# ------------------------------------------------------------
 class Documento(models.Model):
     os = models.ForeignKey(OrdemServico, on_delete=models.CASCADE, related_name='documentos')
     arquivo = models.FileField(upload_to='documentos/os_%Y/%m/')
     nome = models.CharField(max_length=255)
-    tipo = models.CharField(max_length=50, blank=True)  # extensão
+    tipo = models.CharField(max_length=50, blank=True)
     data_inclusao = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -127,7 +171,11 @@ class Documento(models.Model):
 
     def __str__(self):
         return self.nome
-    
+
+
+# ------------------------------------------------------------
+# HISTÓRICO DA OS
+# ------------------------------------------------------------
 class HistoricoOS(models.Model):
     TIPO_CHOICES = [
         ('criacao', 'Criação'),
@@ -144,7 +192,12 @@ class HistoricoOS(models.Model):
     tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='default')
     descricao = models.CharField(max_length=255)
     detalhes = models.TextField(blank=True, null=True)
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     data_hora = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -155,10 +208,12 @@ class HistoricoOS(models.Model):
 
     def __str__(self):
         return f"{self.os} - {self.tipo} - {self.data_hora}"
-    
 
+
+# ------------------------------------------------------------
+# CONFIGURAÇÃO DA OFICINA
+# ------------------------------------------------------------
 class ConfiguracaoOficina(models.Model):
-    """Armazena o valor da hora da mão de obra (único registro)."""
     valor_hora = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     atualizado_em = models.DateTimeField(auto_now=True)
 
@@ -169,8 +224,11 @@ class ConfiguracaoOficina(models.Model):
     def __str__(self):
         return f"Valor Hora: R$ {self.valor_hora}"
 
+
+# ------------------------------------------------------------
+# CATEGORIA DO VEÍCULO
+# ------------------------------------------------------------
 class CategoriaVeiculo(models.Model):
-    """Categorias de veículos com percentual de acréscimo."""
     nome = models.CharField(max_length=100, unique=True)
     percentual = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     icone = models.CharField(max_length=50, blank=True, default='fa-car')
@@ -183,8 +241,11 @@ class CategoriaVeiculo(models.Model):
     def __str__(self):
         return self.nome
 
+
+# ------------------------------------------------------------
+# SERVIÇO
+# ------------------------------------------------------------
 class Servico(models.Model):
-    """Catálogo de serviços oferecidos."""
     nome = models.CharField(max_length=255)
     descricao = models.TextField(blank=True, null=True)
     tempo = models.DecimalField(max_digits=5, decimal_places=2, help_text="Horas estimadas")
@@ -197,37 +258,3 @@ class Servico(models.Model):
 
     def __str__(self):
         return self.nome
-    
-class Cliente(models.Model):
-    # Dados Pessoais
-    nome = models.CharField(max_length=255, verbose_name="Nome Completo")
-    cpf_cnpj = models.CharField(max_length=20, unique=True, verbose_name="CPF/CNPJ")
-    telefone = models.CharField(max_length=20, blank=True, null=True)
-    email = models.EmailField(max_length=255, blank=True, null=True)
-    
-    # Endereço
-    cep = models.CharField(max_length=10, blank=True, null=True)
-    logradouro = models.CharField(max_length=255, blank=True, null=True)
-    numero = models.CharField(max_length=20, blank=True, null=True)
-    complemento = models.CharField(max_length=100, blank=True, null=True)
-    bairro = models.CharField(max_length=100, blank=True, null=True)
-    cidade = models.CharField(max_length=100, blank=True, null=True)
-    uf = models.CharField(max_length=2, blank=True, null=True)
-    
-    # Preferências (Salvo em formato JSON no banco)
-    preferencias = models.JSONField(
-        default=dict, 
-        blank=True, 
-        help_text="Preferências de contato: whatsapp, email, sms"
-    )
-    
-    criado_em = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    atualizado_em = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        managed = True # Ajustado para True para que o Django possa criar a tabela com os novos campos
-        db_table = 'cliente'
-        ordering = ['-criado_em']
-
-    def __str__(self):
-        return f"{self.nome} ({self.cpf_cnpj})"
