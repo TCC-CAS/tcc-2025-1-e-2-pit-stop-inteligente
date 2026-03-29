@@ -197,3 +197,37 @@ class Servico(models.Model):
 
     def __str__(self):
         return self.nome
+    
+class Cliente(models.Model):
+    # Dados Pessoais
+    nome = models.CharField(max_length=255, verbose_name="Nome Completo")
+    cpf_cnpj = models.CharField(max_length=20, unique=True, verbose_name="CPF/CNPJ")
+    telefone = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(max_length=255, blank=True, null=True)
+    
+    # Endereço
+    cep = models.CharField(max_length=10, blank=True, null=True)
+    logradouro = models.CharField(max_length=255, blank=True, null=True)
+    numero = models.CharField(max_length=20, blank=True, null=True)
+    complemento = models.CharField(max_length=100, blank=True, null=True)
+    bairro = models.CharField(max_length=100, blank=True, null=True)
+    cidade = models.CharField(max_length=100, blank=True, null=True)
+    uf = models.CharField(max_length=2, blank=True, null=True)
+    
+    # Preferências (Salvo em formato JSON no banco)
+    preferencias = models.JSONField(
+        default=dict, 
+        blank=True, 
+        help_text="Preferências de contato: whatsapp, email, sms"
+    )
+    
+    criado_em = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        managed = True # Ajustado para True para que o Django possa criar a tabela com os novos campos
+        db_table = 'cliente'
+        ordering = ['-criado_em']
+
+    def __str__(self):
+        return f"{self.nome} ({self.cpf_cnpj})"
