@@ -302,3 +302,7 @@ __pycache__/
 #Banco de Dados Local
 *.sqlite3
 db.sqlite3
+
+__pycache__/
+*.py[cod]
+*$py.class
