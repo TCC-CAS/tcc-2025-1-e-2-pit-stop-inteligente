@@ -7,6 +7,19 @@ from .ordem_servico.diagnostico_orcamento.api.views import ItensOrcamentoAPIView
 from .ordem_servico.execucao.api.views import TarefaExecucaoAPIView, TarefaExecucaoDetalheAPIView
 from .ordem_servico.historico.api.views import HistoricoOSListAPIView
 
+from .views import (
+    ClienteListCreateAPIView, 
+    ClienteRetrieveUpdateDestroyAPIView
+)
+
+urlpatterns = [
+
+    # --- Imports de Clientes ---
+    path('api/clientes/', ClienteListCreateAPIView.as_view(), name='cliente-list-create'),
+    path('api/clientes/<int:pk>/', ClienteRetrieveUpdateDestroyAPIView.as_view(), name='cliente-detail'),
+
+]
+
 # --- Imports de Documentos ---
 from .ordem_servico.documentos.api.views import (
     DocumentoListAPIView,
