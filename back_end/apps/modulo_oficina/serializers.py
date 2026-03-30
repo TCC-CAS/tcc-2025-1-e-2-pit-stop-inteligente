@@ -63,3 +63,8 @@ class ServicoSerializer(serializers.ModelSerializer):
         model = Servico
         fields = ['id', 'nome', 'descricao', 'tempo', 'criado_em', 'atualizado_em']
 
+
+class ClienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cliente
+        fields = '__all__'

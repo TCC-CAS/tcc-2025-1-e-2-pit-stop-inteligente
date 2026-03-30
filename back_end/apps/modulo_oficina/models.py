@@ -1,13 +1,9 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.conf import settings
 
+# ==========================================================
+# CHECKLIST
+# ==========================================================
 class ChecklistRecebimento(models.Model):
     os = models.OneToOneField('OrdemServico', models.DO_NOTHING, blank=True, null=True)
     concluido = models.BooleanField(blank=True, null=True)
@@ -20,17 +16,40 @@ class ChecklistRecebimento(models.Model):
         db_table = 'checklist_recebimento'
 
 
+# ==========================================================
+# CLIENTE
+# ==========================================================
 class Cliente(models.Model):
-    nome = models.CharField(max_length=255)
-    cpf_cnpj = models.CharField(unique=True, max_length=20)
-    telefone = models.CharField(max_length=20, blank=True, null=True)
-    criado_em = models.DateTimeField(blank=True, null=True)
+    nome = models.CharField(max_length=255, db_index=True)
+    documento = models.CharField(max_length=20, unique=False, null=True, blank=True, db_index=True)
+    telefone = models.CharField(max_length=20, blank=True, default='')
+    email = models.EmailField(max_length=255, blank=True, default='')
+
+    cep = models.CharField(max_length=10, blank=True, default='')
+    logradouro = models.CharField(max_length=255, blank=True, default='')
+    numero = models.CharField(max_length=20, blank=True, default='')
+    complemento = models.CharField(max_length=100, blank=True, default='')
+    bairro = models.CharField(max_length=100, blank=True, default='')
+    cidade = models.CharField(max_length=100, blank=True, default='')
+    estado = models.CharField(max_length=2, blank=True, default='')
+
+    preferencias = models.JSONField(default=dict, blank=True)
+
+    criado_em = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'cliente'
+        ordering = ['-criado_em']
+
+    def __str__(self):
+        return f"{self.nome} ({self.documento})"
 
 
+# ==========================================================
+# DOCUMENTO OS
+# ==========================================================
 class DocumentoOs(models.Model):
     os = models.ForeignKey('OrdemServico', models.DO_NOTHING, blank=True, null=True)
     nome = models.CharField(max_length=255)
@@ -42,6 +61,9 @@ class DocumentoOs(models.Model):
         db_table = 'documento_os'
 
 
+# ==========================================================
+# FOTO CHECKLIST
+# ==========================================================
 class FotoChecklist(models.Model):
     checklist = models.ForeignKey(ChecklistRecebimento, models.DO_NOTHING, blank=True, null=True)
     imagem = models.CharField(max_length=500)
@@ -52,6 +74,9 @@ class FotoChecklist(models.Model):
         db_table = 'foto_checklist'
 
 
+# ==========================================================
+# ITEM ORÇAMENTO
+# ==========================================================
 class ItemOrcamento(models.Model):
     os = models.ForeignKey('OrdemServico', models.DO_NOTHING, blank=True, null=True)
     tipo = models.CharField(max_length=10, blank=True, null=True)
@@ -66,6 +91,9 @@ class ItemOrcamento(models.Model):
         db_table = 'item_orcamento'
 
 
+# ==========================================================
+# ORDEM DE SERVIÇO
+# ==========================================================
 class OrdemServico(models.Model):
     veiculo = models.ForeignKey('Veiculo', models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(max_length=20, blank=True, null=True)
@@ -78,6 +106,9 @@ class OrdemServico(models.Model):
         db_table = 'ordem_servico'
 
 
+# ==========================================================
+# EXECUÇÃO
+# ==========================================================
 class TarefaExecucao(models.Model):
     STATUS_CHOICES = [
         ('pendente', 'Pendente'),
@@ -90,7 +121,6 @@ class TarefaExecucao(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
     atualizado_em = models.DateTimeField(auto_now=True)
 
-    # Opcional: propriedade para compatibilidade com código antigo que espera 'concluida'
     @property
     def concluida(self):
         return self.status == 'concluido'
@@ -99,6 +129,9 @@ class TarefaExecucao(models.Model):
         return f"{self.descricao} ({self.get_status_display()})"
 
 
+# ==========================================================
+# VEÍCULO
+# ==========================================================
 class Veiculo(models.Model):
     cliente = models.ForeignKey(Cliente, models.DO_NOTHING, blank=True, null=True)
     placa = models.CharField(unique=True, max_length=10)
@@ -110,24 +143,31 @@ class Veiculo(models.Model):
         managed = False
         db_table = 'veiculo'
 
+
+# ==========================================================
+# DOCUMENTOS DE UPLOAD
+# ==========================================================
 class Documento(models.Model):
     os = models.ForeignKey(OrdemServico, on_delete=models.CASCADE, related_name='documentos')
     arquivo = models.FileField(upload_to='documentos/os_%Y/%m/')
     nome = models.CharField(max_length=255)
-    tipo = models.CharField(max_length=50, blank=True)  # extensão
+    tipo = models.CharField(max_length=50, blank=True)
     data_inclusao = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         if not self.nome:
             self.nome = self.arquivo.name.split('/')[-1]
         if not self.tipo:
-            ext = self.arquivo.name.split('.')[-1].lower()
-            self.tipo = ext
+            self.tipo = self.arquivo.name.split('.')[-1].lower()
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.nome
-    
+
+
+# ==========================================================
+# HISTÓRICO
+# ==========================================================
 class HistoricoOS(models.Model):
     TIPO_CHOICES = [
         ('criacao', 'Criação'),
@@ -150,41 +190,47 @@ class HistoricoOS(models.Model):
     class Meta:
         db_table = 'historico_os'
         ordering = ['-data_hora']
-        verbose_name = 'Histórico'
-        verbose_name_plural = 'Históricos'
 
     def __str__(self):
         return f"{self.os} - {self.tipo} - {self.data_hora}"
-    
 
+
+# ==========================================================
+# CONFIGURAÇÃO DA OFICINA
+# ==========================================================
 class ConfiguracaoOficina(models.Model):
-    """Armazena o valor da hora da mão de obra (único registro)."""
     valor_hora = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     atualizado_em = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = 'Configuração da Oficina'
-        verbose_name_plural = 'Configurações da Oficina'
+        verbose_name = "Configuração da Oficina"
+        verbose_name_plural = "Configurações da Oficina"
 
     def __str__(self):
         return f"Valor Hora: R$ {self.valor_hora}"
 
+
+# ==========================================================
+# CATEGORIA DO VEÍCULO
+# ==========================================================
 class CategoriaVeiculo(models.Model):
-    """Categorias de veículos com percentual de acréscimo."""
     nome = models.CharField(max_length=100, unique=True)
     percentual = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     icone = models.CharField(max_length=50, blank=True, default='fa-car')
     cor = models.CharField(max_length=20, blank=True, default='#22c55e')
 
     class Meta:
-        verbose_name = 'Categoria de Veículo'
-        verbose_name_plural = 'Categorias de Veículos'
+        verbose_name = "Categoria de Veículo"
+        verbose_name_plural = "Categorias de Veículos"
 
     def __str__(self):
         return self.nome
 
+
+# ==========================================================
+# SERVIÇO
+# ==========================================================
 class Servico(models.Model):
-    """Catálogo de serviços oferecidos."""
     nome = models.CharField(max_length=255)
     descricao = models.TextField(blank=True, null=True)
     tempo = models.DecimalField(max_digits=5, decimal_places=2, help_text="Horas estimadas")
@@ -192,8 +238,8 @@ class Servico(models.Model):
     atualizado_em = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = 'Serviço'
-        verbose_name_plural = 'Serviços'
+        verbose_name = "Serviço"
+        verbose_name_plural = "Serviços"
 
     def __str__(self):
         return self.nome
