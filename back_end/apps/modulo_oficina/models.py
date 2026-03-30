@@ -1,173 +1,303 @@
 from django.db import models
 from django.conf import settings
 
-# ==========================================================
-# CHECKLIST
-# ==========================================================
-class ChecklistRecebimento(models.Model):
-    os = models.OneToOneField('OrdemServico', models.DO_NOTHING, blank=True, null=True)
-    concluido = models.BooleanField(blank=True, null=True)
-    assinatura_cliente = models.TextField(blank=True, null=True)
-    assinatura_tecnico = models.TextField(blank=True, null=True)
-    criado_em = models.DateTimeField(blank=True, null=True)
+# ==========================================
+# ADMINISTRATIVO (SAAS)
+# ==========================================
 
-    class Meta:
-        managed = False
-        db_table = 'checklist_recebimento'
-
-
-# ==========================================================
-# CLIENTE
-# ==========================================================
-class Cliente(models.Model):
-    nome = models.CharField(max_length=255, db_index=True)
-    documento = models.CharField(max_length=20, unique=False, null=True, blank=True, db_index=True)
-    telefone = models.CharField(max_length=20, blank=True, default='')
-    email = models.EmailField(max_length=255, blank=True, default='')
-
-    cep = models.CharField(max_length=10, blank=True, default='')
-    logradouro = models.CharField(max_length=255, blank=True, default='')
-    numero = models.CharField(max_length=20, blank=True, default='')
-    complemento = models.CharField(max_length=100, blank=True, default='')
-    bairro = models.CharField(max_length=100, blank=True, default='')
-    cidade = models.CharField(max_length=100, blank=True, default='')
-    estado = models.CharField(max_length=2, blank=True, default='')
-
-    preferencias = models.JSONField(default=dict, blank=True)
-
-    criado_em = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    atualizado_em = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        managed = True
-        db_table = 'cliente'
-        ordering = ['-criado_em']
-
-    def __str__(self):
-        return f"{self.nome} ({self.documento})"
-
-
-# ==========================================================
-# DOCUMENTO OS
-# ==========================================================
-class DocumentoOs(models.Model):
-    os = models.ForeignKey('OrdemServico', models.DO_NOTHING, blank=True, null=True)
-    nome = models.CharField(max_length=255)
-    arquivo = models.CharField(max_length=500)
-    enviado_em = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'documento_os'
-
-
-# ==========================================================
-# FOTO CHECKLIST
-# ==========================================================
-class FotoChecklist(models.Model):
-    checklist = models.ForeignKey(ChecklistRecebimento, models.DO_NOTHING, blank=True, null=True)
-    imagem = models.CharField(max_length=500)
-    criado_em = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'foto_checklist'
-
-
-# ==========================================================
-# ITEM ORÇAMENTO
-# ==========================================================
-class ItemOrcamento(models.Model):
-    os = models.ForeignKey('OrdemServico', models.DO_NOTHING, blank=True, null=True)
-    tipo = models.CharField(max_length=10, blank=True, null=True)
-    nome_descricao = models.CharField(max_length=255)
-    quantidade = models.IntegerField(blank=True, null=True)
-    valor_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-    dificuldade = models.CharField(max_length=50, blank=True, null=True)
-    status_aprovacao = models.CharField(max_length=20, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'item_orcamento'
-
-
-# ==========================================================
-# ORDEM DE SERVIÇO
-# ==========================================================
-class OrdemServico(models.Model):
-    veiculo = models.ForeignKey('Veiculo', models.DO_NOTHING, blank=True, null=True)
-    status = models.CharField(max_length=20, blank=True, null=True)
-    km_atual = models.IntegerField()
-    criado_em = models.DateTimeField(blank=True, null=True)
-    atualizado_em = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ordem_servico'
-
-
-# ==========================================================
-# EXECUÇÃO
-# ==========================================================
-class TarefaExecucao(models.Model):
-    STATUS_CHOICES = [
-        ('pendente', 'Pendente'),
-        ('em_execucao', 'Em Execução'),
-        ('concluido', 'Concluído'),
+class Oficina(models.Model):
+    PLANOS_CHOICES = [
+        ('basico', 'Básico'),
+        ('premium', 'Premium'),
     ]
 
-    os = models.ForeignKey('OrdemServico', on_delete=models.CASCADE, related_name='tarefas')
-    descricao = models.TextField()
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
+    nome = models.CharField(max_length=255)
+    cnpj = models.CharField(max_length=20, unique=True)
+    email = models.EmailField(blank=True, null=True)
+    telefone = models.CharField(max_length=20, blank=True, null=True)
+    
+    
+    especialidade = models.CharField(max_length=100, blank=True, null=True)
+    horario_abertura = models.TimeField(blank=True, null=True)
+    horario_fechamento = models.TimeField(blank=True, null=True)
+    dias_funcionamento = models.CharField(max_length=100, blank=True, null=True) # Ex: "1,2,3,4,5"
+    # Usamos ImageField para validar que é realmente uma imagem
+    logo = models.ImageField(upload_to='logos_oficina/', blank=True, null=True)
+    cep = models.CharField(max_length=10, blank=True, null=True)
+    logradouro = models.CharField(max_length=255, blank=True, null=True)
+    numero = models.CharField(max_length=20, blank=True, null=True)
+    complemento = models.CharField(max_length=100, blank=True, null=True)
+    bairro = models.CharField(max_length=100, blank=True, null=True)
+    cidade = models.CharField(max_length=100, blank=True, null=True)
+    estado = models.CharField(max_length=2, blank=True, null=True)
+    
+    plano_atual = models.CharField(max_length=20, choices=PLANOS_CHOICES, default='basico')
+    
+    # Auditoria
+    criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
-    @property
-    def concluida(self):
-        return self.status == 'concluido'
-
-    def __str__(self):
-        return f"{self.descricao} ({self.get_status_display()})"
-
-
-# ==========================================================
-# VEÍCULO
-# ==========================================================
-class Veiculo(models.Model):
-    cliente = models.ForeignKey(Cliente, models.DO_NOTHING, blank=True, null=True)
-    placa = models.CharField(unique=True, max_length=10)
-    modelo = models.CharField(max_length=100)
-    ano = models.IntegerField(blank=True, null=True)
-    cor = models.CharField(max_length=50, blank=True, null=True)
-
     class Meta:
-        managed = False
-        db_table = 'veiculo'
-
-
-# ==========================================================
-# DOCUMENTOS DE UPLOAD
-# ==========================================================
-class Documento(models.Model):
-    os = models.ForeignKey(OrdemServico, on_delete=models.CASCADE, related_name='documentos')
-    arquivo = models.FileField(upload_to='documentos/os_%Y/%m/')
-    nome = models.CharField(max_length=255)
-    tipo = models.CharField(max_length=50, blank=True)
-    data_inclusao = models.DateTimeField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        if not self.nome:
-            self.nome = self.arquivo.name.split('/')[-1]
-        if not self.tipo:
-            self.tipo = self.arquivo.name.split('.')[-1].lower()
-        super().save(*args, **kwargs)
+        db_table = 'oficina'
+        verbose_name = 'Oficina'
 
     def __str__(self):
         return self.nome
 
+# ==========================================
+# PRECIFICAÇÃO E CATÁLOGO DE SERVIÇOS
+# ==========================================
 
-# ==========================================================
-# HISTÓRICO
-# ==========================================================
+class ConfigPreco(models.Model):
+    
+    oficina = models.OneToOneField(Oficina, on_delete=models.CASCADE, related_name='config_preco')
+    
+    valor_hora_mecanico = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
+    # Categorias de Veículo
+    percentual_popular = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    percentual_eletrico = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    percentual_luxo = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    percentual_esportivo = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    percentual_utilitario = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    percentual_minivan = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+
+    # Auditoria
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'config_preco'
+
+class Servico(models.Model):
+    
+    oficina = models.ForeignKey(Oficina, on_delete=models.CASCADE, related_name='catalogo_servicos')
+
+    nome = models.CharField(max_length=255)
+    descricao = models.TextField(blank=True, null=True)
+    tempo_estimado = models.DecimalField(max_digits=5, decimal_places=2) # Em horas (ex: 1.5 Hrs)
+    
+    # Auditoria
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'servico'
+
+    def __str__(self):
+        return self.nome
+
+# ==========================================
+# CLIENTE E VEÍCULO
+# ==========================================
+
+class Cliente(models.Model):
+
+    oficina = models.ForeignKey(Oficina, on_delete=models.CASCADE, related_name='clientes')
+    nome = models.CharField(max_length=255)
+    cpf_cnpj = models.CharField(max_length=20)
+    telefone = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+
+    cep = models.CharField(max_length=10, blank=True, null=True)
+    logradouro = models.CharField(max_length=255, blank=True, null=True)
+    numero = models.CharField(max_length=20, blank=True, null=True)
+    complemento = models.CharField(max_length=100, blank=True, null=True)
+    bairro = models.CharField(max_length=100, blank=True, null=True)
+    cidade = models.CharField(max_length=100, blank=True, null=True)
+    estado = models.CharField(max_length=2, blank=True, null=True)
+
+    # --- Preferências de Contato ---
+    contato_whatsapp = models.BooleanField(default=False)
+    contato_email = models.BooleanField(default=False)
+    contato_sms = models.BooleanField(default=False)
+    
+    # Auditoria
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'cliente'
+        # Evita clientes duplicados na mesma oficina
+        unique_together = ('oficina', 'cpf_cnpj')
+
+    def __str__(self):
+        return self.nome
+
+class Veiculo(models.Model): ## ARRUMAR
+
+    TIPO_USO_CHOICES = [
+        ('particular', 'Particular'),
+        ('comercial', 'Comercial/Frota'),
+    ]
+
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='veiculos')
+    
+    placa = models.CharField(max_length=10)
+    marca = models.CharField(max_length=100, blank=True, null=True) # Novo campo
+    modelo = models.CharField(max_length=100)
+    ano = models.CharField(max_length=4, blank=True, null=True)
+    cor = models.CharField(max_length=50, blank=True, null=True)
+    chassi = models.CharField(max_length=50, blank=True, null=True) # Novo campo
+    tipo_uso = models.CharField(max_length=20, choices=TIPO_USO_CHOICES, default='particular') # Novo campo
+
+    
+    # Auditoria
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'veiculo'
+
+    def __str__(self):
+        return f"{self.modelo} - {self.placa}"
+
+# ==========================================
+# ORDEM DE SERVIÇO
+# ==========================================
+
+class OrdemServico(models.Model):
+    STATUS_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('execucao', 'Em Execução'),
+        ('concluido', 'Concluído'),
+    ]
+    
+    oficina = models.ForeignKey(Oficina, on_delete=models.CASCADE, related_name='ordens_servico')
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='ordens_servico')
+    veiculo = models.ForeignKey(Veiculo, on_delete=models.CASCADE, related_name='ordens_servico')
+    
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
+    km_atual = models.IntegerField(blank=True, null=True)
+    
+    # Auditoria
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'ordem_servico'
+
+class ChecklistRecebimento(models.Model):
+    NIVEL_COMBUSTIVEL_CHOICES = [
+        ('reserva', 'Reserva'),
+        ('1/4', '1/4'),
+        ('1/2', '1/2 (Meio Tanque)'),
+        ('3/4', '3/4'),
+        ('cheio', 'Cheio')
+    ]
+
+    NIVEL_OLEO_CHOICES = [
+        ('ok', 'Nível Normal'),
+        ('low', 'Baixo'),
+        ('crit', 'Crítico/Vazio')
+    ]
+
+    FLUIDO_ARREFECIMENTO_CHOICES = [
+        ('ok', 'Nível Normal'),
+        ('low', 'Baixo')
+    ]
+
+    os = models.OneToOneField(OrdemServico, on_delete=models.CASCADE, related_name='checklist')
+    concluido = models.BooleanField(default=False)
+    
+    # --- Passo 1: Informações Iniciais ---
+    data_recebimento = models.DateField(blank=True, null=True)
+    consultor = models.CharField(max_length=255, blank=True, null=True)
+    quilometragem = models.IntegerField(blank=True, null=True)
+    nivel_combustivel = models.CharField(max_length=20, choices=NIVEL_COMBUSTIVEL_CHOICES, blank=True, null=True)
+    observacoes_iniciais = models.TextField(blank=True, null=True)
+
+    # --- Passo 2: Inspeção Externa ---
+    lataria_pintura = models.TextField(blank=True, null=True)
+    vidros_farois = models.TextField(blank=True, null=True)
+
+    # --- Passo 3: Inspeção Interna ---
+    possui_manual = models.BooleanField(default=False)
+    possui_estepe_macaco = models.BooleanField(default=False)
+    observacoes_internas = models.TextField(blank=True, null=True)
+
+    # --- Passo 4: Mecânica ---
+    nivel_oleo = models.CharField(max_length=20, choices=NIVEL_OLEO_CHOICES, default='ok')
+    fluido_arrefecimento = models.CharField(max_length=20, choices=FLUIDO_ARREFECIMENTO_CHOICES, default='ok')
+
+    # --- Passo 6: Assinaturas ---
+    assinatura_cliente = models.TextField(blank=True, null=True)
+    assinatura_tecnico = models.TextField(blank=True, null=True)
+    
+    # Auditoria
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'checklist_recebimento'
+
+class ItemOrcamento(models.Model):
+    TIPO_CHOICES = [('peca', 'Peça'), ('servico', 'Serviço')]
+    STATUS_APROVACAO = [
+        ('pendente', 'Pendente'),
+        ('aprovado', 'Aprovado'),
+        ('reprovado', 'Reprovado'),
+    ]
+
+    os = models.ForeignKey(OrdemServico, on_delete=models.CASCADE, related_name='itens_orcamento')
+    
+    # Fica null=True para permitir peças ou serviços "avulsos" (que não estão no catálogo)
+    servico_catalogo = models.ForeignKey(Servico, on_delete=models.SET_NULL, null=True, blank=True)
+
+
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
+    nome_descricao = models.CharField(max_length=255)
+    quantidade = models.IntegerField(default=1)
+    valor_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    categoria_veiculo = models.CharField(max_length=50, blank=True, null=True) # Antigo "dificuldade"
+    
+    status_aprovacao = models.CharField(max_length=20, choices=STATUS_APROVACAO, default='pendente')
+
+    # Auditoria
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'item_orcamento'
+
+class TarefaExecucao(models.Model):
+
+    STATUS_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('execucao', 'Em Execução'),
+        ('concluido', 'Concluído'),
+    ]
+
+    os = models.ForeignKey(OrdemServico, on_delete=models.CASCADE, related_name='tarefas')
+    descricao = models.CharField(max_length=255)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
+    
+    # Auditoria
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'tarefa_execucao'
+
+class Documento(models.Model):
+    ORIGEM_CHOICES = [
+        ('checklist', 'Checklist Inicial'),
+        ('geral', 'Anexo Geral (NF, Orçamento)'),
+    ]
+    
+    os = models.ForeignKey(OrdemServico, on_delete=models.CASCADE, related_name='documentos')
+    
+    arquivo = models.FileField(upload_to='documentos_os/')
+    nome_arquivo = models.CharField(max_length=255, blank=True, null=True) 
+    origem = models.CharField(max_length=20, choices=ORIGEM_CHOICES, default='geral')
+    
+    # Auditoria 
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'documentos'
+
 class HistoricoOS(models.Model):
     TIPO_CHOICES = [
         ('criacao', 'Criação'),
@@ -177,69 +307,26 @@ class HistoricoOS(models.Model):
         ('execucao', 'Execução'),
         ('conclusao', 'Conclusão'),
         ('status', 'Mudança de Status'),
-        ('default', 'Geral'),
+        ('default', 'Outros'),
     ]
 
     os = models.ForeignKey('OrdemServico', on_delete=models.CASCADE, related_name='historico')
+
+    # Novos campos exigidos pelo Front-end:
     tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='default')
-    descricao = models.CharField(max_length=255)
-    detalhes = models.TextField(blank=True, null=True)
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
-    data_hora = models.DateTimeField(auto_now_add=True)
+    descricao = models.CharField(max_length=255) # O título do evento (Ex: "Orçamento Aprovado")
+    detalhes = models.TextField(blank=True, null=True) # O texto longo opcional
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='historicos_os'
+    )
+    data_hora = models.DateTimeField(auto_now_add=True) # O JS do William espera este nome exato
 
     class Meta:
         db_table = 'historico_os'
-        ordering = ['-data_hora']
 
     def __str__(self):
-        return f"{self.os} - {self.tipo} - {self.data_hora}"
-
-
-# ==========================================================
-# CONFIGURAÇÃO DA OFICINA
-# ==========================================================
-class ConfiguracaoOficina(models.Model):
-    valor_hora = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    atualizado_em = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "Configuração da Oficina"
-        verbose_name_plural = "Configurações da Oficina"
-
-    def __str__(self):
-        return f"Valor Hora: R$ {self.valor_hora}"
-
-
-# ==========================================================
-# CATEGORIA DO VEÍCULO
-# ==========================================================
-class CategoriaVeiculo(models.Model):
-    nome = models.CharField(max_length=100, unique=True)
-    percentual = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    icone = models.CharField(max_length=50, blank=True, default='fa-car')
-    cor = models.CharField(max_length=20, blank=True, default='#22c55e')
-
-    class Meta:
-        verbose_name = "Categoria de Veículo"
-        verbose_name_plural = "Categorias de Veículos"
-
-    def __str__(self):
-        return self.nome
-
-
-# ==========================================================
-# SERVIÇO
-# ==========================================================
-class Servico(models.Model):
-    nome = models.CharField(max_length=255)
-    descricao = models.TextField(blank=True, null=True)
-    tempo = models.DecimalField(max_digits=5, decimal_places=2, help_text="Horas estimadas")
-    criado_em = models.DateTimeField(auto_now_add=True)
-    atualizado_em = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "Serviço"
-        verbose_name_plural = "Serviços"
-
-    def __str__(self):
-        return self.nome
+        return f"{self.os} - {self.descricao}"
