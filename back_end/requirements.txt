@@ -1,4 +1,8 @@
-Django>=4.2,<5.0
-djangorestframework
-django-cors-headers
-psycopg2-binary  # se usar PostgreSQL, ou omita se usar SQLite
+asgiref==3.11.1
+Django==4.2.29
+django-cors-headers==4.9.0
+djangorestframework==3.17.1
+pillow==12.1.1
+psycopg2-binary==2.9.11
+sqlparse==0.5.5
+tzdata==2025.3
