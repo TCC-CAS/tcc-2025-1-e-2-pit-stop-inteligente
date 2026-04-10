@@ -1,10 +1,15 @@
 from rest_framework import serializers
-from .models import (Cliente, Veiculo, Servico, ConfigPreco, ChecklistRecebimento, 
+from .models import (Oficina, Cliente, Veiculo, Servico, ConfigPreco, ChecklistRecebimento, 
                      ItemOrcamento, TarefaExecucao, OrdemServico, Documento, HistoricoOS)
 
 # ==========================================
-# 1. SERIALIZERS BASE (Clientes e Veículos)
+# 1. SERIALIZERS BASE (Oficina, Clientes e Veículos)
 # ==========================================
+
+class OficinaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Oficina
+        fields = '__all__'
 
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,6 +33,7 @@ class ConfigPrecoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ServicoSerializer(serializers.ModelSerializer):
+    tempo = serializers.DecimalField(max_digits=5, decimal_places=2, source='tempo_estimado')
     valor_base_calculado = serializers.SerializerMethodField()
 
     class Meta:
@@ -41,7 +47,7 @@ class ServicoSerializer(serializers.ModelSerializer):
                 return 0.00
             
             valor_hora = config.valor_hora_mecanico
-            tempo = obj.tempo
+            tempo = obj.tempo_estimado
             valor_total = float(tempo) * float(valor_hora)
             return round(valor_total, 2)
         except Exception:
@@ -54,20 +60,23 @@ class ServicoSerializer(serializers.ModelSerializer):
 class ChecklistSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChecklistRecebimento
-        fields = ['id', 'os_id', 'concluido', 'assinatura_cliente', 'assinatura_tecnico', 'criado_em']
+        fields = [
+            'id', 'os_id', 'concluido',
+            'assinatura_cliente', 'assinatura_tecnico',
+            'data_recebimento', 'consultor',
+            'nivel_combustivel', 'observacoes_iniciais',
+            'lataria_pintura', 'vidros_farois',
+            'possui_manual', 'possui_estepe_macaco', 'observacoes_internas',
+            'nivel_oleo', 'fluido_arrefecimento',
+            'criado_em'
+        ]
         read_only_fields = ['criado_em']
 
 class ItemOrcamentoSerializer(serializers.ModelSerializer):
-    os_id = serializers.PrimaryKeyRelatedField(
-        source='os',
-        queryset=OrdemServico.objects.all(),
-        write_only=False
-    )
-
     class Meta:
         model = ItemOrcamento
         fields = ['id', 'os_id', 'tipo', 'nome_descricao', 'quantidade', 
-                  'valor_unitario', 'dificuldade', 'status_aprovacao']
+                  'valor_unitario', 'categoria_veiculo', 'status_aprovacao']
 
 class TarefaExecucaoSerializer(serializers.ModelSerializer):
     os_id = serializers.PrimaryKeyRelatedField(
