@@ -1,3 +1,13 @@
+function getCSRFToken() {
+    const name = 'csrftoken';
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [key, value] = cookie.trim().split('=');
+        if (key === name) return value;
+    }
+    return '';
+}
+
 /* scripts/servicos.js */
 
 // --- CONFIGURAÇÃO ---
@@ -109,7 +119,8 @@ async function salvarValorHora() {
     try {
         const response = await fetch(`${API_BASE_URL}/configuracao/`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json','X-CSRFToken': getCSRFToken()},
             body: JSON.stringify({ valor_hora: novoValor })
         });
 
@@ -142,13 +153,15 @@ async function salvarCategoria(index, novoPercentual) {
         if (cat.id) {
             response = await fetch(`${API_BASE_URL}/categorias/${cat.id}/`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken()},
                 body: JSON.stringify({ percentual: payload.percentual })
             });
         } else {
             response = await fetch(`${API_BASE_URL}/categorias/`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken()},
                 body: JSON.stringify(payload)
             });
         }
@@ -204,13 +217,15 @@ async function salvarServico() {
         if (id) {
             response = await fetch(`${API_BASE_URL}/servicos/${id}/`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken()},
                 body: JSON.stringify(payload)
             });
         } else {
             response = await fetch(`${API_BASE_URL}/servicos/`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken()},
                 body: JSON.stringify(payload)
             });
         }
@@ -247,7 +262,7 @@ window.editarServico = function(id) {
 window.excluirServico = async function(id) {
     if(confirm('Excluir este serviço definitivamente do Banco de Dados?')) {
         try {
-            const response = await fetch(`${API_BASE_URL}/servicos/${id}/`, { method: 'DELETE' });
+            const response = await fetch(`${API_BASE_URL}/servicos/${id}/`, { method: 'DELETE', credentials: 'include', headers: {'X-CSRFToken': getCSRFToken()} });
             if (!response.ok) throw new Error('Falha ao excluir');
 
             estado.servicos = estado.servicos.filter(s => s.id !== id);

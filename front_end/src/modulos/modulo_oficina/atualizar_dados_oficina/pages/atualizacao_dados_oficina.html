@@ -208,7 +208,7 @@
                                     <li><i class="fas fa-check"></i> Até 100 OS/mês</li>
                                     <li><i class="fas fa-check"></i> 1 Usuário</li>
                                 </ul>
-                                <button class="btn btn-outline full-width">Selecionar</button>
+                                <button class="btn btn-outline full-width plan-select-btn" data-plan="basico">Selecionar</button>
                             </div>
                             
                             <div class="plan-card featured" id="planPremium">
@@ -220,8 +220,9 @@
                                     <li><i class="fas fa-check"></i> 5 Usuários</li>
                                     <li><i class="fas fa-check"></i> WhatsApp Incluso</li>
                                 </ul>
-                                <button class="btn btn-primary full-width" id="btnCurrentPlan">Atual</button>
+                                <button class="btn btn-primary full-width plan-select-btn" data-plan="premium">Atual</button>
                             </div>
+                            <input type="hidden" id="planoAtual" value="">
                         </div>
                     </div>
 
