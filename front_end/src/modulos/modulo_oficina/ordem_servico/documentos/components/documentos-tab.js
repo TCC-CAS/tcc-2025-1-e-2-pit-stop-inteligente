@@ -1,4 +1,14 @@
 // documentos-tab.js
+function getCSRFToken() {
+    const name = 'csrftoken';
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [key, value] = cookie.trim().split('=');
+        if (key === name) return value;
+    }
+    return '';
+}
+
 const DocumentosService = {
     getDocumentos: async (osId) => {
         // Listagem dos documentos da OS
@@ -14,6 +24,8 @@ const DocumentosService = {
         // Endpoint específico para upload (pode ser o mesmo da listagem com POST, mas vamos usar um separado)
         const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/documentos/upload/`, {
             method: 'POST',
+            credentials: 'include',
+            headers: { 'X-CSRFToken': getCSRFToken() },
             body: formData
         });
         if (!response.ok) throw new Error('Erro ao fazer upload');
@@ -21,7 +33,9 @@ const DocumentosService = {
     },
     removerDocumento: async (documentoId) => {
         const response = await fetch(`http://127.0.0.1:8000/api/oficina/documentos/${documentoId}/`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include',
+            headers: { 'X-CSRFToken': getCSRFToken() }
         });
         if (!response.ok) throw new Error('Erro ao remover documento');
     }
@@ -162,7 +176,8 @@ function abrirModalDocumentos(modalElement, gridElement, templateElement) {
         }
     });
 
-    btnUpload.addEventListener('click', async () => {
+    btnUpload.addEventListener('click', async (event) => {
+        event.preventDefault();
         const files = fileInput.files;
         if (files.length === 0) return;
 
