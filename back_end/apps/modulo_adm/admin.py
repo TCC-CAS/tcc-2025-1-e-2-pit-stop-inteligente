@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django import forms
 from apps.modulo_oficina.models import (
     Oficina, ConfigPreco, Servico, Cliente, Veiculo, 
     OrdemServico, ChecklistRecebimento, ItemOrcamento, 
@@ -45,12 +46,37 @@ class HistoricoOSInline(admin.TabularInline):
 # TELAS DO DJANGO ADMIN
 # ==========================================
 
+class OficinaForm(forms.ModelForm):
+    # Define o campo com as escolhas e widget de checkboxes
+    dias_funcionamento = forms.MultipleChoiceField(
+        choices=Oficina.DIAS_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="Dias de funcionamento"
+    )
+
+    class Meta:
+        model = Oficina
+        fields = '__all__'
+
+    def clean_dias_funcionamento(self):
+        # O MultipleChoiceField já retorna uma lista; só precisa garantir que seja compatível com ArrayField
+        return self.cleaned_data['dias_funcionamento'] or []
+
+
 @admin.register(Oficina)
 class OficinaAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'cnpj', 'plano_atual', 'cidade', 'estado')
+    form = OficinaForm  # <-- usa o formulário customizado
+    list_display = ('nome', 'cnpj', 'plano_atual', 'cidade', 'estado', 'dias_formatados')
     search_fields = ('nome', 'cnpj', 'email')
     list_filter = ('plano_atual', 'estado')
-    inlines = [ConfigPrecoInline] # Permite criar a Regra de Preço na mesma tela da Oficina
+    inlines = [ConfigPrecoInline]
+
+    def dias_formatados(self, obj):
+        if obj.dias_funcionamento:
+            return ', '.join(dict(Oficina.DIAS_CHOICES)[d] for d in obj.dias_funcionamento)
+        return '-'
+    dias_formatados.short_description = 'Dias de funcionamento'
 
 @admin.register(Servico)
 class ServicoAdmin(admin.ModelAdmin):

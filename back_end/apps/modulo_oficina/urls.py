@@ -3,10 +3,12 @@ from . import views
 
 urlpatterns = [
     # ==========================================
-    # 0. CADASTRO DE CLIENTES
+    # 0. OFICINA E CADASTRO DE CLIENTES
     # ==========================================
+    path('perfil/', views.OficinaPerfilAPIView.as_view(), name='oficina_perfil'),
     path('clientes/', views.ClienteListCreateAPIView.as_view(), name='clientes_list'),
     path('clientes/<int:pk>/', views.ClienteRetrieveUpdateDestroyAPIView.as_view(), name='clientes_detail'),
+    path('veiculos/', views.VeiculoListAPIView.as_view(), name='veiculos_list'),
 
     # ==========================================
     # 1. ROTAS DA ORDEM DE SERVIÇO (OS)
@@ -22,6 +24,8 @@ urlpatterns = [
     # ==========================================
     # Aba: Checklist
     path('os/<int:os_id>/checklist/', views.ChecklistAPIView.as_view(), name='checklist_os'),
+    #TEMPORARIO
+    path('checklist/<int:os_id>/', views.ChecklistAPIView.as_view(), name='checklist_fallback'),
     
     # Aba: Diagnóstico (Itens do Orçamento)
     path('os/<int:os_id>/itens/', views.ItensOrcamentoAPIView.as_view(), name='itens_orcamento'),
