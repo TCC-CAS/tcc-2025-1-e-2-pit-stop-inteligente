@@ -116,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -128,9 +128,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# CORS settings
-# Removido CORS_ALLOW_ALL_ORIGINS e adicionado configurações específicas
 CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+    "http://127.0.0.1:3000",
+    "http://localhost:3000"
+]
+
+CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5500",
     "http://localhost:5500",
     "http://127.0.0.1:3000",

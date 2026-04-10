@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 
 # ==========================================
 # ADMINISTRATIVO (SAAS)
@@ -11,17 +12,34 @@ class Oficina(models.Model):
         ('premium', 'Premium'),
     ]
 
+    ESPECIALIDADE_CHOICES = [                     
+        ('geral', 'Mecânica Geral'),
+        ('eletrica', 'Elétrica'),
+        ('funilaria', 'Funilaria e Pintura'),
+    ]
+
+    DIAS_CHOICES = [                                   
+        ('seg', 'Segunda-feira'),
+        ('ter', 'Terça-feira'),
+        ('qua', 'Quarta-feira'),
+        ('qui', 'Quinta-feira'),
+        ('sex', 'Sexta-feira'),
+        ('sab', 'Sábado'),
+        ('dom', 'Domingo'),
+    ]
+
     nome = models.CharField(max_length=255)
     cnpj = models.CharField(max_length=20, unique=True)
     email = models.EmailField(blank=True, null=True)
     telefone = models.CharField(max_length=20, blank=True, null=True)
     
-    
-    especialidade = models.CharField(max_length=100, blank=True, null=True)
+   
+    especialidade = models.CharField(max_length=100, choices=ESPECIALIDADE_CHOICES, blank=True, null=True)
+
     horario_abertura = models.TimeField(blank=True, null=True)
     horario_fechamento = models.TimeField(blank=True, null=True)
-    dias_funcionamento = models.CharField(max_length=100, blank=True, null=True) # Ex: "1,2,3,4,5"
-    # Usamos ImageField para validar que é realmente uma imagem
+    dias_funcionamento = ArrayField(models.CharField(max_length=3, choices=DIAS_CHOICES), blank=True, null=True, default=list)       
+    # ImageField para validar que é realmente uma imagem
     logo = models.ImageField(upload_to='logos_oficina/', blank=True, null=True)
     cep = models.CharField(max_length=10, blank=True, null=True)
     logradouro = models.CharField(max_length=255, blank=True, null=True)
@@ -29,6 +47,8 @@ class Oficina(models.Model):
     complemento = models.CharField(max_length=100, blank=True, null=True)
     bairro = models.CharField(max_length=100, blank=True, null=True)
     cidade = models.CharField(max_length=100, blank=True, null=True)
+
+    
     estado = models.CharField(max_length=2, blank=True, null=True)
     
     plano_atual = models.CharField(max_length=20, choices=PLANOS_CHOICES, default='basico')
@@ -124,7 +144,7 @@ class Cliente(models.Model):
     def __str__(self):
         return self.nome
 
-class Veiculo(models.Model): ## ARRUMAR
+class Veiculo(models.Model): 
 
     TIPO_USO_CHOICES = [
         ('particular', 'Particular'),
@@ -203,7 +223,6 @@ class ChecklistRecebimento(models.Model):
     # --- Passo 1: Informações Iniciais ---
     data_recebimento = models.DateField(blank=True, null=True)
     consultor = models.CharField(max_length=255, blank=True, null=True)
-    quilometragem = models.IntegerField(blank=True, null=True)
     nivel_combustivel = models.CharField(max_length=20, choices=NIVEL_COMBUSTIVEL_CHOICES, blank=True, null=True)
     observacoes_iniciais = models.TextField(blank=True, null=True)
 
@@ -269,6 +288,7 @@ class TarefaExecucao(models.Model):
     ]
 
     os = models.ForeignKey(OrdemServico, on_delete=models.CASCADE, related_name='tarefas')
+
     descricao = models.CharField(max_length=255)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
     
