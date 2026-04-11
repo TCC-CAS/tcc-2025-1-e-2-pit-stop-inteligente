@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,10 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     # Nossas adições:
     'rest_framework',
     'corsheaders',
-    'apps.modulo_oficina', # Conecta sua pasta!
+    'apps.modulo_oficina',
+    'apps.modulo_adm',
 ]
 
 MIDDLEWARE = [
@@ -82,7 +85,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'pitstop_db',  # Nome do banco que você criará no PgAdmin
         'USER': 'postgres',    # Seu usuário do Postgres
-        'PASSWORD': 'Marciano',
+        'PASSWORD': '123456', # Sua senha do Postgres
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -113,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -125,11 +128,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# CORS settings
-# Removido CORS_ALLOW_ALL_ORIGINS e adicionado configurações específicas
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",
     "http://localhost:5500",
+    "http://127.0.0.1:3000",
+    "http://localhost:3000"
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+    "http://127.0.0.1:3000",
+    "http://localhost:3000"
 ]
 
 # Permitir envio de cookies/credenciais
@@ -157,3 +167,6 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

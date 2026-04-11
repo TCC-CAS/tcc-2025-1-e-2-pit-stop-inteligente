@@ -91,6 +91,7 @@ async function loadHistory(osId) {
             throw new Error(`HTTP error ${response.status}`);
         }
         const data = await response.json();
+        console.log('Histórico recebido:', data);   // Log
         renderTimeline(data);
     } catch (error) {
         console.error('Erro ao carregar histórico:', error);

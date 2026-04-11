@@ -208,18 +208,15 @@ async function carregarTarefas() {
     }
 }
 
+// CORREÇÃO: Normalizar status e atualizar
 const statusChangeHandler = async (e) => {
     const tarefaId = e.target.dataset.id;
-    const newStatus = e.target.value;
+    let newStatus = e.target.value;
+    if (newStatus === 'em_execucao') newStatus = 'execucao'; // Ajuste para o modelo
     try {
         await ExecucaoService.atualizarTarefa(currentOsId, tarefaId, { status: newStatus });
-        // Recarrega a lista para garantir que a interface reflita o novo status
-        carregarTarefas();
-    } catch (error) {
-        alert(error.message);
-        // Recarrega para restaurar o valor anterior
-        carregarTarefas();
-    }
+        carregarTarefas(); // Recarrega a lista
+    } catch (error) { '...' }
 };
 
 const deleteHandler = async (e) => {
