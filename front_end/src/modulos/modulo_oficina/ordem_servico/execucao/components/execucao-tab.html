@@ -1,27 +1,69 @@
 <!-- execucao-tab.html -->
 <link rel="stylesheet" href="../../execucao/style/execucao-tab.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="tab-card fade-in">
     <div class="tab-card-header">
-        <h3 class="tab-card-title">Tarefas da O.S</h3>
-        <button class="btn btn-success" id="btnFinalizarOS">Finalizar O.S</button>
+        <h3 class="tab-card-title">
+            <i class="fas fa-tasks"></i> Tarefas da O.S
+        </h3>
+        <button class="btn btn-success" id="btnFinalizarOS">
+            <i class="fas fa-check-double"></i> Finalizar O.S
+        </button>
+    </div>
+
+    <!-- Card de resumo com contadores -->
+    <div class="resumo-tarefas">
+        <div class="resumo-item" data-filtro="todas">
+            <i class="fas fa-list"></i>
+            <span class="resumo-label">Total</span>
+            <span class="resumo-numero" id="totalCount">0</span>
+        </div>
+        <div class="resumo-item" data-filtro="pendente">
+            <i class="fas fa-clock"></i>
+            <span class="resumo-label">Pendentes</span>
+            <span class="resumo-numero" id="pendenteCount">0</span>
+        </div>
+        <div class="resumo-item" data-filtro="execucao">
+            <i class="fas fa-spinner fa-pulse"></i>
+            <span class="resumo-label">Em Execução</span>
+            <span class="resumo-numero" id="execucaoCount">0</span>
+        </div>
+        <div class="resumo-item" data-filtro="concluido">
+            <i class="fas fa-check-circle"></i>
+            <span class="resumo-label">Concluídas</span>
+            <span class="resumo-numero" id="concluidoCount">0</span>
+        </div>
     </div>
 
     <div class="tarefas-wrapper">
         <div class="tarefas-controls">
-            <button class="btn btn-secondary btn-sm" id="btnIncluirTarefa">
-                <i class="fas fa-plus"></i> Incluir Tarefa
+            <button class="btn btn-primary btn-sm" id="btnIncluirTarefa">
+                <i class="fas fa-plus"></i> Nova Tarefa
             </button>
+            <div class="filtro-wrapper">
+                <i class="fas fa-filter"></i>
+                <select id="filtroStatus" class="filtro-status">
+                    <option value="todas">Todas as tarefas</option>
+                    <option value="pendente">Pendentes</option>
+                    <option value="execucao">Em execução</option>
+                    <option value="concluido">Concluídas</option>
+                </select>
+            </div>
         </div>
 
-        <!-- Cabeçalho da lista de tarefas -->
-        <div class="task-list-header">
-            <div class="header-status">Status</div>
-            <div class="header-descricao">Descrição</div>
-            <div class="header-acoes">Ações</div>
+        <!-- Lista de tarefas -->
+        <div class="task-list-container">
+            <div class="task-list-header">
+                <div class="header-status">Status</div>
+                <div class="header-descricao">Descrição</div>
+                <div class="header-acoes">Ações</div>
+            </div>
+            <ul class="task-list" id="listaTarefas">
+                <li class="loading-placeholder">
+                    <i class="fas fa-spinner fa-pulse"></i> Carregando tarefas...
+                </li>
+            </ul>
         </div>
-
-        <!-- Lista de tarefas será preenchida dinamicamente -->
-        <ul class="task-list" id="listaTarefas"></ul>
     </div>
 </div>

@@ -15,14 +15,15 @@
         <table id="tabelaItensAprovacao">
             <thead>
                 <tr>
-                    <th>Item / Serviço</th>
+                    <th>Peça / Serviço</th>
+                    <th>Descrição</th>   <!-- NOVA COLUNA -->
                     <th>Valor</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody id="listaAprovacaoBody">
                 <tr>
-                    <td colspan="3" class="text-center">Carregando...</td>
+                    <td colspan="4" class="text-center">Carregando...</td>
                 </tr>
             </tbody>
         </table>
@@ -66,12 +67,24 @@
         <!-- Lista de Itens para Aprovação -->
         <div class="itens-aprovacao">
             <h5><i class="fas fa-list-ul"></i> Aprovação Item a Item</h5>
-            <ul id="listaItensModal" class="itens-list">
-                <!-- Itens serão inseridos dinamicamente -->
-            </ul>
+            <div class="table-container-modal">
+                <table class="modal-itens-table">
+                    <thead>
+                        <tr>
+                            <th>Peça / Serviço</th>
+                            <th>Descrição</th>
+                            <th>Valor (R$)</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaItensModal">
+                        <!-- Itens serão inseridos dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Confirmação de Aprovação (substitui as assinaturas) -->
+        <!-- Confirmação de Aprovação -->
         <div class="confirmacao-aprovacao">
             <label class="checkbox-container">
                 <input type="checkbox" id="confirmarAprovacao">

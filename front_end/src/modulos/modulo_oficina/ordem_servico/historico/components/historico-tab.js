@@ -18,30 +18,30 @@ function formatDateTime(dateString) {
 
 function getEventIcon(tipo) {
     const icons = {
-        'criacao': 'fas fa-plus-circle',
-        'checklist': 'fas fa-clipboard-list',
-        'diagnostico': 'fas fa-stethoscope',
-        'aprovacao': 'fas fa-check-double',
-        'execucao': 'fas fa-wrench',
-        'conclusao': 'fas fa-flag-checkered',
-        'status': 'fas fa-exchange-alt',
-        'default': 'fas fa-history'
+        'criacao': 'fa-plus-circle',
+        'checklist': 'fa-clipboard-list',
+        'diagnostico': 'fa-stethoscope',
+        'aprovacao': 'fa-check-double',
+        'execucao': 'fa-wrench',
+        'conclusao': 'fa-flag-checkered',
+        'status': 'fa-exchange-alt',
+        'default': 'fa-history'
     };
     return icons[tipo] || icons['default'];
 }
 
-function getBadgeClass(tipo) {
-    const classes = {
-        'criacao': 'bg-primary',
-        'checklist': 'bg-info',
-        'diagnostico': 'bg-warning',
-        'aprovacao': 'bg-success',
-        'execucao': 'bg-secondary',
-        'conclusao': 'bg-success',
-        'status': 'bg-warning',
-        'default': 'bg-secondary'
+function getEventColor(tipo) {
+    const colors = {
+        'criacao': 'var(--primary)',
+        'checklist': 'var(--info)',
+        'diagnostico': 'var(--warning)',
+        'aprovacao': 'var(--success)',
+        'execucao': 'var(--secondary)',
+        'conclusao': 'var(--success-dark)',
+        'status': 'var(--warning-dark)',
+        'default': 'var(--gray)'
     };
-    return classes[tipo] || classes['default'];
+    return colors[tipo] || colors['default'];
 }
 
 function renderTimeline(events) {
@@ -49,54 +49,60 @@ function renderTimeline(events) {
     if (!timelineContainer) return;
 
     if (!events || events.length === 0) {
-        timelineContainer.innerHTML = '<li class="timeline-item text-muted">Nenhum evento registrado.</li>';
+        timelineContainer.innerHTML = '<div class="timeline-empty">Nenhum evento registrado.</div>';
         return;
     }
 
     let html = '';
-    events.forEach(event => {
+    events.forEach((event, index) => {
         const tipo = event.tipo || 'default';
         const iconClass = getEventIcon(tipo);
-        const badgeClass = getBadgeClass(tipo);
+        const color = getEventColor(tipo);
         const dataHora = formatDateTime(event.data_hora || event.created_at);
         const descricao = event.descricao || 'Evento sem descrição';
-        const usuario = event.usuario ? `<small class="text-muted ms-2">por ${event.usuario}</small>` : '';
+        const usuario = event.usuario ? `<span class="timeline-author">por ${escapeHtml(event.usuario)}</span>` : '';
 
         html += `
-            <li class="timeline-item">
-                <div class="timeline-icon ${badgeClass}">
-                    <i class="${iconClass}"></i>
+            <div class="timeline-item">
+                <div class="timeline-marker" style="background-color: ${color};">
+                    <i class="fas ${iconClass}"></i>
                 </div>
                 <div class="timeline-content">
                     <div class="timeline-date">${dataHora}</div>
-                    <div class="timeline-title">${descricao} ${usuario}</div>
-                    ${event.detalhes ? `<div class="timeline-details text-muted small">${event.detalhes}</div>` : ''}
+                    <div class="timeline-title">${escapeHtml(descricao)} ${usuario}</div>
+                    ${event.detalhes ? `<div class="timeline-details">${escapeHtml(event.detalhes)}</div>` : ''}
                 </div>
-            </li>
+            </div>
         `;
     });
     timelineContainer.innerHTML = html;
 }
 
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
 async function loadHistory(osId) {
     const timelineContainer = document.getElementById('timelineBody');
     if (timelineContainer) {
-        timelineContainer.innerHTML = '<li class="timeline-item">Carregando histórico...</li>';
+        timelineContainer.innerHTML = '<div class="timeline-loading">Carregando histórico...</div>';
     }
 
     try {
-        // Ajuste a URL conforme seu endpoint real
         const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/historico/`);
-        if (!response.ok) {
-            throw new Error(`HTTP error ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
         const data = await response.json();
-        console.log('Histórico recebido:', data);   // Log
         renderTimeline(data);
     } catch (error) {
         console.error('Erro ao carregar histórico:', error);
         if (timelineContainer) {
-            timelineContainer.innerHTML = '<li class="timeline-item text-danger">Erro ao carregar histórico. Verifique o console.</li>';
+            timelineContainer.innerHTML = '<div class="timeline-error">Erro ao carregar histórico. Verifique o console.</div>';
         }
     }
 }
@@ -152,7 +158,6 @@ async function exportToPDF() {
         }
 
         pdf.save(`historico_os_${currentOSId}.pdf`);
-
         document.body.removeChild(clone);
     } catch (error) {
         console.error('Erro ao gerar PDF:', error);

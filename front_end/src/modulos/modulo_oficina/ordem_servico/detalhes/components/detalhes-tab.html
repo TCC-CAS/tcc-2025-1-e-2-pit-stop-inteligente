@@ -1,34 +1,73 @@
 <link rel="stylesheet" href="../../detalhes/style/detalhes-tab.css">
-<!-- detalhes-tab.html -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <div class="tab-card fade-in">
     <div class="tab-card-header">
-        <h3 class="tab-card-title">Dados do Veículo e Cliente</h3>
+        <h3 class="tab-card-title">
+            <i class="fas fa-clipboard-list"></i> Dados do Veículo e Cliente
+        </h3>
     </div>
-    
-    <div class="grid-col-2">
-        <div class="info-group">
-            <div class="info-label">Cliente</div>
-            <div class="info-value" id="detalhe-cliente-nome">--</div>
+
+    <!-- Cards modernos e organizados -->
+    <div class="info-cards-grid">
+        <div class="modern-card">
+            <div class="card-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="card-content">
+                <span class="card-label">Cliente</span>
+                <span class="card-value" id="detalhe-cliente-nome">--</span>
+            </div>
         </div>
-        <div class="info-group">
-            <div class="info-label">CPF/CNPJ</div>
-            <div class="info-value" id="detalhe-cliente-doc">--</div>
+
+        <div class="modern-card">
+            <div class="card-icon">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <div class="card-content">
+                <span class="card-label">CPF/CNPJ</span>
+                <span class="card-value" id="detalhe-cliente-doc">--</span>
+            </div>
         </div>
-        <div class="info-group">
-            <div class="info-label">Veículo</div>
-            <div class="info-value" id="detalhe-veiculo-modelo">--</div>
+
+        <div class="modern-card">
+            <div class="card-icon">
+                <i class="fas fa-car"></i>
+            </div>
+            <div class="card-content">
+                <span class="card-label">Veículo</span>
+                <span class="card-value" id="detalhe-veiculo-modelo">--</span>
+            </div>
         </div>
-        <div class="info-group">
-            <div class="info-label">Placa</div>
-            <div class="info-value" id="detalhe-veiculo-placa">--</div>
+
+        <div class="modern-card">
+            <div class="card-icon">
+                <i class="fas fa-tag"></i>
+            </div>
+            <div class="card-content">
+                <span class="card-label">Placa</span>
+                <span class="card-value" id="detalhe-veiculo-placa">--</span>
+            </div>
         </div>
-        <div class="info-group">
-            <div class="info-label">KM Atual</div>
-            <div class="info-value" id="detalhe-veiculo-km">--</div>
+
+        <div class="modern-card">
+            <div class="card-icon">
+                <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <div class="card-content">
+                <span class="card-label">KM Atual</span>
+                <span class="card-value" id="detalhe-veiculo-km">--</span>
+            </div>
         </div>
-        <div class="info-group">
-            <div class="info-label">Ano/Cor</div>
-            <div class="info-value" id="detalhe-veiculo-ano-cor">--</div>
+
+        <div class="modern-card">
+            <div class="card-icon">
+                <i class="fas fa-palette"></i>
+            </div>
+            <div class="card-content">
+                <span class="card-label">Ano / Cor</span>
+                <span class="card-value" id="detalhe-veiculo-ano-cor">--</span>
+            </div>
         </div>
     </div>
 </div>

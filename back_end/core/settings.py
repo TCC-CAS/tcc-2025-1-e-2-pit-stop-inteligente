@@ -85,7 +85,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'pitstop_db',  # Nome do banco que você criará no PgAdmin
         'USER': 'postgres',    # Seu usuário do Postgres
-        'PASSWORD': '123456', # Sua senha do Postgres
+        'PASSWORD': 'Marciano', # Sua senha do Postgres
         'HOST': 'localhost',
         'PORT': '5432',
     }

@@ -1,15 +1,19 @@
 <link rel="stylesheet" href="../../historico/style/historico-tab.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="tab-card fade-in">
     <div class="tab-card-header">
-        <h3 class="tab-card-title">Linha do Tempo</h3>
+        <h3 class="tab-card-title">
+            <i class="fas fa-history"></i> Linha do Tempo
+        </h3>
         <button class="btn btn-secondary btn-sm" id="btnExportarHistoricoPDF">
             <i class="fas fa-file-pdf"></i> Exportar Histórico (PDF)
         </button>
     </div>
 
     <div class="timeline-container">
-        <ul class="timeline" id="timelineBody">
-            </ul>
+        <div class="timeline" id="timelineBody">
+            <!-- Eventos serão inseridos dinamicamente -->
+        </div>
     </div>
 </div>

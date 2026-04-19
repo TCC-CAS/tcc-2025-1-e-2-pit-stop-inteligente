@@ -9,20 +9,25 @@ function getCSRFToken() {
     return '';
 }
 
+const API_BASE = 'http://127.0.0.1:8000/api/oficina';
+
 const DocumentosService = {
     getDocumentos: async (osId) => {
-        // Listagem dos documentos da OS
-        const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/documentos/`);
+        const response = await fetch(`${API_BASE}/os/${osId}/documentos/`);
         if (!response.ok) throw new Error('Erro ao carregar documentos');
-        return response.json();
+        const data = await response.json();
+        // Garantir que cada documento tenha uma URL completa para download
+        return data.map(doc => ({
+            ...doc,
+            download_url: doc.arquivo_url || `${API_BASE}/documentos/${doc.id}/download/`
+        }));
     },
     uploadDocumentos: async (osId, files) => {
         const formData = new FormData();
         for (let file of files) {
             formData.append('files', file);
         }
-        // Endpoint específico para upload (pode ser o mesmo da listagem com POST, mas vamos usar um separado)
-        const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/documentos/upload/`, {
+        const response = await fetch(`${API_BASE}/os/${osId}/documentos/upload/`, {
             method: 'POST',
             credentials: 'include',
             headers: { 'X-CSRFToken': getCSRFToken() },
@@ -32,12 +37,16 @@ const DocumentosService = {
         return response.json();
     },
     removerDocumento: async (documentoId) => {
-        const response = await fetch(`http://127.0.0.1:8000/api/oficina/documentos/${documentoId}/`, {
+        const response = await fetch(`${API_BASE}/documentos/${documentoId}/`, {
             method: 'DELETE',
             credentials: 'include',
             headers: { 'X-CSRFToken': getCSRFToken() }
         });
         if (!response.ok) throw new Error('Erro ao remover documento');
+    },
+    downloadDocumento: async (documentoId, url) => {
+        // Abrir em nova aba ou forçar download
+        window.open(url, '_blank');
     }
 };
 
@@ -65,35 +74,54 @@ export function initDocumentos(osId) {
 }
 
 async function carregarDocumentos(gridElement, templateElement) {
-    const osId = currentOsId;
     try {
-        const documentos = await DocumentosService.getDocumentos(osId);
+        const documentos = await DocumentosService.getDocumentos(currentOsId);
         renderizarGrade(gridElement, templateElement, documentos);
     } catch (error) {
         console.error('Erro ao carregar documentos:', error);
+        gridElement.innerHTML = '<div class="error-message">Erro ao carregar documentos.</div>';
     }
 }
 
 function renderizarGrade(gridElement, templateElement, documentos) {
     gridElement.innerHTML = '';
 
+    if (documentos.length === 0) {
+        gridElement.innerHTML = '<div class="empty-state">Nenhum documento anexado.</div>';
+        return;
+    }
+
     documentos.forEach(doc => {
         const clone = document.importNode(templateElement.content, true);
         const card = clone.querySelector('.doc-card');
         card.dataset.id = doc.id;
+        card.dataset.url = doc.download_url;
 
+        // Ícone conforme extensão
         const icon = clone.querySelector('.doc-icon i');
-        setIconForType(icon, doc.tipo);
+        setIconForType(icon, doc.tipo || doc.nome);
 
         clone.querySelector('.doc-name').textContent = doc.nome;
         clone.querySelector('.doc-date').textContent = doc.dataInclusao || '';
 
+        // Clique no card para baixar/visualizar
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('.btn-remover-doc')) return; // evitar conflito
+            DocumentosService.downloadDocumento(doc.id, doc.download_url);
+        });
+
+        // Botão remover
         const btnRemover = clone.querySelector('.btn-remover-doc');
         btnRemover.addEventListener('click', async (e) => {
             e.stopPropagation();
-            if (confirm('Remover este documento?')) {
-                await DocumentosService.removerDocumento(doc.id);
-                carregarDocumentos(gridElement, templateElement);
+            if (confirm(`Remover "${doc.nome}" permanentemente?`)) {
+                try {
+                    await DocumentosService.removerDocumento(doc.id);
+                    carregarDocumentos(gridElement, templateElement);
+                } catch (error) {
+                    console.error(error);
+                    alert('Erro ao remover documento.');
+                }
             }
         });
 
@@ -101,27 +129,30 @@ function renderizarGrade(gridElement, templateElement, documentos) {
     });
 }
 
-function setIconForType(iconElement, tipo) {
-    const ext = (tipo || '').toLowerCase();
-    if (ext.includes('pdf')) {
+function setIconForType(iconElement, nomeOuExtensao) {
+    const ext = (nomeOuExtensao || '').split('.').pop().toLowerCase();
+    if (ext === 'pdf') {
         iconElement.className = 'fas fa-file-pdf';
-    } else if (ext.includes('jpg') || ext.includes('jpeg') || ext.includes('png') || ext.includes('gif')) {
+    } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext)) {
         iconElement.className = 'fas fa-file-image';
-    } else if (ext.includes('doc') || ext.includes('docx')) {
+    } else if (['doc', 'docx'].includes(ext)) {
         iconElement.className = 'fas fa-file-word';
-    } else if (ext.includes('xls') || ext.includes('xlsx')) {
+    } else if (['xls', 'xlsx'].includes(ext)) {
         iconElement.className = 'fas fa-file-excel';
-    } else {
+    } else if (['txt', 'rtf'].includes(ext)) {
         iconElement.className = 'fas fa-file-alt';
+    } else {
+        iconElement.className = 'fas fa-file';
     }
 }
 
 function abrirModalDocumentos(modalElement, gridElement, templateElement) {
+    // Limpa conteúdo anterior do modal
     while (modalElement.firstChild) {
         modalElement.removeChild(modalElement.firstChild);
     }
 
-    const osNumero = document.getElementById('header-os-id')?.textContent || '';
+    const osNumero = document.getElementById('header-os-id')?.textContent || currentOsId;
 
     const titleSpan = document.createElement('span');
     titleSpan.setAttribute('slot', 'title');
@@ -156,14 +187,17 @@ function abrirModalDocumentos(modalElement, gridElement, templateElement) {
     const selectedSpan = modalElement.querySelector('.selected-files');
     let modalGrid = modalElement.querySelector('#modalDocsGrid');
 
+    // Clona a grade atual para dentro do modal
     const cloneGrid = gridElement.cloneNode(true);
     cloneGrid.id = 'modalDocsGrid';
     if (modalGrid) {
         modalGrid.replaceWith(cloneGrid);
     } else {
-        modalGrid = cloneGrid;
         bodyDiv.appendChild(cloneGrid);
     }
+
+    // Atualiza a grade sempre que o modal abrir
+    carregarDocumentos(cloneGrid, templateElement);
 
     fileInput.addEventListener('change', () => {
         const files = fileInput.files;
@@ -186,11 +220,13 @@ function abrirModalDocumentos(modalElement, gridElement, templateElement) {
 
         try {
             await DocumentosService.uploadDocumentos(currentOsId, files);
+            // Recarrega a grade principal e a do modal
             await carregarDocumentos(gridElement, templateElement);
             const novaGrid = gridElement.cloneNode(true);
             novaGrid.id = 'modalDocsGrid';
             const modalGridContainer = modalElement.querySelector('#modalDocsGrid');
             if (modalGridContainer) modalGridContainer.replaceWith(novaGrid);
+            await carregarDocumentos(novaGrid, templateElement);
 
             fileInput.value = '';
             selectedSpan.textContent = '';
@@ -205,6 +241,5 @@ function abrirModalDocumentos(modalElement, gridElement, templateElement) {
     });
 
     modalElement.querySelector('.close-modal').addEventListener('click', () => modalElement.close());
-
     modalElement.open();
 }

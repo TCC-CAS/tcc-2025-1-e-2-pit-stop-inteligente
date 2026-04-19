@@ -66,10 +66,9 @@
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
+    min-width: 900px; /* ajustado para comportar nova coluna */
 }
 
-/* Cabeçalhos centralizados */
 th {
     background-color: #f8fafc;
     color: #1e293b;
@@ -81,20 +80,27 @@ th {
     border-bottom: 2px solid #e2e8f0;
 }
 
-/* Células de conteúdo centralizadas */
 td {
     padding: 1rem;
     border-bottom: 1px solid #e2e8f0;
     color: #0f172a;
     vertical-align: middle;
-    text-align: center;               /* Centraliza todo o conteúdo */
+    text-align: center;
 }
 
-/* Célula de ações mantém centralização */
-td.actions-cell {
-    text-align: center;
+/* Coluna de descrição: truncamento + tooltip */
+td.descricao-item {
+    max-width: 250px;
     white-space: nowrap;
-    min-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: help;
+    text-align: left;
+}
+
+td.nome-item {
+    text-align: left;
+    font-weight: 500;
 }
 
 /* Badges */
@@ -118,45 +124,30 @@ td.actions-cell {
     display: inline-block;
 }
 
-/* Botões de ação */
+/* Botões de ação - versão melhorada */
+.actions-cell {
+    text-align: center;
+    white-space: nowrap;
+    min-width: 100px;
+}
+
 .btn-icon {
-    background: none;
+    background: transparent;
     border: none;
     cursor: pointer;
-    font-size: 1.2rem;
-    padding: 0.5rem 0.75rem;
-    margin: 0 0.3rem;
-    border-radius: 6px;
-    transition: all 0.2s;
+    font-size: 1rem;
+    padding: 0.4rem 0.7rem;
+    margin: 0 0.2rem;
+    border-radius: 30px;
+    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.3rem;
+    gap: 0.4rem;
 }
 
 .btn-icon .btn-text {
-    font-size: 0.9rem;
-}
-
-/* Em telas grandes, mostrar texto junto com ícone */
-@media (min-width: 1024px) {
-    .btn-icon {
-        width: auto;
-        padding: 0.5rem 1rem;
-    }
-    .btn-icon .btn-text {
-        display: inline;
-    }
-}
-
-/* Em telas menores, mostrar só ícone por padrão, mas texto no hover */
-@media (max-width: 1023px) {
-    .btn-icon .btn-text {
-        display: none;
-    }
-    .btn-icon:hover .btn-text {
-        display: inline;
-    }
+    font-size: 0.85rem;
 }
 
 .btn-edit {
@@ -164,6 +155,7 @@ td.actions-cell {
 }
 .btn-edit:hover {
     background-color: #dbeafe;
+    transform: scale(1.02);
 }
 
 .btn-delete {
@@ -171,9 +163,10 @@ td.actions-cell {
 }
 .btn-delete:hover {
     background-color: #fee2e2;
+    transform: scale(1.02);
 }
 
-/* Rodapé do orçamento (total geral) */
+/* Rodapé do orçamento */
 .orcamento-footer {
     padding: 1.5rem;
     text-align: right;
@@ -195,7 +188,7 @@ td.actions-cell {
     margin-left: 0.5rem;
 }
 
-/* Ações abaixo da tabela (PDF e Enviar) */
+/* Ações abaixo da tabela */
 .orcamento-actions {
     display: flex;
     justify-content: space-between;
@@ -212,18 +205,6 @@ td.actions-cell {
     display: flex;
     gap: 0.8rem;
     flex-wrap: wrap;
-}
-
-/* Para telas muito pequenas, centralizar os grupos */
-@media (max-width: 640px) {
-    .orcamento-actions {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .action-group-left,
-    .action-group-right {
-        justify-content: center;
-    }
 }
 
 /* Botões padrão */
@@ -308,7 +289,6 @@ td.actions-cell {
     font-weight: 700;
 }
 
-/* Controle de Visibilidade */
 .hidden {
     display: none !important;
 }
@@ -322,7 +302,6 @@ td.actions-cell {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Inputs e Labels */
 .form-group {
     margin-bottom: 1.2rem;
 }
@@ -359,7 +338,6 @@ td.actions-cell {
     gap: 1rem;
 }
 
-/* Ajustes para o modal dentro do componente */
 oficina-modal [slot="body"] {
     max-height: 70vh;
     overflow-y: auto;
@@ -368,34 +346,24 @@ oficina-modal [slot="body"] {
 
 /* Responsividade mobile */
 @media (max-width: 767px) {
-    .actions-cell {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        align-items: center;
-        min-width: auto;
-    }
-    
-    .btn-icon {
-        width: auto;
-        height: auto;
-        padding: 0.5rem 1rem;
-        margin: 0;
-        justify-content: center;
-    }
-    
-    .btn-icon i {
-        margin-right: 0.5rem;
-    }
-    
     .btn-icon .btn-text {
-        display: inline; /* Sempre visível no mobile */
+        display: none;
     }
-
+    .btn-icon {
+        padding: 0.5rem;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+    }
+    .btn-icon:hover .btn-text {
+        display: none;
+    }
+    td.descricao-item {
+        max-width: 150px;
+    }
     .item-filter-tabs {
         flex-wrap: wrap;
     }
-
     .filter-tab {
         flex: 1 1 auto;
         text-align: center;

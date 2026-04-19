@@ -14,194 +14,521 @@ function getCSRFToken() {
 
 let currentStep = 1;
 let tabsRef = null;
-let photos = [];
 let currentOsId = null;
+
+let fotosExterno = [];
+let fotosInterno = [];
+let fotosMecanica = [];
+
+let checklistDataCache = null;
+let isReadOnlyMode = false;
+
+const stepValidationMap = {
+  1: () => {
+    const data = document.querySelector('[name="data_recebimento"]')?.value;
+    const consultor = document.querySelector('[name="consultor"]')?.value;
+    const km = document.querySelector('[name="km"]')?.value;
+    return !!(data && consultor && km);
+  },
+  2: () => true,
+  3: () => true,
+  4: () => true,
+  5: () => (fotosExterno.length + fotosInterno.length + fotosMecanica.length) >= 4,
+  6: () => {
+    const sigClient = document.getElementById("sigClient");
+    const sigTech = document.getElementById("sigTech");
+    return !isCanvasBlank(sigClient) && !isCanvasBlank(sigTech);
+  }
+};
 
 export function initChecklist(tabsComponent, osId) {
   tabsRef = tabsComponent;
   currentOsId = osId;
-
-  const btnOpen = document.getElementById("btnOpenChecklist");
-  if (btnOpen) {
-    btnOpen.onclick = openWizard;
-  }
-
-  if (osId) {
-    carregarResumoChecklist(osId);
-  }
+  document.getElementById("btnOpenChecklist")?.addEventListener("click", () => openWizard(false));
+  document.getElementById("btnViewChecklist")?.addEventListener("click", viewChecklist);
+  if (osId) carregarResumoChecklist(osId);
 }
 
 async function carregarResumoChecklist(osId) {
   try {
     const dados = await ChecklistService.buscarChecklist(osId);
-    const statusTitle = document.getElementById("statusTitle");
-    const statusDesc = document.getElementById("statusDesc");
-    const btnOpen = document.getElementById("btnOpenChecklist");
-    const summaryStatus = document.getElementById("summaryStatus");
-    const summaryDate = document.getElementById("summaryDate");
-    const summaryResponsible = document.getElementById("summaryResponsible");
-    const summarySignClient = document.getElementById("summarySignClient");
-    const summarySignTech = document.getElementById("summarySignTech");
-    const summaryPhotosCount = document.getElementById("summaryPhotosCount");
-
-    // --- Buscar documentos para contar as fotos do checklist ---
-    let totalFotos = 0;
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/documentos/`);
-      if (response.ok) {
-        const docs = await response.json();
-        totalFotos = docs.filter(doc => doc.origem === 'checklist').length;
-      }
-    } catch (e) {
-      console.warn('Não foi possível carregar documentos:', e);
-    }
-
-    if (dados && dados.concluido) {
-      // Checklist concluído
-      statusTitle.innerHTML = '<i class="fas fa-check-circle"></i> Checklist Concluído';
-      statusDesc.innerText = "Checklist já foi preenchido e assinado. As demais etapas estão liberadas.";
-      if (btnOpen) btnOpen.style.display = "none";
-      summaryStatus.innerText = "Concluído";
-      summaryStatus.className = "badge badge-success";
-      summarySignClient.innerHTML = '<i class="fas fa-check-circle"></i> Assinado';
-      summarySignTech.innerHTML = '<i class="fas fa-check-circle"></i> Assinado';
-      summaryDate.innerText = dados.criado_em ? new Date(dados.criado_em).toLocaleDateString() : "-";
-      summaryResponsible.innerText = dados.consultor || "-";
-      summaryPhotosCount.innerText = `${totalFotos} foto(s)`;
-
-      if (tabsRef && typeof tabsRef.setLockedByChecklist === "function") {
-        tabsRef.setLockedByChecklist(true);
-      }
-    } else {
-      // Checklist pendente
-      statusTitle.innerHTML = '<i class="fas fa-exclamation-circle"></i> Checklist Pendente';
-      statusDesc.innerText = "A O.S. está bloqueada. O preenchimento e assinatura são obrigatórios para liberar as demais etapas.";
-      if (btnOpen) btnOpen.style.display = "inline-block";
-      summaryStatus.innerText = "Pendente";
-      summaryStatus.className = "badge badge-warning";
-      summarySignClient.innerHTML = '<i class="fas fa-times-circle"></i> Não assinado';
-      summarySignTech.innerHTML = '<i class="fas fa-times-circle"></i> Não assinado';
-      summaryDate.innerText = "-";
-      summaryResponsible.innerText = dados?.consultor || "-";
-      summaryPhotosCount.innerText = `${totalFotos} foto(s)`;
-
-      if (tabsRef && typeof tabsRef.setLockedByChecklist === "function") {
-        tabsRef.setLockedByChecklist(false);
-      }
-    }
+    checklistDataCache = dados;
+    const totalFotos = await contarFotosServidor(osId);
+    atualizarInterfacePorStatus(dados, totalFotos);
   } catch (error) {
-    console.log("Nenhum checklist encontrado para esta OS.", error);
-    // Tratamento de erro (já existente)
-    const statusTitle = document.getElementById("statusTitle");
-    const statusDesc = document.getElementById("statusDesc");
-    const btnOpen = document.getElementById("btnOpenChecklist");
-    if (statusTitle) statusTitle.innerHTML = '<i class="fas fa-exclamation-circle"></i> Checklist Pendente';
-    if (statusDesc) statusDesc.innerText = "A O.S. está bloqueada. O preenchimento e assinatura são obrigatórios para liberar as demais etapas.";
-    if (btnOpen) btnOpen.style.display = "inline-block";
+    console.log("Nenhum checklist encontrado", error);
+    atualizarInterfacePorStatus(null, 0);
   }
 }
 
-function openWizard() {
+async function contarFotosServidor(osId) {
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/documentos/`);
+    if (res.ok) {
+      const docs = await res.json();
+      return docs.filter(doc => doc.origem === 'checklist').length;
+    }
+  } catch (e) {}
+  return 0;
+}
+
+function atualizarInterfacePorStatus(dados, totalFotos) {
+  const concluido = dados && dados.concluido;
+  const statusTitle = document.getElementById("statusTitle");
+  const statusDesc = document.getElementById("statusDesc");
+  const statusIcon = document.getElementById("statusIcon");
+  const btnOpen = document.getElementById("btnOpenChecklist");
+  const btnView = document.getElementById("btnViewChecklist");
+  const statusCard = document.getElementById("checklistStatusCard");
+  const summaryStatus = document.getElementById("summaryStatus");
+  const summaryDate = document.getElementById("summaryDate");
+  const summaryResponsible = document.getElementById("summaryResponsible");
+  const summarySignClient = document.getElementById("summarySignClient");
+  const summarySignTech = document.getElementById("summarySignTech");
+  const summaryPhotosCount = document.getElementById("summaryPhotosCount");
+
+  if (concluido) {
+    statusTitle.innerHTML = "Checklist Concluído";
+    statusDesc.innerText = "Checklist já foi preenchido e assinado. Etapas liberadas.";
+    statusIcon.className = "fas fa-check-circle";
+    statusCard.classList.add("completed");
+    btnOpen.style.display = "none";
+    btnView.style.display = "inline-flex";
+    summaryStatus.innerText = "Concluído";
+    summaryStatus.className = "resumo-value badge badge-success";
+    summarySignClient.innerHTML = '<i class="fas fa-check-circle"></i> Assinado';
+    summarySignTech.innerHTML = '<i class="fas fa-check-circle"></i> Assinado';
+    summaryDate.innerText = dados.criado_em ? new Date(dados.criado_em).toLocaleDateString() : "-";
+    summaryResponsible.innerText = dados.consultor || "-";
+    summaryPhotosCount.innerText = `${totalFotos} foto(s)`;
+    tabsRef?.setLockedByChecklist?.(true);
+  } else {
+    statusTitle.innerHTML = "Checklist Pendente";
+    statusDesc.innerText = "A O.S. está bloqueada. Preenchimento obrigatório.";
+    statusIcon.className = "fas fa-exclamation-circle";
+    statusCard.classList.remove("completed");
+    btnOpen.style.display = "inline-flex";
+    btnView.style.display = "none";
+    summaryStatus.innerText = "Pendente";
+    summaryStatus.className = "resumo-value badge badge-warning";
+    summarySignClient.innerHTML = '<i class="fas fa-times-circle"></i> Não assinado';
+    summarySignTech.innerHTML = '<i class="fas fa-times-circle"></i> Não assinado';
+    summaryDate.innerText = "-";
+    summaryResponsible.innerText = dados?.consultor || "-";
+    summaryPhotosCount.innerText = `${totalFotos} foto(s)`;
+    tabsRef?.setLockedByChecklist?.(false);
+  }
+}
+
+function openWizard(isReadOnly = false) {
+  isReadOnlyMode = isReadOnly;
   const modal = document.getElementById("modalChecklist");
   const body = document.getElementById("checklist-wizard-body");
   const temp = document.getElementById("wizardTemplate");
-
-  if (temp && body) {
-    body.innerHTML = "";
-    body.appendChild(temp.content.cloneNode(true));
+  if (!modal || !body || !temp) {
+    console.error("Elementos do modal não encontrados");
+    return;
   }
 
+  body.innerHTML = "";
+  body.appendChild(temp.content.cloneNode(true));
   currentStep = 1;
-  photos = [];
 
-  setupWizardListeners();
-  updateUI();
-
-  if (modal && typeof modal.open === "function") {
-    modal.open();
+  if (isReadOnly) {
+    if (checklistDataCache) preencherFormularioComDados(checklistDataCache);
+    desabilitarFormulario(true);
+    const btnFinalizar = document.getElementById("btnFinalizarChecklist");
+    if (btnFinalizar) btnFinalizar.style.display = "none";
+    carregarFotosDoServidor().then(() => atualizarPreviewGeral());
+    carregarAssinaturasNosCanvas();
   } else {
-    console.error("Modal não encontrada ou método open inexistente");
+    fotosExterno = [];
+    fotosInterno = [];
+    fotosMecanica = [];
+    if (checklistDataCache && !checklistDataCache.concluido) {
+      preencherFormularioComDados(checklistDataCache);
+    }
+    desabilitarFormulario(false);
+    configurarUploads();
+    configurarAssinaturas();
+    const btnFinalizar = document.getElementById("btnFinalizarChecklist");
+    if (btnFinalizar) btnFinalizar.onclick = () => finalizarChecklist();
+  }
+
+  configurarStepperNavegacao();
+  atualizarUI();
+
+  if (typeof modal.open === 'function') {
+    modal.open();
+  } else if (typeof modal.showModal === 'function') {
+    modal.showModal();
+  } else {
+    modal.setAttribute('open', '');
   }
 }
 
-function setupWizardListeners() {
-  const btnNext = document.getElementById("btnProximoPasso");
-  const btnPrev = document.getElementById("btnAnteriorPasso");
-  const btnSave = document.getElementById("btnSalvarChecklist");
+function preencherFormularioComDados(dados) {
+  if (dados.data_recebimento) document.querySelector('[name="data_recebimento"]').value = dados.data_recebimento;
+  if (dados.consultor) document.querySelector('[name="consultor"]').value = dados.consultor;
+  if (dados.quilometragem) document.querySelector('[name="km"]').value = dados.quilometragem;
+  if (dados.nivel_combustivel) document.querySelector('[name="fuel"]').value = dados.nivel_combustivel;
+  if (dados.observacoes_iniciais) document.querySelector('[name="obs_inicial"]').value = dados.observacoes_iniciais;
+  if (dados.lataria_pintura) document.querySelector('[name="ext_body"]').value = dados.lataria_pintura;
+  if (dados.vidros_farois) document.querySelector('[name="ext_glass"]').value = dados.vidros_farois;
+  if (dados.observacoes_internas) document.querySelector('[name="int_obs"]').value = dados.observacoes_internas;
+  if (dados.nivel_oleo) document.querySelector('[name="mech_oil"]').value = dados.nivel_oleo;
+  if (dados.fluido_arrefecimento) document.querySelector('[name="mech_coolant"]').value = dados.fluido_arrefecimento;
+  if (dados.observacoes_mecanica) document.querySelector('[name="mec_obs"]').value = dados.observacoes_mecanica;
+  if (dados.possui_manual) document.getElementById("chk_manual").checked = true;
+  if (dados.possui_estepe_macaco) document.getElementById("chk_step").checked = true;
+}
 
-  if (btnNext) {
-    btnNext.onclick = () => {
-      if (currentStep < 6) {
-        currentStep++;
-        updateUI();
+function desabilitarFormulario(disabled) {
+  const form = document.getElementById("checklistForm");
+  if (!form) return;
+  const inputs = form.querySelectorAll("input, select, textarea, .photo-dropzone, .btn-clear");
+  inputs.forEach(el => {
+    if (el.classList.contains("photo-dropzone")) {
+      el.style.pointerEvents = disabled ? "none" : "auto";
+      el.style.opacity = disabled ? "0.6" : "1";
+    } else if (el.classList.contains("btn-clear")) {
+      el.disabled = disabled;
+      el.style.opacity = disabled ? "0.5" : "1";
+    } else {
+      el.disabled = disabled;
+    }
+  });
+  document.querySelectorAll(".signature-pad").forEach(c => {
+    c.style.pointerEvents = disabled ? "none" : "auto";
+  });
+}
+
+function configurarStepperNavegacao() {
+  const steps = document.querySelectorAll(".step-item");
+  steps.forEach(step => {
+    step.addEventListener("click", async (e) => {
+      if (isReadOnlyMode) {
+        currentStep = parseInt(step.dataset.step);
+        atualizarUI();
+        return;
       }
-    };
-  }
 
-  if (btnPrev) {
-    btnPrev.onclick = () => {
-      if (currentStep > 1) {
-        currentStep--;
-        updateUI();
+      const targetStep = parseInt(step.dataset.step);
+      if (targetStep === currentStep) return;
+
+      if (targetStep > currentStep) {
+        const isValid = await validarPassoAtual();
+        if (!isValid) {
+          alert("Preencha os campos obrigatórios antes de prosseguir.");
+          return;
+        }
       }
+
+      currentStep = targetStep;
+      atualizarUI();
+    });
+  });
+}
+
+function viewChecklist() {
+  if (!checklistDataCache || !checklistDataCache.concluido) {
+    alert("Nenhum checklist concluído para visualizar.");
+    return;
+  }
+  openWizard(true);
+}
+
+function configurarUploads() {
+  setTimeout(() => {
+    configurarDropzone("externo", fotosExterno, ".preview-externo", ".count-externo");
+    configurarDropzone("interno", fotosInterno, ".preview-interno", ".count-interno");
+    configurarDropzone("mecanica", fotosMecanica, ".preview-mecanica", ".count-mecanica");
+  }, 50);
+}
+
+function configurarDropzone(categoria, arrayFotos, previewSel, counterSel) {
+  const dropzone = document.querySelector(`.photo-dropzone[data-categoria="${categoria}"]`);
+  const fileInput = document.querySelector(`.file-input-${categoria}`);
+  if (!dropzone || !fileInput) return;
+
+  dropzone.onclick = () => fileInput.click();
+
+  dropzone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropzone.style.borderColor = "var(--primary)";
+    dropzone.style.background = "#eff6ff";
+  });
+  dropzone.addEventListener("dragleave", (e) => {
+    e.preventDefault();
+    dropzone.style.borderColor = "var(--gray-300)";
+    dropzone.style.background = "var(--gray-50)";
+  });
+  dropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropzone.style.borderColor = "var(--gray-300)";
+    dropzone.style.background = "var(--gray-50)";
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/"));
+    adicionarFotos(files, categoria, arrayFotos, previewSel, counterSel);
+  });
+
+  fileInput.onchange = (e) => {
+    const files = Array.from(e.target.files);
+    adicionarFotos(files, categoria, arrayFotos, previewSel, counterSel);
+    fileInput.value = '';
+  };
+}
+
+function adicionarFotos(files, categoria, arrayFotos, previewSel, counterSel) {
+  files.forEach(file => {
+    const newFile = new File([file], `${categoria}_${file.name}`, { type: file.type });
+    arrayFotos.push(newFile);
+  });
+  atualizarPreviewCategoria(previewSel, counterSel, arrayFotos);
+  atualizarPreviewGeral();
+}
+
+function atualizarPreviewCategoria(previewSel, counterSel, arrayFotos) {
+  const grid = document.querySelector(previewSel);
+  const counter = document.querySelector(counterSel);
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  arrayFotos.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const thumb = document.createElement("div");
+      thumb.className = "photo-thumb";
+      thumb.style.backgroundImage = `url(${e.target.result})`;
+      grid.appendChild(thumb);
     };
-  }
+    reader.readAsDataURL(file);
+  });
+  if (counter) counter.innerText = `${arrayFotos.length} foto(s)`;
+}
 
-  if (btnSave) {
-    btnSave.onclick = finishChecklist;
-  }
+function atualizarPreviewGeral() {
+  const gridGeral = document.getElementById("photoPreviewGrid");
+  const counterGeral = document.getElementById("photoCounter");
+  if (!gridGeral) return;
+  const todas = [...fotosExterno, ...fotosInterno, ...fotosMecanica];
+  gridGeral.innerHTML = "";
 
+  todas.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const thumb = document.createElement("div");
+      thumb.className = "photo-thumb";
+      thumb.style.backgroundImage = `url(${e.target.result})`;
+      gridGeral.appendChild(thumb);
+    };
+    reader.readAsDataURL(file);
+  });
+  if (counterGeral) {
+    counterGeral.innerText = `${todas.length} foto(s) no total`;
+    counterGeral.style.color = todas.length >= 4 ? "var(--success)" : "var(--warning)";
+  }
+}
+
+async function carregarFotosDoServidor() {
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/api/oficina/os/${currentOsId}/documentos/`);
+    if (!res.ok) return;
+    const docs = await res.json();
+    const fotos = docs.filter(d => d.origem === 'checklist');
+
+    fotosExterno = []; fotosInterno = []; fotosMecanica = [];
+
+    for (const doc of fotos) {
+      const response = await fetch(doc.arquivo);
+      const blob = await response.blob();
+      const file = new File([blob], doc.descricao || 'foto.jpg', { type: blob.type });
+
+      let categoria = doc.categoria || '';
+      if (!categoria) {
+        if (doc.descricao?.includes('externo')) categoria = 'externo';
+        else if (doc.descricao?.includes('interno')) categoria = 'interno';
+        else if (doc.descricao?.includes('mecanica')) categoria = 'mecanica';
+        else categoria = 'externo';
+      }
+
+      if (categoria === 'externo') fotosExterno.push(file);
+      else if (categoria === 'interno') fotosInterno.push(file);
+      else if (categoria === 'mecanica') fotosMecanica.push(file);
+    }
+
+    atualizarPreviewCategoria('.preview-externo', '.count-externo', fotosExterno);
+    atualizarPreviewCategoria('.preview-interno', '.count-interno', fotosInterno);
+    atualizarPreviewCategoria('.preview-mecanica', '.count-mecanica', fotosMecanica);
+    atualizarPreviewGeral();
+  } catch (e) {
+    console.error("Erro ao carregar fotos do servidor:", e);
+  }
+}
+
+function carregarAssinaturasNosCanvas() {
+  if (!checklistDataCache) return;
+  const desenhar = (canvasId, dataURL) => {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || !dataURL) return;
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    img.src = dataURL;
+  };
+  setTimeout(() => {
+    desenhar("sigClient", checklistDataCache.assinatura_cliente);
+    desenhar("sigTech", checklistDataCache.assinatura_tecnico);
+  }, 200);
+}
+
+function configurarAssinaturas() {
   setTimeout(() => {
     configurarCanvas("sigClient");
     configurarCanvas("sigTech");
+    document.querySelectorAll(".btn-clear").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const canvasId = btn.getAttribute("data-canvas");
+        if (canvasId) limparCanvas(canvasId);
+      });
+    });
   }, 100);
-
-  const dropZone = document.getElementById("dropZone");
-  const fileInput = document.getElementById("fileInput");
-
-  if (dropZone && fileInput) {
-    dropZone.onclick = () => fileInput.click();
-    fileInput.onchange = (e) => {
-      const files = Array.from(e.target.files);
-      files.forEach((file) => photos.push(file));
-      atualizarPreviewFotos();
-    };
-  }
-
-  atualizarPassosWizard();
 }
 
-function atualizarPassosWizard() {
-  const steps = document.querySelectorAll(".wizard-step");
-  steps.forEach((step) => {
-    step.classList.remove("active");
-    if (parseInt(step.dataset.step) === currentStep) {
-      step.classList.add("active");
+function configurarCanvas(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  let desenhando = false;
+
+  const resizeCanvas = () => {
+    const container = canvas.parentElement;
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+  };
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  const desenhar = (e) => {
+    if (!desenhando) return;
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    let clientX, clientY;
+    if (e.touches) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    const x = (clientX - rect.left) * scaleX;
+    const y = (clientY - rect.top) * scaleY;
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  };
+
+  canvas.addEventListener("mousedown", (e) => {
+    desenhando = true;
+    ctx.beginPath();
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+    ctx.moveTo(x, y);
+    e.preventDefault();
+  });
+  canvas.addEventListener("mouseup", () => { desenhando = false; ctx.beginPath(); });
+  canvas.addEventListener("mousemove", desenhar);
+  canvas.addEventListener("touchstart", (e) => {
+    desenhando = true;
+    ctx.beginPath();
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.touches[0].clientX - rect.left) * scaleX;
+    const y = (e.touches[0].clientY - rect.top) * scaleY;
+    ctx.moveTo(x, y);
+    e.preventDefault();
+  }, { passive: false });
+  canvas.addEventListener("touchend", () => { desenhando = false; ctx.beginPath(); });
+  canvas.addEventListener("touchmove", desenhar, { passive: false });
+}
+
+function limparCanvas(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+async function validarPassoAtual() {
+  if (stepValidationMap[currentStep]) {
+    if (currentStep === 6) {
+      // Aguarda um pequeno delay para garantir que os canvas estejam prontos
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    return stepValidationMap[currentStep]();
+  }
+  return true;
+}
+
+function isCanvasBlank(canvas) {
+  if (!canvas) return true;
+  const ctx = canvas.getContext("2d");
+  const pixelBuffer = new Uint32Array(ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
+  return !pixelBuffer.some(color => color !== 0);
+}
+
+function atualizarUI() {
+  document.querySelectorAll(".wizard-panel").forEach(panel => {
+    panel.style.display = parseInt(panel.dataset.step) === currentStep ? "block" : "none";
+  });
+
+  document.querySelectorAll(".step-item").forEach(step => {
+    const stepNum = parseInt(step.dataset.step);
+    step.classList.toggle("active", stepNum === currentStep);
+
+    if (!isReadOnlyMode) {
+      if (stepNum < currentStep) {
+        const isValid = stepValidationMap[stepNum] ? stepValidationMap[stepNum]() : true;
+        step.classList.toggle("completed", isValid);
+      } else {
+        step.classList.remove("completed");
+      }
+      step.style.opacity = stepNum < currentStep ? 0.8 : (stepNum > currentStep ? 0.5 : 1);
+    } else {
+      step.style.opacity = 1;
     }
   });
 }
 
-// CORREÇÃO: Coletar todos os campos do wizard
-async function finishChecklist() {
+async function finalizarChecklist() {
+  if (!(await validarPassoAtual())) return;
+
   const sigClient = document.getElementById("sigClient");
   const sigTech = document.getElementById("sigTech");
-
-  // Validação das assinaturas
-  if (isCanvasBlank(sigClient)) {
-    alert("Assinatura do cliente é obrigatória!");
-    return;
-  }
-  if (isCanvasBlank(sigTech)) {
-    alert("Assinatura do técnico é obrigatória!");
+  if (isCanvasBlank(sigClient) || isCanvasBlank(sigTech)) {
+    alert("Ambas as assinaturas são obrigatórias.");
     return;
   }
 
-  const dadosParaSalvar = {
+  const dados = {
     concluido: true,
     assinatura_cliente: sigClient.toDataURL("image/png"),
     assinatura_tecnico: sigTech.toDataURL("image/png"),
-    data_recebimento: document.querySelector('[name="data_recebimento"]')
-      ?.value,
+    data_recebimento: document.querySelector('[name="data_recebimento"]')?.value,
     consultor: document.querySelector('[name="consultor"]')?.value,
     quilometragem: document.querySelector('[name="km"]')?.value,
     nivel_combustivel: document.querySelector('[name="fuel"]')?.value,
@@ -212,159 +539,37 @@ async function finishChecklist() {
     possui_estepe_macaco: document.getElementById("chk_step")?.checked || false,
     observacoes_internas: document.querySelector('[name="int_obs"]')?.value,
     nivel_oleo: document.querySelector('[name="mech_oil"]')?.value,
-    fluido_arrefecimento: document.querySelector('[name="mech_coolant"]')
-      ?.value,
+    fluido_arrefecimento: document.querySelector('[name="mech_coolant"]')?.value,
+    observacoes_mecanica: document.querySelector('[name="mec_obs"]')?.value || "",
   };
 
-  const btnSave = document.getElementById("btnSalvarChecklist");
-  btnSave.disabled = true;
-  btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+  const btnFinalizar = document.getElementById("btnFinalizarChecklist");
+  btnFinalizar.disabled = true;
+  btnFinalizar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
 
   try {
-    await ChecklistService.salvarChecklist(currentOsId, dadosParaSalvar);
-
-    if (photos.length > 0) {
+    await ChecklistService.salvarChecklist(currentOsId, dados);
+    const todasFotos = [...fotosExterno, ...fotosInterno, ...fotosMecanica];
+    if (todasFotos.length) {
       const formData = new FormData();
-      photos.forEach((photo) => formData.append("files", photo));
-      formData.append('origem', 'checklist');
-      await fetch(
-        `http://127.0.0.1:8000/api/oficina/os/${currentOsId}/documentos/upload/`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "X-CSRFToken": getCSRFToken() },
-          body: formData,
-        },
-      );
+      todasFotos.forEach(f => formData.append("files", f));
+      formData.append("origem", "checklist");
+      await fetch(`http://127.0.0.1:8000/api/oficina/os/${currentOsId}/documentos/upload/`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "X-CSRFToken": getCSRFToken() },
+        body: formData,
+      });
     }
-
-    // Atualiza o contador de fotos no resumo
-    const summaryPhotosCount = document.getElementById("summaryPhotosCount");
-    if (summaryPhotosCount) {
-      summaryPhotosCount.innerText = `${photos.length} foto(s)`;
-    }
-
     alert("Checklist salvo com sucesso!");
-    document.getElementById("modalChecklist").close();
-    await carregarResumoChecklist(currentOsId); // recarrega o resumo (e desbloqueia as abas)
-  } catch (erro) {
-    console.error("Erro ao salvar checklist:", erro);
-    alert("Erro ao salvar checklist. Verifique o console.");
+    const modal = document.getElementById("modalChecklist");
+    if (modal) modal.close();
+    await carregarResumoChecklist(currentOsId);
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao salvar checklist.");
   } finally {
-    btnSave.disabled = false;
-    btnSave.innerHTML = "Salvar e Concluir";
+    btnFinalizar.disabled = false;
+    btnFinalizar.innerHTML = "Finalizar Checklist";
   }
-}
-
-function updateUI() {
-  const panels = document.querySelectorAll(".wizard-panel");
-  panels.forEach((p) => {
-    p.style.display =
-      parseInt(p.dataset.step) === currentStep ? "block" : "none";
-  });
-
-  const btnNext = document.getElementById("btnProximoPasso");
-  const btnPrev = document.getElementById("btnAnteriorPasso");
-  const btnSave = document.getElementById("btnSalvarChecklist");
-
-  if (currentStep === 6) {
-    if (btnNext) btnNext.style.display = "none";
-    if (btnPrev) btnPrev.style.display = "inline-block";
-    if (btnSave) btnSave.style.display = "inline-block";
-  } else {
-    if (btnNext) btnNext.style.display = "inline-block";
-    if (btnPrev)
-      btnPrev.style.display = currentStep > 1 ? "inline-block" : "none";
-    if (btnSave) btnSave.style.display = "none";
-  }
-
-  atualizarPassosWizard();
-}
-
-function isCanvasBlank(canvas) {
-  if (!canvas) return true;
-  const blank = document.createElement("canvas");
-  blank.width = canvas.width;
-  blank.height = canvas.height;
-  return canvas.toDataURL() === blank.toDataURL();
-}
-
-window.clearSig = function (id) {
-  const canvas = document.getElementById(id);
-  if (canvas) {
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-};
-
-function configurarCanvas(canvasId) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-
-  const ctx = canvas.getContext("2d");
-  let desenhando = false;
-
-  canvas.width = canvas.parentElement.offsetWidth || 400;
-  canvas.height = canvas.parentElement.offsetHeight || 150;
-
-  const iniciarDesenho = (e) => {
-    desenhando = true;
-    desenhar(e);
-  };
-
-  const pararDesenho = () => {
-    desenhando = false;
-    ctx.beginPath();
-  };
-
-  const desenhar = (e) => {
-    if (!desenhando) return;
-    e.preventDefault();
-
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "#0f172a";
-
-    const rect = canvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-  };
-
-  canvas.addEventListener("mousedown", iniciarDesenho);
-  canvas.addEventListener("mouseup", pararDesenho);
-  canvas.addEventListener("mousemove", desenhar);
-  canvas.addEventListener("mouseout", pararDesenho);
-
-  canvas.addEventListener("touchstart", iniciarDesenho, { passive: false });
-  canvas.addEventListener("touchend", pararDesenho);
-  canvas.addEventListener("touchmove", desenhar, { passive: false });
-}
-
-function atualizarPreviewFotos() {
-  const grid = document.getElementById("photoPreviewGrid");
-  if (!grid) return;
-  grid.innerHTML = "";
-  photos.forEach((file, index) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const div = document.createElement("div");
-      div.style.cssText = `
-                width: 80px; height: 80px;
-                background-image: url(${e.target.result});
-                background-size: cover;
-                background-position: center;
-                border-radius: 8px; border: 1px solid #cbd5e1;
-            `;
-      grid.appendChild(div);
-    };
-    reader.readAsDataURL(file);
-  });
 }

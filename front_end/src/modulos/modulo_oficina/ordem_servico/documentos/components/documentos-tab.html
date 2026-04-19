@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="../../documentos/style/documentos-tab.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="tab-card fade-in">
     <div class="tab-card-header">
@@ -8,15 +9,15 @@
         </button>
     </div>
 
-    <!-- Grade de documentos (será preenchida dinamicamente) -->
+    <!-- Grade de documentos -->
     <div class="docs-grid" id="docsGridBody"></div>
 </div>
 
-<!-- Template para cada documento na grade (usado pelo JavaScript) -->
+<!-- Template para cada documento na grade -->
 <template id="tmplDocumento">
-    <div class="doc-card" data-id="">
+    <div class="doc-card" data-id="" data-url="">
         <div class="doc-icon">
-            <i class="fas"></i> <!-- classe será definida conforme tipo -->
+            <i class="fas"></i>
         </div>
         <div class="doc-info">
             <span class="doc-name"></span>

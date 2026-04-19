@@ -28,10 +28,9 @@ async function carregarDetalhes(osId) {
     if (!response.ok) throw new Error("Erro ao carregar detalhes da OS");
     const os = await response.json();
 
-    // Log para depuração
     console.log("Dados da OS recebidos:", os);
 
-    // Preenche campos de cliente e veículo
+    // Preenche os cards
     document.getElementById("detalhe-cliente-nome").textContent =
       os.veiculo_detalhes?.cliente_detalhes?.nome || "--";
 
@@ -44,14 +43,12 @@ async function carregarDetalhes(osId) {
     document.getElementById("detalhe-veiculo-placa").textContent =
       os.veiculo_detalhes?.placa || "--";
 
-    // KM Atual
     const km =
       os.km_atual !== undefined && os.km_atual !== null
         ? `${os.km_atual} km`
         : "--";
     document.getElementById("detalhe-veiculo-km").textContent = km;
 
-    // Ano / Cor
     const ano = os.veiculo_detalhes?.ano || "--";
     const cor = os.veiculo_detalhes?.cor || "--";
     document.getElementById("detalhe-veiculo-ano-cor").textContent =
@@ -64,35 +61,42 @@ async function carregarDetalhes(osId) {
 }
 
 async function carregarChecklistResumo(osId) {
-    const tbody = document.getElementById("checklist-body");
-    if (!tbody) return;
-    try {
-        const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/checklist/`);
-        if (response.ok) {
-            const checklist = await response.json();
-            const itens = [
-                { nome: "Data Recebimento", valor: checklist.data_recebimento || "-", status: "OK", obs: "" },
-                { nome: "Consultor", valor: checklist.consultor || "-", status: "OK", obs: "" },
-                { nome: "Nível Combustível", valor: checklist.nivel_combustivel || "-", status: "OK", obs: "" },
-                { nome: "Lataria/Pintura", valor: checklist.lataria_pintura || "-", status: "OK", obs: checklist.lataria_pintura || "" },
-                { nome: "Vidros/Faróis", valor: checklist.vidros_farois || "-", status: "OK", obs: checklist.vidros_farois || "" },
-                { nome: "Nível Óleo", valor: checklist.nivel_oleo || "-", status: "OK", obs: "" },
-                { nome: "Fluido Arrefecimento", valor: checklist.fluido_arrefecimento || "-", status: "OK", obs: "" },
-                { nome: "Observações Iniciais", valor: checklist.observacoes_iniciais || "-", status: "OK", obs: checklist.observacoes_iniciais || "" }
-            ];
-            tbody.innerHTML = itens
-                .map(item => `
-                    <tr>
-                        <td>${item.nome}</td>
-                        <td>${item.status}</td>
-                        <td>${item.valor}</td>
-                    </tr>
-                `).join("");
-        } else {
-            tbody.innerHTML = '<tr><td colspan="3">Checklist não encontrado.</td></tr>';
-        }
-    } catch (error) {
-        console.error(error);
-        tbody.innerHTML = '<tr><td colspan="3">Erro ao carregar checklist.</td></tr>';
+  const tbody = document.getElementById("checklist-body");
+  if (!tbody) return;
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:8000/api/oficina/os/${osId}/checklist/`,
+    );
+    if (response.ok) {
+      const checklist = await response.json();
+      const itens = [
+        { nome: "Data Recebimento", valor: checklist.data_recebimento || "-", status: "OK", obs: "" },
+        { nome: "Consultor", valor: checklist.consultor || "-", status: "OK", obs: "" },
+        { nome: "Nível Combustível", valor: checklist.nivel_combustivel || "-", status: "OK", obs: "" },
+        { nome: "Lataria/Pintura", valor: checklist.lataria_pintura || "-", status: "OK", obs: checklist.lataria_pintura || "" },
+        { nome: "Vidros/Faróis", valor: checklist.vidros_farois || "-", status: "OK", obs: checklist.vidros_farois || "" },
+        { nome: "Nível Óleo", valor: checklist.nivel_oleo || "-", status: "OK", obs: "" },
+        { nome: "Fluido Arrefecimento", valor: checklist.fluido_arrefecimento || "-", status: "OK", obs: "" },
+        { nome: "Observações Iniciais", valor: checklist.observacoes_iniciais || "-", status: "OK", obs: checklist.observacoes_iniciais || "" }
+      ];
+      tbody.innerHTML = itens
+        .map(
+          (item) => `
+          <tr>
+            <td>${item.nome}</td>
+            <td>${item.status}</td>
+            <td>${item.valor}</td>
+          </tr>
+        `,
+        )
+        .join("");
+    } else {
+      tbody.innerHTML =
+        '<tr><td colspan="3">Checklist não encontrado.</td></tr>';
     }
+  } catch (error) {
+    console.error(error);
+    tbody.innerHTML =
+      '<tr><td colspan="3">Erro ao carregar checklist.</td></tr>';
+  }
 }

@@ -99,6 +99,8 @@ const ExecucaoService = {
 };
 
 let currentOsId = null;
+let todasTarefas = [];
+let filtroAtual = 'todas';
 
 export function initExecucao(osId) {
     currentOsId = osId;
@@ -118,6 +120,26 @@ export function initExecucao(osId) {
         btnFinalizar.removeEventListener('click', finalizarOSHandler);
         btnFinalizar.addEventListener('click', finalizarOSHandler);
     }
+
+    const filtroSelect = document.getElementById('filtroStatus');
+    if (filtroSelect) {
+        filtroSelect.addEventListener('change', (e) => {
+            filtroAtual = e.target.value;
+            renderizarListaTarefas();
+        });
+    }
+
+    // Filtro via clique nos cards de resumo
+    document.querySelectorAll('.resumo-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const filtro = item.dataset.filtro;
+            if (filtro && filtroSelect) {
+                filtroSelect.value = filtro;
+                filtroAtual = filtro;
+                renderizarListaTarefas();
+            }
+        });
+    });
 }
 
 const adicionarTarefaHandler = () => adicionarTarefa();
@@ -167,64 +189,109 @@ async function carregarTarefas() {
     const lista = document.getElementById('listaTarefas');
     if (!lista) return;
 
-    lista.innerHTML = '<li>Carregando tarefas...</li>';
+    lista.innerHTML = '<li class="loading-placeholder"><i class="fas fa-spinner fa-pulse"></i> Carregando tarefas...</li>';
 
     try {
         const tarefas = await ExecucaoService.getTarefas(currentOsId);
-        lista.innerHTML = '';
-
-        if (!Array.isArray(tarefas) || tarefas.length === 0) {
-            lista.innerHTML = '<li class="text-muted">Nenhuma tarefa adicionada.</li>';
-            return;
-        }
-
-        tarefas.forEach(t => {
-            const li = document.createElement('li');
-            li.className = 'task-item';
-            li.innerHTML = `
-                <select class="task-status" data-id="${t.id}">
-                    <option value="pendente" ${t.status === 'pendente' ? 'selected' : ''}>Pendente</option>
-                    <option value="em_execucao" ${t.status === 'em_execucao' ? 'selected' : ''}>Em Execução</option>
-                    <option value="concluido" ${t.status === 'concluido' ? 'selected' : ''}>Concluído</option>
-                </select>
-                <span class="task-desc-label">${escapeHtml(t.descricao)}</span>
-                <button class="btn-icon-danger" data-id="${t.id}" title="Remover"><i class="fas fa-trash"></i></button>
-            `;
-            lista.appendChild(li);
-        });
-
-        // Adiciona evento de mudança de status
-        document.querySelectorAll('.task-status').forEach(select => {
-            select.addEventListener('change', statusChangeHandler);
-        });
-
-        // Eventos de remoção
-        document.querySelectorAll('.btn-icon-danger').forEach(btn => {
-            btn.addEventListener('click', deleteHandler);
-        });
-
+        todasTarefas = Array.isArray(tarefas) ? tarefas : [];
+        atualizarContadores();
+        renderizarListaTarefas();
     } catch (error) {
-        lista.innerHTML = `<li style="color:red;">Erro ao carregar: ${error.message}</li>`;
+        lista.innerHTML = `<li class="text-muted" style="color:red;">Erro ao carregar: ${escapeHtml(error.message)}</li>`;
     }
 }
 
-// CORREÇÃO: Normalizar status e atualizar
+function atualizarContadores() {
+    const total = todasTarefas.length;
+    const pendente = todasTarefas.filter(t => t.status === 'pendente').length;
+    const execucao = todasTarefas.filter(t => t.status === 'execucao' || t.status === 'em_execucao').length;
+    const concluido = todasTarefas.filter(t => t.status === 'concluido').length;
+
+    document.getElementById('totalCount').innerText = total;
+    document.getElementById('pendenteCount').innerText = pendente;
+    document.getElementById('execucaoCount').innerText = execucao;
+    document.getElementById('concluidoCount').innerText = concluido;
+}
+
+function renderizarListaTarefas() {
+    const lista = document.getElementById('listaTarefas');
+    if (!lista) return;
+
+    let tarefasFiltradas = [...todasTarefas];
+    if (filtroAtual !== 'todas') {
+        let statusFiltro = filtroAtual;
+        if (statusFiltro === 'execucao') statusFiltro = 'execucao';
+        tarefasFiltradas = tarefasFiltradas.filter(t => {
+            const tStatus = (t.status === 'em_execucao') ? 'execucao' : t.status;
+            return tStatus === statusFiltro;
+        });
+    }
+
+    if (tarefasFiltradas.length === 0) {
+        lista.innerHTML = '<li class="text-muted">Nenhuma tarefa encontrada.</li>';
+        return;
+    }
+
+    lista.innerHTML = '';
+    tarefasFiltradas.forEach(t => {
+        const li = document.createElement('li');
+        li.className = 'task-item';
+        
+        let statusValue = t.status;
+        let statusClass = '';
+        if (statusValue === 'pendente') statusClass = 'status-pendente';
+        else if (statusValue === 'em_execucao' || statusValue === 'execucao') {
+            statusValue = 'execucao';
+            statusClass = 'status-execucao';
+        }
+        else if (statusValue === 'concluido') statusClass = 'status-concluido';
+
+        li.innerHTML = `
+            <select class="task-status ${statusClass}" data-id="${t.id}">
+                <option value="pendente" ${t.status === 'pendente' ? 'selected' : ''}>⏳ Pendente</option>
+                <option value="execucao" ${(t.status === 'em_execucao' || t.status === 'execucao') ? 'selected' : ''}>⚙️ Em Execução</option>
+                <option value="concluido" ${t.status === 'concluido' ? 'selected' : ''}>✅ Concluído</option>
+            </select>
+            <span class="task-desc-label">${escapeHtml(t.descricao)}</span>
+            <button class="btn-icon-danger" data-id="${t.id}" title="Remover tarefa">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        `;
+        lista.appendChild(li);
+    });
+
+    // Eventos de mudança de status
+    document.querySelectorAll('.task-status').forEach(select => {
+        select.removeEventListener('change', statusChangeHandler);
+        select.addEventListener('change', statusChangeHandler);
+    });
+
+    // Eventos de remoção
+    document.querySelectorAll('.btn-icon-danger').forEach(btn => {
+        btn.removeEventListener('click', deleteHandler);
+        btn.addEventListener('click', deleteHandler);
+    });
+}
+
 const statusChangeHandler = async (e) => {
     const tarefaId = e.target.dataset.id;
     let newStatus = e.target.value;
-    if (newStatus === 'em_execucao') newStatus = 'execucao'; // Ajuste para o modelo
+    if (newStatus === 'execucao') newStatus = 'execucao';
     try {
         await ExecucaoService.atualizarTarefa(currentOsId, tarefaId, { status: newStatus });
-        carregarTarefas(); // Recarrega a lista
-    } catch (error) { '...' }
+        await carregarTarefas();
+    } catch (error) {
+        alert(`Erro ao atualizar status: ${error.message}`);
+        await carregarTarefas();
+    }
 };
 
 const deleteHandler = async (e) => {
     const tarefaId = e.currentTarget.dataset.id;
-    if (confirm('Deseja realmente remover esta tarefa?')) {
+    if (confirm('Deseja remover esta tarefa permanentemente?')) {
         try {
             await ExecucaoService.deletarTarefa(currentOsId, tarefaId);
-            carregarTarefas();
+            await carregarTarefas();
         } catch (error) {
             alert(error.message);
         }
@@ -234,7 +301,7 @@ const deleteHandler = async (e) => {
 async function adicionarTarefa() {
     const check = await checarChecklistNoBackend();
     if (!check.concluido) {
-        const continuar = confirm(`⚠️ O backend informou que o checklist NÃO está concluído.\n(Retorno: ${check.erro || JSON.stringify(check.raw)})\n\nDeseja forçar a inclusão da tarefa mesmo assim?`);
+        const continuar = confirm(`⚠️ O checklist ainda não foi concluído.\nDeseja forçar a inclusão da tarefa mesmo assim?`);
         if (!continuar) return;
     }
 
@@ -242,7 +309,6 @@ async function adicionarTarefa() {
     if (!descricao || descricao.trim() === '') return;
 
     try {
-        // Cria a tarefa com status inicial 'pendente'
         await ExecucaoService.salvarTarefa(currentOsId, { 
             descricao: descricao.trim(), 
             status: 'pendente'
@@ -254,10 +320,10 @@ async function adicionarTarefa() {
 }
 
 async function finalizarOS() {
-    if (!confirm('Deseja marcar esta O.S como finalizada?')) return;
+    if (!confirm('Deseja marcar esta O.S como finalizada?\nEsta ação não poderá ser desfeita.')) return;
     try {
         await ExecucaoService.finalizarOS(currentOsId);
-        alert('OS finalizada com sucesso!');
+        alert('✅ OS finalizada com sucesso!');
         const statusBadge = document.querySelector('.os-status-bar .badge');
         if (statusBadge) statusBadge.textContent = 'Concluído';
         window.dispatchEvent(new CustomEvent('os:criada'));

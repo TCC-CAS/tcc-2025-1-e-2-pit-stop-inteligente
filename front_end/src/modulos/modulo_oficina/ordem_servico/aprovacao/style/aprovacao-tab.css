@@ -13,6 +13,7 @@
     --gray-200: #e5e7eb;
     --gray-300: #d1d5db;
     --gray-600: #4b5563;
+    --gray-700: #374151;
     --gray-800: #1f2937;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
@@ -104,16 +105,7 @@
     transform: none;
 }
 
-.btn-warning {
-    background-color: var(--warning);
-    color: white;
-}
-.btn-warning:hover {
-    background-color: #d97706;
-    transform: translateY(-1px);
-}
-
-/* Tabela */
+/* Tabela principal */
 .table-container {
     overflow-x: auto;
     border-radius: var(--radius-sm);
@@ -143,6 +135,15 @@
     padding: 1rem;
     border-bottom: 1px solid var(--gray-200);
     color: var(--gray-800);
+    vertical-align: middle;
+}
+
+/* Coluna de descrição na tabela principal */
+#tabelaItensAprovacao td.desc-col {
+    max-width: 300px;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
 }
 
 #tabelaItensAprovacao tbody tr:hover {
@@ -181,7 +182,7 @@
 }
 
 /* ========================================= */
-/* Estilos da Modal (conteúdo do template)   */
+/* Estilos da Modal (tabela de itens)        */
 /* ========================================= */
 .aprovacao-modal-container {
     padding: 0.25rem;
@@ -234,7 +235,7 @@
     font-size: 0.9rem;
 }
 
-/* Lista de itens */
+/* Tabela dentro do modal */
 .itens-aprovacao {
     margin: 1.5rem 0;
 }
@@ -249,38 +250,51 @@
     color: var(--gray-800);
 }
 
-.itens-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    border: 1px solid var(--gray-200);
+.table-container-modal {
+    overflow-x: auto;
     border-radius: var(--radius-sm);
-    overflow: hidden;
+    border: 1px solid var(--gray-200);
 }
 
-.item-aprovacao-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.875rem 1rem;
-    border-bottom: 1px solid var(--gray-200);
+.modal-itens-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
     background: white;
 }
 
-.item-aprovacao-row:last-child {
-    border-bottom: none;
+.modal-itens-table thead {
+    background: var(--gray-50);
 }
 
-.item-aprovacao-row > span:first-child {
-    font-weight: 500;
+.modal-itens-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-600);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.modal-itens-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--gray-200);
     color: var(--gray-800);
+    vertical-align: middle;
 }
 
-.item-aprovacao-row > div {
-    display: flex;
-    gap: 0.5rem;
+.modal-itens-table td.desc-col {
+    max-width: 250px;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
 }
 
+.modal-itens-table .actions-cell {
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Botões de ação na modal */
 .btn-icon {
     background: transparent;
     border: none;
@@ -424,7 +438,42 @@
     transform: scale(1.05);
 }
 
-/* Responsividade */
+/* ========================================= */
+/* Estilos para impressão (PDF / papel)      */
+/* ========================================= */
+@media print {
+    .tab-card {
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+    }
+    .btn, .btn-icon, .aprovacao-actions, .checkbox-container, .actions-cell,
+    #btnGerenciarAprovacao, .reenviar-group {
+        display: none !important;
+    }
+    .table-container, .table-container-modal {
+        border: 1px solid #ccc;
+        overflow: visible;
+    }
+    #tabelaItensAprovacao th, #tabelaItensAprovacao td,
+    .modal-itens-table th, .modal-itens-table td {
+        border: 1px solid #ddd;
+    }
+    .badge {
+        border: 1px solid #aaa;
+        background: none !important;
+        color: black !important;
+    }
+    .info-cards {
+        grid-template-columns: repeat(2, 1fr);
+        break-inside: avoid;
+    }
+    .aprovacao-modal-container {
+        padding: 0;
+    }
+}
+
+/* Responsividade mobile */
 @media (max-width: 768px) {
     .tab-card {
         padding: 1rem;
@@ -447,13 +496,16 @@
         justify-content: center;
     }
 
-    .item-aprovacao-row {
-        flex-direction: column;
-        gap: 0.75rem;
-        align-items: flex-start;
+    .modal-itens-table th, .modal-itens-table td {
+        padding: 0.5rem;
+        font-size: 0.8rem;
     }
 
-    .item-aprovacao-row > div {
-        align-self: flex-end;
+    .modal-itens-table td.desc-col {
+        max-width: 150px;
+    }
+
+    #tabelaItensAprovacao td.desc-col {
+        max-width: 150px;
     }
 }

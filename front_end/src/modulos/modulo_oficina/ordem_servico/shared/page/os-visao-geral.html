@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pit Stop Inteligente - Visão Geral OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../../../shared/styles/variables.css">
     <link rel="stylesheet" href="../../../../../shared/styles/global.css">
     <link rel="stylesheet" href="../../../../../shared/styles/responsive-tablet.css">
@@ -20,15 +23,21 @@
 
         <main class="main-content-wrapper" id="mainContent">
             
+            <!-- Cabeçalho da OS - ESTRUTURA ESTÁVEL -->
             <div class="os-header card fade-in">
                 <div class="os-header-top">
                     <div>
                         <h1 class="os-title">OS #<span id="header-os-id">...</span></h1>
-                        <p class="os-subtitle"><span id="header-veiculo">...</span> • <span id="header-placa">...</span></p>
+                        <div class="os-subtitle">
+                            <span id="header-veiculo">...</span>
+                            <span class="separator">•</span>
+                            <span id="header-placa">...</span>
+                        </div>
                     </div>
-                    
                     <div class="header-actions-top">
-                        <button class="btn btn-outline"><i class="fas fa-print"></i> Imprimir</button>
+                        <button class="btn-outline" id="btnImprimirOS">
+                            <i class="fas fa-print"></i> Imprimir
+                        </button>
                     </div>
                 </div>
                 <div class="os-status-bar">
@@ -36,6 +45,7 @@
                 </div>
             </div>
 
+            <!-- Componente de abas -->
             <oficina-tabs>
                 <div class="tab active" role="tab" data-target="checklist">
                     <i class="fas fa-clipboard-check"></i> Checklist
@@ -60,8 +70,8 @@
                 </div>
             </oficina-tabs>
 
-            <div id="content-area" class="fade-in">
-                </div>
+            <!-- Área de conteúdo dinâmico -->
+            <div id="content-area" class="fade-in"></div>
 
         </main>
 
@@ -70,25 +80,25 @@
         </aside>
     </div>
 
+    <!-- Modais -->
     <oficina-modal id="modalNovaOS">
         <span slot="title">Nova Ordem de Serviço</span>
         <div slot="body">
+            <!-- conteúdo do formulário mantido igual ao original -->
             <div class="section-group">
-                <h4 class="section-title">
-                    <i class="fas fa-user"></i> Dados do Proprietário
-                </h4>
+                <h4 class="section-title"><i class="fas fa-user"></i> Dados do Proprietário</h4>
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group" style="position: relative;">
                             <label for="cliente">Cliente *</label>
-                            <input type="text" id="cliente" class="form-control" placeholder="Nome completo" required autocomplete="off">
+                            <input type="text" id="cliente" class="form-control" placeholder="Nome completo" autocomplete="off">
                             <div id="cliente-suggestions" class="autocomplete-suggestions d-none"></div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group" style="position: relative;">
                             <label for="cpf_cnpj">CPF/CNPJ *</label>
-                            <input type="text" id="cpf_cnpj" class="form-control" placeholder="000.000.000-00" required autocomplete="off">
+                            <input type="text" id="cpf_cnpj" class="form-control" placeholder="000.000.000-00" autocomplete="off">
                             <div id="cpf-cnpj-suggestions" class="autocomplete-suggestions d-none"></div>
                         </div>
                     </div>
@@ -108,13 +118,9 @@
                     </div>
                 </div>
             </div>
-
             <hr class="section-divider">
-
             <div class="section-group">
-                <h4 class="section-title">
-                    <i class="fas fa-car"></i> Dados do Veículo
-                </h4>
+                <h4 class="section-title"><i class="fas fa-car"></i> Dados do Veículo</h4>
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
