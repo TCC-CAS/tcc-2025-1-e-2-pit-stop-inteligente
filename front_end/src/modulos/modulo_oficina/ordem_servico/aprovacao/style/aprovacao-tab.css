@@ -509,3 +509,23 @@
         max-width: 150px;
     }
 }
+
+
+
+
+
+
+/* Feedback visual para itens com alteração pendente */
+.btn-approve.active-approve {
+    background-color: #10b981 !important;
+    color: white !important;
+    border-radius: 50%;
+    transform: scale(1.05);
+}
+
+.btn-reject.active-reject {
+    background-color: #ef4444 !important;
+    color: white !important;
+    border-radius: 50%;
+    transform: scale(1.05);
+}

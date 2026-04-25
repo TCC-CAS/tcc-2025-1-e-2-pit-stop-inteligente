@@ -67,7 +67,7 @@ class ChecklistSerializer(serializers.ModelSerializer):
             'nivel_combustivel', 'observacoes_iniciais',
             'lataria_pintura', 'vidros_farois',
             'possui_manual', 'possui_estepe_macaco', 'observacoes_internas',
-            'nivel_oleo', 'fluido_arrefecimento',
+            'nivel_oleo', 'fluido_arrefecimento', 'observacoes_mecanica', 
             'criado_em'
         ]
         read_only_fields = ['criado_em']
@@ -82,8 +82,10 @@ class TarefaExecucaoSerializer(serializers.ModelSerializer):
     os_id = serializers.PrimaryKeyRelatedField(
         source='os',
         queryset=OrdemServico.objects.all(),
-        write_only=False
+        write_only=False,
+        required=False
     )
+    descricao = serializers.CharField(required=False)
 
     class Meta:
         model = TarefaExecucao
@@ -98,7 +100,7 @@ class DocumentoSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Documento
-        fields = ['id', 'nome', 'tipo', 'data_inclusao', 'arquivo', 'origem']
+        fields = ['id', 'nome', 'tipo', 'data_inclusao', 'arquivo', 'origem', 'categoria']
 
     def get_tipo(self, obj):
         """Extrai a extensão do arquivo para o front-end desenhar o ícone correto (PDF, PNG, etc)"""

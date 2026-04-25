@@ -33,6 +33,7 @@ export class OficinaSidebar extends HTMLElement {
     render() {
         // Captura o valor inicial do atributo 'page' (vinda do HTML)
         const activePage = this.getAttribute('page');
+        const basePath = window.location.pathname.match(/.*?(?=\/front_end\/)/)?.[0] || '';
 
         const style = `
             <style>
@@ -135,22 +136,22 @@ export class OficinaSidebar extends HTMLElement {
                         </a>
                     </li>
                     <li>
-                        <a href="/front_end/src/modulos/modulo_oficina/cadastro_cliente/pages/cadastro-cliente.html" class="${activePage === 'clientes' ? 'active' : ''}">
+                        <a href="${basePath}/front_end/src/modulos/modulo_oficina/cadastro_cliente/pages/cadastro-cliente.html" class="${activePage === 'clientes' ? 'active' : ''}">
                             <span class="icon">👥</span> Clientes
                         </a>
                     </li>
                     <li>
-                        <a href="/front_end/src/modulos/modulo_oficina/ordem_servico/shared/page/os-visao-geral.html" class="${activePage === 'operacoes' ? 'active' : ''}">
+                        <a href="${basePath}/front_end/src/modulos/modulo_oficina/ordem_servico/shared/page/os-visao-geral.html" class="${activePage === 'operacoes' ? 'active' : ''}">
                             <span class="icon">🛠️</span> Operações e Serviços
                         </a>
                     </li>
                     <li>
-                        <a href="/front_end/src/modulos/modulo_oficina/atualizar_dados_oficina/pages/atualizacao_dados_oficina.html" class="${activePage === 'atualizacao' ? 'active' : ''}">
+                        <a href="${basePath}/front_end/src/modulos/modulo_oficina/atualizar_dados_oficina/pages/atualizacao_dados_oficina.html" class="${activePage === 'atualizacao' ? 'active' : ''}">
                             <span class="icon">🔄</span> Atualização de Dados
                         </a>
                     </li>
                     <li>
-                        <a href="/front_end/src/modulos/modulo_oficina/precos_servicos/configuracoes_gerais/pages/servicos.html" class="${activePage === 'precos' ? 'active' : ''}">
+                        <a href="${basePath}/front_end/src/modulos/modulo_oficina/precos_servicos/configuracoes_gerais/pages/servicos.html" class="${activePage === 'precos' ? 'active' : ''}">
                             <span class="icon">💲</span> Preços e Serviços
                         </a>
                     </li>
