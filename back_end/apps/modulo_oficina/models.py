@@ -238,6 +238,7 @@ class ChecklistRecebimento(models.Model):
     # --- Passo 4: Mecânica ---
     nivel_oleo = models.CharField(max_length=20, choices=NIVEL_OLEO_CHOICES, default='ok')
     fluido_arrefecimento = models.CharField(max_length=20, choices=FLUIDO_ARREFECIMENTO_CHOICES, default='ok')
+    observacoes_mecanica = models.TextField(blank=True, null=True)
 
     # --- Passo 6: Assinaturas ---
     assinatura_cliente = models.TextField(blank=True, null=True)
@@ -304,12 +305,19 @@ class Documento(models.Model):
         ('checklist', 'Checklist Inicial'),
         ('geral', 'Anexo Geral (NF, Orçamento)'),
     ]
-    
+
+    CATEGORIA_CHOICES = [                     
+        ('externo', 'Parte Externa'),
+        ('interno', 'Parte Interna'),
+        ('mecanica', 'Mecânica'),
+    ]
+
     os = models.ForeignKey(OrdemServico, on_delete=models.CASCADE, related_name='documentos')
     
     arquivo = models.FileField(upload_to='documentos_os/')
     nome_arquivo = models.CharField(max_length=255, blank=True, null=True) 
     origem = models.CharField(max_length=20, choices=ORIGEM_CHOICES, default='geral')
+    categoria = models.CharField(max_length=20, choices=CATEGORIA_CHOICES, blank=True, null=True)      
     
     # Auditoria 
     criado_em = models.DateTimeField(auto_now_add=True)

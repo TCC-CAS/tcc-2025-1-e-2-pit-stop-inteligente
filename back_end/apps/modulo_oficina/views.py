@@ -323,6 +323,7 @@ class ChecklistAPIView(APIView):
             'observacoes_internas': data.get('observacoes_internas'),
             'nivel_oleo': data.get('nivel_oleo', 'ok'),
             'fluido_arrefecimento': data.get('fluido_arrefecimento', 'ok'),
+            'observacoes_mecanica': data.get('observacoes_mecanica', ''),
         }
         checklist, _ = ChecklistRecebimento.objects.update_or_create(os=os, defaults=defaults)
         _registrar_historico(os, 'checklist', 'Checklist Preenchido', 'Checklist salvo.', request)
@@ -416,7 +417,7 @@ class TarefaExecucaoAPIView(APIView):
         tarefas = TarefaExecucao.objects.filter(os_id=os_id)
         return Response(TarefaExecucaoSerializer(tarefas, many=True).data, status=status.HTTP_200_OK)
 
-    def post(self, request, os_id):
+    def patch(self, request, os_id):
         get_object_or_404(OrdemServico, id=os_id, oficina=_get_oficina_atual(request))
         dados = request.data.copy()
         dados['os_id'] = os_id
@@ -453,11 +454,13 @@ class DocumentoUploadAPIView(APIView):
         for file in files:
             # Lê a origem do request.data (se não vier, usa 'geral')
             origem = request.data.get('origem', 'geral')
+            categoria = request.data.get('categoria', None)
             doc = Documento.objects.create(
-                os=os, 
-                arquivo=file, 
-                nome_arquivo=file.name, 
-                origem=origem
+                os=os,
+                arquivo=file,
+                nome_arquivo=file.name,
+                origem=origem,
+                categoria=categoria
             )
             docs_criados.append(doc)
             

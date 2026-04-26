@@ -276,7 +276,6 @@ function renderizarListaTarefas() {
 const statusChangeHandler = async (e) => {
     const tarefaId = e.target.dataset.id;
     let newStatus = e.target.value;
-    if (newStatus === 'execucao') newStatus = 'execucao';
     try {
         await ExecucaoService.atualizarTarefa(currentOsId, tarefaId, { status: newStatus });
         await carregarTarefas();
