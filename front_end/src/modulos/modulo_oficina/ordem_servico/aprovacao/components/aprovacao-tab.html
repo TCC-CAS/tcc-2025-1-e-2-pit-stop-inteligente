@@ -1,0 +1,115 @@
+<link rel="stylesheet" href="../../aprovacao/style/aprovacao-tab.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="tab-card fade-in">
+    <div class="tab-card-header">
+        <h3 class="tab-card-title">
+            <i class="fas fa-check-circle"></i> Aprovação de Orçamento
+        </h3>
+        <button class="btn btn-primary" id="btnGerenciarAprovacao">
+            <i class="fas fa-tasks"></i> Gerenciar Aprovação
+        </button>
+    </div>
+
+    <div class="table-container">
+        <table id="tabelaItensAprovacao">
+            <thead>
+                <tr>
+                    <th>Peça / Serviço</th>
+                    <th>Descrição</th>   <!-- NOVA COLUNA -->
+                    <th>Valor</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="listaAprovacaoBody">
+                <tr>
+                    <td colspan="4" class="text-center">Carregando...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<template id="tmplGerenciarAprovacao">
+    <div class="aprovacao-modal-container">
+        <!-- Status Geral e Informações do Cliente -->
+        <div class="info-cards">
+            <div class="info-card">
+                <i class="fas fa-chart-line"></i>
+                <div>
+                    <span class="info-label">Status Geral</span>
+                    <span class="info-value" id="modalStatusGeral">--</span>
+                </div>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-calendar-alt"></i>
+                <div>
+                    <span class="info-label">Data Envio</span>
+                    <span class="info-value" id="modalDataEnvio">--</span>
+                </div>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-user"></i>
+                <div>
+                    <span class="info-label">Cliente</span>
+                    <span class="info-value" id="modalCliente">--</span>
+                </div>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-phone-alt"></i>
+                <div>
+                    <span class="info-label">Telefone</span>
+                    <span class="info-value" id="modalTelefone">--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Itens para Aprovação -->
+        <div class="itens-aprovacao">
+            <h5><i class="fas fa-list-ul"></i> Aprovação Item a Item</h5>
+            <div class="table-container-modal">
+                <table class="modal-itens-table">
+                    <thead>
+                        <tr>
+                            <th>Peça / Serviço</th>
+                            <th>Descrição</th>
+                            <th>Valor (R$)</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaItensModal">
+                        <!-- Itens serão inseridos dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Confirmação de Aprovação -->
+        <div class="confirmacao-aprovacao">
+            <label class="checkbox-container">
+                <input type="checkbox" id="confirmarAprovacao">
+                <span class="checkmark"></span>
+                <span class="checkbox-text">Confirmo que li e concordo com os valores e serviços apresentados, autorizando a execução do orçamento.</span>
+            </label>
+        </div>
+
+        <!-- Ações de Reenvio e Aprovação Final -->
+        <div class="aprovacao-actions">
+            <div class="reenviar-group">
+                <span>Reenviar solicitação:</span>
+                <button class="btn-icon" id="btnReenviarWhatsApp" title="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </button>
+                <button class="btn-icon" id="btnReenviarSMS" title="SMS">
+                    <i class="fas fa-sms"></i>
+                </button>
+                <button class="btn-icon" id="btnReenviarEmail" title="E-mail">
+                    <i class="fas fa-envelope"></i>
+                </button>
+            </div>
+            <button class="btn btn-success" id="btnAprovarComoCliente" disabled>
+                <i class="fas fa-check"></i> Aprovar Orçamento
+            </button>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Serviços e Preços</title>
+    
+    <link rel="stylesheet" href="../../../../../shared/styles/variables.css">
+    <link rel="stylesheet" href="../../../../../shared/styles/global.css">
+    
+    <link rel="stylesheet" href="../style/servicos.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <oficina-header></oficina-header>
+
+    <div class="app-body">
+        <oficina-sidebar class="sidebar-left" page="precos"></oficina-sidebar>
+
+        <main class="main-content-wrapper" id="mainContent">
+            
+            <header class="page-header-custom">
+                <div>
+                    <h1 class="page-title">Gestão de Serviços</h1>
+                    <p class="text-secondary">Gerencie o catálogo de serviços e regras de precificação.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="btnAtualizar">
+                        <i class="fas fa-sync-alt"></i> Atualizar Dados
+                    </button>
+                </div>
+            </header>
+
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab active" data-tab="servicos">Serviços Disponíveis</button>
+                    <button class="tab" data-tab="configuracoes">Configurações Gerais</button>
+                </div>
+            </div>
+
+            <div class="tab-content-wrapper">
+                <div id="servicos" class="tab-pane active">
+                    <div class="card content-card">
+                        <div class="toolbar">
+                            <div class="search-box-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" id="buscaServico" class="form-control search-input" placeholder="Buscar serviço por nome...">
+                            </div>
+                            <button class="btn btn-primary" id="btnNovoServico">
+                                <i class="fas fa-plus"></i> Novo Serviço
+                            </button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table id="tabelaServicos" class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Serviço</th>
+                                        <th class="text-center">Tempo Padrão (h)</th>
+                                        <th class="text-right">Valor Base (Mão de Obra)</th>
+                                        <th class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaServicosBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4">
+                                            <i class="fas fa-spinner fa-spin"></i> Carregando dados do servidor...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="configuracoes" class="tab-pane">
+                    
+                    <div class="hourly-rate-card mb-4">
+                        <div class="hourly-rate-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="hourly-rate-info">
+                            <h3>Valor Hora da Mão de Obra</h3>
+                            <p>Este valor base é multiplicado pelo tempo de serviço para compor o preço inicial.</p>
+                        </div>
+                        <div class="hourly-rate-action">
+                            <div class="input-currency-wrapper">
+                                <span class="currency-symbol">R$</span>
+                                <input type="number" id="valorHoraMecanico" step="0.50" placeholder="0.00">
+                            </div>
+                            <button class="btn-save-circle" id="btnSalvarHora" title="Salvar Valor Hora">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card content-card">
+                        <div class="card-header-flex">
+                            <h2 class="card-title-small">Categorias de Veículos e Taxas</h2>
+                            <button class="btn btn-sm btn-outline-secondary" id="btnRestaurarPadroes">
+                                <i class="fas fa-undo"></i> Restaurar Padrões
+                            </button>
+                        </div>
+                        <p class="text-secondary mb-4 description-text">
+                            Defina o percentual de acréscimo (+) sobre o valor da mão de obra que será aplicado automaticamente nas Ordens de Serviço dependendo do carro.
+                        </p>
+                        
+                        <div class="categories-grid" id="containerCategorias">
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modalServico">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitulo">Novo Serviço</h3>
+                <button class="modal-close" id="btnFecharModal" title="Fechar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formServico">
+                    <input type="hidden" id="servicoId">
+                    
+                    <div class="form-group mb-3">
+                        <label for="nomeServico">Nome do Serviço <span class="text-danger">*</span></label>
+                        <input type="text" id="nomeServico" class="form-control" required placeholder="Ex: Troca de Pastilhas Dianteiras">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="descricaoServico">Descrição Detalhada</label>
+                        <textarea id="descricaoServico" class="form-control" rows="2" placeholder="Descreva o que está incluso..."></textarea>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="tempoServico">Tempo Estimado (Horas) <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" id="tempoServico" class="form-control input-with-suffix" step="0.1" min="0.1" required placeholder="1.0">
+                            <span class="input-group-text">h</span>
+                        </div>
+                    </div>
+
+                    <div class="calc-preview-box">
+                        <h4 class="calc-title">Custo Base da Mão de Obra</h4>
+                        <div class="calc-row">
+                            <span class="calc-label">Cálculo (<span id="previewTempo">0</span>h x R$ <span id="previewValorHora">0</span>)</span>
+                            <span class="calc-value font-bold text-primary">R$ <span id="previewTotal">0,00</span></span>
+                        </div>
+                        <p class="text-xs text-secondary mt-2">
+                            * O valor final ao cliente poderá variar dependendo da categoria do veículo selecionado na Ordem de Serviço.
+                        </p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btnCancelarModal">Cancelar</button>
+                <button class="btn btn-primary" id="btnSalvarServico">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../../../../../shared/components/oficina-header.js"></script>
+    <script type="module" src="../../../../../shared/components/oficina-sidebar.js"></script>
+    <script type="module" src="../scripts/servicos.js"></script>
+</body>
+</html>

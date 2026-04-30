@@ -1,0 +1,531 @@
+/* ========================================= */
+/* Variáveis e Reset para consistência       */
+/* ========================================= */
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --success: #10b981;
+    --success-dark: #059669;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --radius: 0.75rem;
+    --radius-sm: 0.5rem;
+}
+
+/* ========================================= */
+/* Estilos da aba Aprovação                  */
+/* ========================================= */
+.tab-card {
+    background: #ffffff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.2s ease;
+}
+
+.tab-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.tab-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.tab-card-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tab-card-title i {
+    color: var(--primary);
+    font-size: 1.4rem;
+}
+
+/* Botões principais */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--gray-100);
+    color: var(--gray-800);
+}
+
+.btn i {
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background-color: var(--success);
+    color: white;
+}
+.btn-success:hover:not(:disabled) {
+    background-color: var(--success-dark);
+    transform: translateY(-1px);
+}
+.btn-success:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Tabela principal */
+.table-container {
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-200);
+    background: white;
+}
+
+#tabelaItensAprovacao {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+#tabelaItensAprovacao thead {
+    background: var(--gray-50);
+}
+
+#tabelaItensAprovacao th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-600);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+#tabelaItensAprovacao td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+    color: var(--gray-800);
+    vertical-align: middle;
+}
+
+/* Coluna de descrição na tabela principal */
+#tabelaItensAprovacao td.desc-col {
+    max-width: 300px;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+#tabelaItensAprovacao tbody tr:hover {
+    background: var(--gray-50);
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Badges de status */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    background: var(--gray-100);
+    color: var(--gray-600);
+}
+
+.badge-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-danger {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* ========================================= */
+/* Estilos da Modal (tabela de itens)        */
+/* ========================================= */
+.aprovacao-modal-container {
+    padding: 0.25rem;
+}
+
+/* Cards de informações */
+.info-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--gray-50);
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--primary);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.info-card i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.info-card div {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--gray-600);
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-weight: 600;
+    color: var(--gray-800);
+    font-size: 0.9rem;
+}
+
+/* Tabela dentro do modal */
+.itens-aprovacao {
+    margin: 1.5rem 0;
+}
+
+.itens-aprovacao h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gray-800);
+}
+
+.table-container-modal {
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-200);
+}
+
+.modal-itens-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    background: white;
+}
+
+.modal-itens-table thead {
+    background: var(--gray-50);
+}
+
+.modal-itens-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-600);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.modal-itens-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--gray-200);
+    color: var(--gray-800);
+    vertical-align: middle;
+}
+
+.modal-itens-table td.desc-col {
+    max-width: 250px;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.modal-itens-table .actions-cell {
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Botões de ação na modal */
+.btn-icon {
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.btn-approve {
+    color: var(--success);
+}
+.btn-approve:hover {
+    background: #d1fae5;
+    color: var(--success-dark);
+    transform: scale(1.05);
+}
+
+.btn-reject {
+    color: var(--danger);
+}
+.btn-reject:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+    transform: scale(1.05);
+}
+
+/* Checkbox customizado */
+.confirmacao-aprovacao {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    user-select: none;
+    position: relative;
+    padding-left: 2rem;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1.25rem;
+    width: 1.25rem;
+    background-color: #fff;
+    border: 2px solid var(--gray-300);
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    border-color: var(--primary);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-container .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox-text {
+    color: var(--gray-700);
+    line-height: 1.4;
+}
+
+/* Ações da modal */
+.aprovacao-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.reenviar-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.reenviar-group span {
+    font-weight: 500;
+    color: var(--gray-600);
+    font-size: 0.85rem;
+}
+
+.reenviar-group .btn-icon {
+    color: var(--gray-600);
+    background: var(--gray-100);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+.reenviar-group .btn-icon:hover {
+    background: var(--gray-200);
+    color: var(--primary);
+    transform: scale(1.05);
+}
+
+/* ========================================= */
+/* Estilos para impressão (PDF / papel)      */
+/* ========================================= */
+@media print {
+    .tab-card {
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+    }
+    .btn, .btn-icon, .aprovacao-actions, .checkbox-container, .actions-cell,
+    #btnGerenciarAprovacao, .reenviar-group {
+        display: none !important;
+    }
+    .table-container, .table-container-modal {
+        border: 1px solid #ccc;
+        overflow: visible;
+    }
+    #tabelaItensAprovacao th, #tabelaItensAprovacao td,
+    .modal-itens-table th, .modal-itens-table td {
+        border: 1px solid #ddd;
+    }
+    .badge {
+        border: 1px solid #aaa;
+        background: none !important;
+        color: black !important;
+    }
+    .info-cards {
+        grid-template-columns: repeat(2, 1fr);
+        break-inside: avoid;
+    }
+    .aprovacao-modal-container {
+        padding: 0;
+    }
+}
+
+/* Responsividade mobile */
+@media (max-width: 768px) {
+    .tab-card {
+        padding: 1rem;
+    }
+
+    .info-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .aprovacao-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .reenviar-group {
+        justify-content: center;
+    }
+
+    .btn-success {
+        justify-content: center;
+    }
+
+    .modal-itens-table th, .modal-itens-table td {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .modal-itens-table td.desc-col {
+        max-width: 150px;
+    }
+
+    #tabelaItensAprovacao td.desc-col {
+        max-width: 150px;
+    }
+}
+
+
+
+
+
+
+/* Feedback visual para itens com alteração pendente */
+.btn-approve.active-approve {
+    background-color: #10b981 !important;
+    color: white !important;
+    border-radius: 50%;
+    transform: scale(1.05);
+}
+
+.btn-reject.active-reject {
+    background-color: #ef4444 !important;
+    color: white !important;
+    border-radius: 50%;
+    transform: scale(1.05);
+}

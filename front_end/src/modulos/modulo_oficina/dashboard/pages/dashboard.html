@@ -1,0 +1,202 @@
+=<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Pit Stop Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../../../shared/styles/variables.css">
+    <link rel="stylesheet" href="../../../../../shared/styles/global.css">
+    <link rel="stylesheet" href="../../../../../shared/styles/responsive-tablet.css">
+    <link rel="stylesheet" href="../../../../../shared/styles/responsive-mobile.css">
+    <link rel="stylesheet" href="../style/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <oficina-header></oficina-header>
+    <div class="app-body">
+        <oficina-sidebar class="sidebar-left" page="dashboard"></oficina-sidebar>
+        <main class="main-content-wrapper">
+            <!-- Cabeçalho + exportação + botão últimas OS -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Dashboard Gerencial</h1>
+                    <p class="text-secondary">Visão estratégica com indicadores e alertas</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline-secondary" id="btnVerUltimasOS"><i class="fas fa-history"></i> Últimas O.S</button>
+                    <button class="btn btn-outline-secondary" id="btnExportarPDF"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="btn btn-outline-secondary" id="btnExportarExcel"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button class="btn btn-outline-secondary" id="btnExportarCSV"><i class="fas fa-file-csv"></i> CSV</button>
+                </div>
+            </div>
+
+            <!-- Filtros globais -->
+            <div class="filters-bar card">
+                <div class="filter-group">
+                    <label><i class="fas fa-calendar-alt"></i> Período</label>
+                    <select id="periodoSelect" class="form-control-sm">
+                        <option value="7">Últimos 7 dias</option>
+                        <option value="30" selected>Últimos 30 dias</option>
+                        <option value="90">Últimos 90 dias</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                <div class="filter-group" id="customDateRange" style="display: none;">
+                    <label>De</label>
+                    <input type="date" id="dataInicio" class="form-control-sm">
+                    <label>Até</label>
+                    <input type="date" id="dataFim" class="form-control-sm">
+                    <button class="btn btn-sm btn-primary" id="btnAplicarPeriodo">Aplicar</button>
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-filter"></i> Status OS</label>
+                    <select id="statusFiltro" class="form-control-sm">
+                        <option value="todos">Todos</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="execucao">Em Execução</option>
+                        <option value="concluido">Concluído</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-user-cog"></i> Mecânico</label>
+                    <select id="mecanicoFiltro" class="form-control-sm">
+                        <option value="todos">Todos</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-wrench"></i> Tipo Serviço</label>
+                    <select id="servicoFiltro" class="form-control-sm">
+                        <option value="todos">Todos</option>
+                    </select>
+                </div>
+                <button class="btn btn-sm btn-secondary" id="btnRefreshDashboard"><i class="fas fa-sync-alt"></i> Atualizar</button>
+            </div>
+
+            <!-- KPIs (sem atraso e retrabalho) -->
+            <div class="kpi-grid">
+                <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-clipboard-list"></i></div><div class="kpi-info"><span class="kpi-label">O.S Abertas</span><span class="kpi-value" id="kpiAbertas">0</span><span class="kpi-trend" id="trendAbertas"></span></div></div>
+                <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-spinner"></i></div><div class="kpi-info"><span class="kpi-label">Em Andamento</span><span class="kpi-value" id="kpiAndamento">0</span><span class="kpi-trend" id="trendAndamento"></span></div></div>
+                <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-check-circle"></i></div><div class="kpi-info"><span class="kpi-label">Concluídas</span><span class="kpi-value" id="kpiConcluidas">0</span><span class="kpi-trend" id="trendConcluidas"></span></div></div>
+                <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div><div class="kpi-info"><span class="kpi-label">Faturamento (R$)</span><span class="kpi-value" id="kpiFaturamento">0,00</span><span class="kpi-trend" id="trendFaturamento"></span></div></div>
+                <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-ticket-alt"></i></div><div class="kpi-info"><span class="kpi-label">Ticket Médio</span><span class="kpi-value" id="kpiTicketMedio">0,00</span><span class="kpi-trend" id="trendTicket"></span></div></div>
+                <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-hourglass-half"></i></div><div class="kpi-info"><span class="kpi-label">Tempo Médio (dias)</span><span class="kpi-value" id="kpiTempoMedio">0</span><span class="kpi-trend" id="trendTempo"></span></div></div>
+            </div>
+
+            <!-- Gráficos: linha com 2 gráficos lado a lado -->
+            <div class="charts-row">
+                <div class="chart-card"><div class="chart-header"><h3><i class="fas fa-chart-pie"></i> O.S por Status</h3></div><canvas id="statusPieChart"></canvas></div>
+                <div class="chart-card"><div class="chart-header"><h3><i class="fas fa-chart-line"></i> Evolução de O.S</h3></div><canvas id="evolucaoOSChart"></canvas></div>
+            </div>
+            
+            <!-- Segunda linha de gráficos: 3 gráficos lado a lado -->
+            <div class="charts-row three-charts">
+                <div class="chart-card"><div class="chart-header"><h3><i class="fas fa-chart-bar"></i> Faturamento Mensal</h3></div><canvas id="faturamentoBarChart"></canvas></div>
+                <div class="chart-card"><div class="chart-header"><h3><i class="fas fa-chart-simple"></i> Serviços Mais Realizados</h3></div><canvas id="servicosRealizadosChart"></canvas></div>
+                <div class="chart-card"><div class="chart-header"><h3><i class="fas fa-chart-simple"></i> Serviços Mais Rentáveis</h3></div><canvas id="servicosRentaveisChart"></canvas></div>
+            </div>
+
+            <!-- Cards de resumo e alertas -->
+            <div class="two-columns">
+                <div class="card os-summary-card">
+                    <div class="card-header-flex">
+                        <h3><i class="fas fa-car-side"></i> Ordens de Serviço</h3>
+                        <span class="badge-info" id="totalOSCard">0 total</span>
+                    </div>
+                    <div class="os-status-stats" id="osStatusStats"></div>
+                </div>
+                <div class="card alerts-card">
+                    <div class="card-header-flex"><h3><i class="fas fa-bell"></i> Alertas e Gargalos</h3></div>
+                    <div id="alertList" class="alert-list"></div>
+                </div>
+            </div>
+
+            <!-- Aprovações e Desempenho da Equipe -->
+            <div class="two-columns">
+                <div class="card aprovacao-card">
+                    <div class="card-header-flex"><h3><i class="fas fa-check-double"></i> Aprovação de Orçamentos</h3></div>
+                    <div class="aprovacao-stats">
+                        <div><span>Pendentes:</span><strong id="aprovPendentes">0</strong></div>
+                        <div><span>Aprovados:</span><strong id="aprovAprovados">0</strong></div>
+                        <div><span>Reprovados:</span><strong id="aprovReprovados">0</strong></div>
+                        <div><span>Tempo médio espera:</span><strong id="aprovTempoMedio">0 dias</strong></div>
+                    </div>
+                </div>
+                <div class="card equipe-card">
+                    <div class="card-header-flex"><h3><i class="fas fa-users"></i> Desempenho da Equipe</h3></div>
+                    <div class="table-responsive">
+                        <table class="custom-table" id="tabelaEquipe">
+                            <thead><tr><th>Mecânico</th><th>O.S</th><th>Tempo médio (dias)</th><th>Eficiência</th></tr></thead>
+                            <tbody id="equipeBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para listagem de OS por status -->
+    <oficina-modal id="modalOSList" class="aprovacao-style-modal">
+        <span slot="title"><i class="fas fa-list-ul"></i> Ordens de Serviço - <span id="modalStatusTitle"></span></span>
+        <div slot="body">
+            <div class="table-container-modal">
+                <table class="modal-itens-table" id="listaOSTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Veículo</th>
+                            <th>Placa</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalOSTbody"></tbody>
+                </table>
+            </div>
+        </div>
+        <div slot="footer">
+            <button class="btn btn-secondary" onclick="document.getElementById('modalOSList').close()">
+                <i class="fas fa-times"></i> Fechar
+            </button>
+        </div>
+    </oficina-modal>
+
+    <!-- Modal para Últimas Ordens de Serviço -->
+    <oficina-modal id="modalUltimasOS" class="aprovacao-style-modal">
+        <span slot="title"><i class="fas fa-history"></i> Últimas Ordens de Serviço</span>
+        <div slot="body">
+            <div class="table-container-modal">
+                <table class="modal-itens-table" id="ultimasOSTableModal">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Veículo</th>
+                            <th>Placa</th>
+                            <th>Status</th>
+                            <th>Data Abertura</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ultimasOSBodyModal"></tbody>
+                </table>
+            </div>
+        </div>
+        <div slot="footer">
+            <button class="btn btn-secondary" onclick="document.getElementById('modalUltimasOS').close()">
+                <i class="fas fa-times"></i> Fechar
+            </button>
+        </div>
+    </oficina-modal>
+
+    <script type="module" src="../../../../../shared/components/oficina-header.js"></script>
+    <script type="module" src="../../../../../shared/components/oficina-sidebar.js"></script>
+    <script type="module" src="../../../../../shared/components/oficina-modal.js"></script>
+    <script type="module" src="../components/dashboard.js"></script>
+</body>
+</html>

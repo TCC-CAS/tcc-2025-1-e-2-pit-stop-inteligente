@@ -1,0 +1,30 @@
+<link rel="stylesheet" href="../../documentos/style/documentos-tab.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="tab-card fade-in">
+    <div class="tab-card-header">
+        <h3 class="tab-card-title">Documentos da OS</h3>
+        <button class="btn btn-primary btn-sm" id="btnIncluirDocumento">
+            <i class="fas fa-plus"></i> Incluir Documento
+        </button>
+    </div>
+
+    <!-- Grade de documentos -->
+    <div class="docs-grid" id="docsGridBody"></div>
+</div>
+
+<!-- Template para cada documento na grade -->
+<template id="tmplDocumento">
+    <div class="doc-card" data-id="" data-url="">
+        <div class="doc-icon">
+            <i class="fas"></i>
+        </div>
+        <div class="doc-info">
+            <span class="doc-name"></span>
+            <span class="doc-date"></span>
+        </div>
+        <button class="btn-icon-danger btn-remover-doc" title="Remover documento">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+</template>

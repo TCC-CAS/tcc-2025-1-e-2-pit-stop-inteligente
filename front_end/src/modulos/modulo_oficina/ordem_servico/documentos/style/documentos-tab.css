@@ -1,0 +1,196 @@
+/* ========================================= */
+/* Estilos da aba Documentos                  */
+/* ========================================= */
+
+.tab-card {
+    background: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    padding: 1.5rem;
+    transition: box-shadow 0.2s ease;
+}
+
+.tab-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.tab-card-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+/* Grade de documentos */
+.docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+/* Card individual */
+.doc-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.doc-card:hover {
+    border-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+.doc-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.doc-icon .fa-file-pdf {
+    color: #dc2626;
+}
+.doc-icon .fa-file-image {
+    color: #10b981;
+}
+.doc-icon .fa-file-word {
+    color: #2563eb;
+}
+.doc-icon .fa-file-excel {
+    color: #16a34a;
+}
+.doc-icon .fa-file-alt,
+.doc-icon .fa-file {
+    color: #6b7280;
+}
+
+.doc-info {
+    flex: 1;
+    overflow: hidden;
+}
+
+.doc-name {
+    display: block;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #1f2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.doc-date {
+    display: block;
+    font-size: 0.7rem;
+    color: #6b7280;
+    margin-top: 0.2rem;
+}
+
+.btn-remover-doc {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 9999px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-remover-doc:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.empty-state, .error-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* Estilos do modal de upload */
+.upload-area {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.selected-files {
+    font-size: 0.85rem;
+    color: #4b5563;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-primary {
+    background-color: #2563eb;
+    color: white;
+}
+.btn-primary:hover:not(:disabled) {
+    background-color: #1d4ed8;
+}
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background-color: #f3f4f6;
+    color: #1f2937;
+    border: 1px solid #d1d5db;
+}
+.btn-secondary:hover {
+    background-color: #e5e7eb;
+}
+
+.modal-docs-grid {
+    margin-top: 1rem;
+    max-height: 50vh;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+    .tab-card {
+        padding: 1rem;
+    }
+    .docs-grid {
+        grid-template-columns: 1fr;
+    }
+    .upload-area {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .upload-area .btn {
+        justify-content: center;
+    }
+}

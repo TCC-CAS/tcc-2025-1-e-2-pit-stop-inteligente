@@ -1,0 +1,360 @@
+/* execucao-tab.css */
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --success: #10b981;
+    --success-dark: #059669;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-600: #4b5563;
+    --gray-800: #1f2937;
+    --radius: 0.75rem;
+    --radius-sm: 0.5rem;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.tab-card {
+    background: #ffffff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.tab-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gray-50);
+}
+
+.tab-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tab-card-title i {
+    color: var(--primary);
+}
+
+/* Resumo de tarefas (cards contadores) */
+.resumo-tarefas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: #ffffff;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.resumo-item {
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.resumo-item:hover {
+    background: #eff6ff;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.resumo-item i {
+    font-size: 1.25rem;
+    color: var(--primary);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.resumo-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--gray-600);
+    display: block;
+}
+
+.resumo-numero {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    line-height: 1.2;
+}
+
+/* Wrapper das tarefas */
+.tarefas-wrapper {
+    padding: 1.5rem;
+}
+
+.tarefas-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background-color: var(--success);
+    color: white;
+}
+.btn-success:hover {
+    background-color: var(--success-dark);
+    transform: translateY(-1px);
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.filtro-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--gray-100);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+}
+
+.filtro-wrapper i {
+    color: var(--gray-600);
+}
+
+.filtro-status {
+    border: none;
+    background: transparent;
+    padding: 0.4rem 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--gray-800);
+    cursor: pointer;
+    outline: none;
+}
+
+/* Lista de tarefas */
+.task-list-container {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.task-list-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--gray-100);
+    border-bottom: 1px solid var(--gray-200);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-600);
+}
+
+.header-status {
+    flex-shrink: 0;
+    width: 140px;
+}
+
+.header-descricao {
+    flex: 1;
+}
+
+.header-acoes {
+    flex-shrink: 0;
+    width: 50px;
+    text-align: center;
+}
+
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--gray-100);
+    transition: all 0.2s;
+    animation: fadeSlideIn 0.2s ease;
+}
+
+.task-item:hover {
+    background-color: var(--gray-50);
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Select de status estilizado */
+.task-status {
+    flex-shrink: 0;
+    width: 140px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid var(--gray-300);
+    border-radius: 2rem;
+    background-color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.6rem center;
+    background-size: 1rem;
+    text-align: center;
+    text-align-last: center;
+}
+
+.task-status.status-pendente {
+    background-color: #fef3c7;
+    border-color: #fde68a;
+    color: #92400e;
+}
+.task-status.status-execucao {
+    background-color: #dbeafe;
+    border-color: #bfdbfe;
+    color: #1e40af;
+}
+.task-status.status-concluido {
+    background-color: #d1fae5;
+    border-color: #a7f3d0;
+    color: #065f46;
+}
+
+.task-desc-label {
+    flex: 1;
+    font-size: 0.95rem;
+    color: var(--gray-800);
+    word-break: break-word;
+}
+
+.btn-icon-danger {
+    background: transparent;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-icon-danger:hover {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    transform: scale(1.05);
+}
+
+.loading-placeholder {
+    padding: 2rem;
+    text-align: center;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.text-muted {
+    padding: 2rem;
+    text-align: center;
+    color: var(--gray-600);
+    font-style: italic;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .resumo-tarefas {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+    .task-list-header {
+        display: none;
+    }
+    .task-item {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+    .task-status {
+        width: 100%;
+        max-width: 180px;
+    }
+    .task-desc-label {
+        width: 100%;
+        order: 1;
+    }
+    .btn-icon-danger {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+    }
+    .tarefas-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filtro-wrapper {
+        justify-content: center;
+    }
+}

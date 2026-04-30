@@ -1,0 +1,353 @@
+/* ==========================================================================
+   CADASTRO DE CLIENTE - ESTILO COMPLETO E CORRIGIDO
+   Arquivo: cadastro-cliente.css
+   ========================================================================== */
+
+/* --- Layout da Página --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem; /* Aumentado para dar respiro no topo */
+}
+
+.page-title {
+    font-size: 2rem; /* Título levemente maior */
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.breadcrumb {
+    font-size: 0.95rem;
+    color: var(--secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* --- Grid Principal (Formulário x Lista) --- */
+.content-grid {
+    display: grid;
+    /* Ajuste: A lista lateral agora tem 380px para caber melhor os nomes */
+    grid-template-columns: 1fr 380px; 
+    gap: 2rem; /* Espaço maior entre o form e a lista */
+    align-items: start;
+    height: calc(100vh - 180px); /* Tenta ocupar a altura da tela */
+}
+
+/* Responsividade: Em telas menores, empilha tudo */
+@media (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+        height: auto; /* Remove altura fixa no mobile */
+    }
+    
+    .list-section {
+        height: 500px !important; /* Altura fixa quando empilhado */
+        margin-top: 2rem;
+    }
+}
+
+/* --- Formulário (Esquerda) --- */
+.form-section {
+    padding: 2.5rem; /* Mais espaçamento interno */
+    background-color: #fff; /* Garante fundo branco */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Sombra suave */
+    height: 100%;
+    overflow-y: auto; /* Permite rolar se o form for muito longo */
+}
+
+.card-header {
+    margin-bottom: 2rem; /* Mais espaço abaixo do título do card */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+}
+
+.card-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Sistema de Grid do Formulário */
+.form-row {
+    display: flex;
+    gap: 1.5rem; /* Espaço horizontal entre inputs */
+    margin-bottom: 1.5rem; /* Espaço vertical entre linhas */
+    align-items: flex-start;
+}
+
+.two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.three-cols { display: grid; grid-template-columns: 1fr 2fr 0.8fr; gap: 1.5rem; }
+.address-search-row { display: grid; grid-template-columns: 220px 1fr; gap: 1.5rem; }
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem; /* Afasta o label do input */
+    width: 100%;
+}
+
+.col-span-2 { grid-column: span 2; }
+.flex-grow { flex-grow: 1; }
+
+/* Estilo dos Labels e Inputs */
+.form-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.required { color: var(--danger); }
+
+/* Inputs mais altos e confortáveis */
+.form-control {
+    height: 48px; /* Altura moderna para inputs */
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+    width: 100%;
+    background-color: #fcfcfc;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    background-color: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Subtítulos e Divisórias */
+.section-subtitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--secondary);
+    margin: 2rem 0 1rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.85rem;
+}
+
+.form-divider {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+    opacity: 0.6;
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+    height: 48px; /* Mesma altura do input */
+}
+
+/* Container de Checkboxes */
+.preferences-container {
+    background-color: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px dashed var(--border);
+    margin-top: 1rem;
+}
+
+.checkbox-group {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.checkbox-label:hover {
+    background-color: rgba(0,0,0,0.03);
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: var(--primary);
+}
+
+/* --- Lista Lateral (Direita) --- */
+.list-section {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ocupa a altura do grid pai */
+    overflow: hidden; /* Importante para o scroll interno funcionar */
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.list-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    background-color: #fff;
+}
+
+.badge {
+    background: var(--primary);
+    color: white;
+    padding: 0.25rem 0.8rem;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.search-box {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    background-color: #f8fafc;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.8rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--text);
+    font-size: 0.95rem;
+}
+
+.search-icon {
+    position: absolute;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray);
+}
+
+/* Container que rola (Scroll) */
+.client-list-container {
+    flex: 1; /* Ocupa o resto do espaço vertical */
+    overflow-y: auto; /* Scroll apenas aqui */
+    padding: 1rem;
+    background-color: #f8fafc; /* Fundo levemente cinza para destacar os cards */
+}
+
+/* Card do Cliente */
+.client-card {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: #fff;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.client-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-color: var(--border);
+}
+
+.client-card.active {
+    background-color: rgba(37, 99, 235, 0.05);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary);
+}
+
+.client-info h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--text);
+}
+
+.client-info p {
+    font-size: 0.85rem;
+    color: var(--secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Botões de Ação na Lista */
+.client-actions {
+    opacity: 0; /* Invisível por padrão */
+    transition: opacity 0.2s;
+}
+
+.client-card:hover .client-actions {
+    opacity: 1; /* Visível ao passar o mouse */
+}
+
+.btn-icon-danger {
+    background: #fff;
+    border: 1px solid #fee2e2;
+    color: var(--danger);
+    cursor: pointer;
+    padding: 0.6rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.btn-icon-danger:hover {
+    background: var(--danger);
+    color: #fff;
+    border-color: var(--danger);
+}
+
+/* Toast Notification (Mantido igual) */
+.toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 9999;
+}
+
+.toast {
+    min-width: 300px;
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    background: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: slideIn 0.3s ease-out;
+    border-left: 4px solid transparent;
+    font-size: 0.95rem;
+}
+
+.toast.success { border-left-color: var(--success); }
+.toast.error { border-left-color: var(--danger); }
+.toast.info { border-left-color: var(--primary); }
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}

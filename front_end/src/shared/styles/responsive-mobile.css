@@ -1,0 +1,179 @@
+/* responsive-mobile.css */
+@media (max-width: 767px) {
+    /* Estrutura principal */
+    .app-body {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+
+    .sidebar-left {
+        flex: 0 0 auto;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .main-content-wrapper {
+        padding: 1rem;
+        overflow-y: visible;
+    }
+
+    .sidebar-right {
+        flex: 0 0 auto;
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        max-height: 350px;
+    }
+
+    /* Cabeçalho da OS */
+    .os-header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .header-actions-top {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* Abas */
+    .tabs {
+        flex-wrap: wrap;
+        overflow-x: hidden;
+        gap: 2px;
+    }
+
+    .tab {
+        flex: 1 1 calc(50% - 2px);
+        padding: 0.5rem;
+        font-size: 0.85rem;
+        white-space: normal;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .tab i {
+        font-size: 1rem;
+    }
+
+    /* Cards */
+    .tab-card {
+        padding: 1rem;
+    }
+
+    .tab-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    /* Grids */
+    .grid-col-2 {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    /* Formulários */
+    .row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .col-6, .col-4, .col-8 {
+        flex: 1 1 100%;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    /* Modal */
+    .modal-container {
+        width: 95%;
+        max-width: none;
+        margin: 0 0.5rem;
+    }
+
+    .modal-header, .modal-body, .modal-footer {
+        padding: 1rem;
+    }
+
+    .modal-body {
+        max-height: 70vh;
+    }
+
+    /* Checklist wizard */
+    .wizard-progress {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    .wizard-step {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+
+    .photo-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .signature-pad-wrapper {
+        height: 120px;
+    }
+
+    /* Documentos */
+    .docs-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .upload-area {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .upload-area .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Tabelas */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        font-size: 0.85rem;
+    }
+
+    th, td {
+        padding: 0.5rem;
+    }
+
+    /* Botões */
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+    }
+
+    /* Ajustes na lista de OS */
+    .os-card {
+        padding: 0.75rem 2.2rem 0.75rem 0.75rem;
+    }
+
+    .os-id {
+        max-width: 60%;
+    }
+}

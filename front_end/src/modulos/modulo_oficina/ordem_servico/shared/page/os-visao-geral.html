@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pit Stop Inteligente - Visão Geral OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../../../shared/styles/variables.css">
+    <link rel="stylesheet" href="../../../../../shared/styles/global.css">
+    <link rel="stylesheet" href="../../../../../shared/styles/responsive-tablet.css">
+    <link rel="stylesheet" href="../../../../../shared/styles/responsive-mobile.css">
+    <link rel="stylesheet" href="os-visao-geral.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <oficina-header></oficina-header>
+
+    <div class="app-body">
+        <oficina-sidebar class="sidebar-left" page="operacoes"></oficina-sidebar>
+
+        <main class="main-content-wrapper" id="mainContent">
+            
+            <!-- Cabeçalho da OS - ESTRUTURA ESTÁVEL -->
+            <div class="os-header card fade-in">
+                <div class="os-header-top">
+                    <div>
+                        <h1 class="os-title">OS #<span id="header-os-id">...</span></h1>
+                        <div class="os-subtitle">
+                            <span id="header-veiculo">...</span>
+                            <span class="separator">•</span>
+                            <span id="header-placa">...</span>
+                        </div>
+                    </div>
+                    <div class="header-actions-top">
+                        <button class="btn-outline" id="btnImprimirOS">
+                            <i class="fas fa-print"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+                <div class="os-status-bar">
+                    <span class="badge badge-warning">Em Análise</span>
+                </div>
+            </div>
+
+            <!-- Componente de abas -->
+            <oficina-tabs>
+                <div class="tab active" role="tab" data-target="checklist">
+                    <i class="fas fa-clipboard-check"></i> Checklist
+                </div>
+                <div class="tab locked" role="tab" data-target="detalhes">
+                    <i class="fas fa-lock"></i> Detalhes
+                </div>
+                <div class="tab locked" role="tab" data-target="diagnostico">
+                    <i class="fas fa-lock"></i> Diagnóstico
+                </div>
+                <div class="tab locked" role="tab" data-target="aprovacao">
+                    <i class="fas fa-lock"></i> Aprovação
+                </div>
+                <div class="tab locked" role="tab" data-target="execucao">
+                    <i class="fas fa-lock"></i> Execução
+                </div>
+                <div class="tab locked" role="tab" data-target="documentos">
+                    <i class="fas fa-lock"></i> Documentos
+                </div>
+                <div class="tab locked" role="tab" data-target="historico">
+                    <i class="fas fa-lock"></i> Histórico
+                </div>
+            </oficina-tabs>
+
+            <!-- Área de conteúdo dinâmico -->
+            <div id="content-area" class="fade-in"></div>
+
+        </main>
+
+        <aside class="sidebar-right">
+            <os-list></os-list>
+        </aside>
+    </div>
+
+    <!-- Modais -->
+    <oficina-modal id="modalNovaOS">
+        <span slot="title">Nova Ordem de Serviço</span>
+        <div slot="body">
+            <!-- conteúdo do formulário mantido igual ao original -->
+            <div class="section-group">
+                <h4 class="section-title"><i class="fas fa-user"></i> Dados do Proprietário</h4>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group" style="position: relative;">
+                            <label for="cliente">Cliente *</label>
+                            <input type="text" id="cliente" class="form-control" placeholder="Nome completo" autocomplete="off">
+                            <div id="cliente-suggestions" class="autocomplete-suggestions d-none"></div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group" style="position: relative;">
+                            <label for="cpf_cnpj">CPF/CNPJ *</label>
+                            <input type="text" id="cpf_cnpj" class="form-control" placeholder="000.000.000-00" autocomplete="off">
+                            <div id="cpf-cnpj-suggestions" class="autocomplete-suggestions d-none"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="telefone">Telefone</label>
+                            <input type="text" id="telefone" class="form-control" placeholder="(99) 99999-9999">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" class="form-control" placeholder="exemplo@email.com">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="section-divider">
+            <div class="section-group">
+                <h4 class="section-title"><i class="fas fa-car"></i> Dados do Veículo</h4>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="placa">Placa *</label>
+                            <input type="text" id="placa" class="form-control" placeholder="ABC1D23" required>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="km_atual">KM Atual *</label>
+                            <input type="number" id="km_atual" class="form-control" placeholder="Ex: 50000" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="marca">Marca</label>
+                            <input type="text" id="marca" class="form-control" placeholder="Ex: Volkswagen">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="modelo">Modelo</label>
+                            <input type="text" id="modelo" class="form-control" placeholder="Ex: Gol">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="ano">Ano</label>
+                            <input type="text" id="ano" class="form-control" placeholder="2018/2019">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="cor">Cor</label>
+                            <input type="text" id="cor" class="form-control" placeholder="Prata">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="chassi">Chassi</label>
+                            <input type="text" id="chassi" class="form-control" placeholder="9BWZZZ377VT004251">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="tipoUso">Tipo de Uso</label>
+                    <select id="tipoUso" class="form-control">
+                        <option value="">Selecione</option>
+                        <option value="particular">Particular</option>
+                        <option value="comercial">Comercial</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div slot="footer">
+            <button class="btn btn-secondary" onclick="document.getElementById('modalNovaOS').close()">Cancelar</button>
+            <button class="btn btn-primary" id="btnCriarOS">Criar O.S.</button>
+        </div>
+    </oficina-modal>
+
+    <oficina-modal id="modalChecklist">
+        <span slot="title">Checklist de Recebimento</span>
+        <div slot="body" id="checklist-wizard-body" style="min-height: 400px;"></div>
+        <div slot="footer">
+            <button class="btn btn-secondary" onclick="document.getElementById('modalChecklist').close()">Cancelar</button>
+            <button class="btn btn-primary" id="btnAnteriorPasso" style="display:none;">Voltar</button>
+            <button class="btn btn-primary" id="btnProximoPasso">Próximo</button>
+            <button class="btn btn-success" id="btnSalvarChecklist" style="display:none;">Salvar e Concluir</button>
+        </div>
+    </oficina-modal>
+
+    <oficina-modal id="modalNovoItem">
+        <span slot="title">Adicionar Item ao Orçamento</span>
+        <div slot="body"></div>
+        <div slot="footer">
+            <button class="btn btn-secondary" onclick="document.getElementById('modalNovoItem').close()">Cancelar</button>
+            <button class="btn btn-primary" id="btnSalvarItemModal">Salvar</button>
+        </div>
+    </oficina-modal>
+
+    <oficina-modal id="modalGerenciarAprovacao">
+        <span slot="title">Gerenciar Aprovação</span>
+        <div slot="body"></div>
+        <div slot="footer">
+            <button class="btn btn-secondary" onclick="document.getElementById('modalGerenciarAprovacao').close()">Fechar</button>
+        </div>
+    </oficina-modal>
+
+    <oficina-modal id="mainModal">
+        <span slot="title"></span>
+        <div slot="body"></div>
+        <div slot="footer">
+            <button class="btn btn-secondary close-modal">Fechar</button>
+        </div>
+    </oficina-modal>
+
+    <script type="module" src="../../../../../shared/components/oficina-header.js"></script>
+    <script type="module" src="../../../../../shared/components/oficina-sidebar.js"></script>
+    <script type="module" src="../../../../../shared/components/oficina-tabs.js"></script>
+    <script type="module" src="../../../../../shared/components/oficina-modal.js"></script>
+    <script type="module" src="../components/os-list.js"></script>
+    <script type="module" src="os-visao-geral.js"></script>
+
+</body>
+</html>

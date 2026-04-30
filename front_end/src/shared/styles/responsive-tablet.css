@@ -1,0 +1,75 @@
+/* responsive-tablet.css */
+@media (min-width: 768px) and (max-width: 1024px) {
+    /* Ajustes na estrutura principal */
+    .app-body {
+        flex-direction: column;
+    }
+
+    .sidebar-left {
+        flex: 0 0 auto;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .main-content-wrapper {
+        padding: 1.5rem;
+    }
+
+    .sidebar-right {
+        flex: 0 0 auto;
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        max-height: 400px;
+    }
+
+    /* Ajustes nas abas */
+    .tabs {
+        flex-wrap: wrap;
+        overflow-x: hidden;
+    }
+
+    .tab {
+        flex: 1 1 auto;
+        text-align: center;
+        justify-content: center;
+    }
+
+    /* Cards e grid */
+    .grid-col-2 {
+        grid-template-columns: 1fr;
+    }
+
+    /* Modal */
+    .modal-container {
+        width: 95%;
+        max-width: 700px;
+    }
+
+    /* Formulários */
+    .row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .col-6, .col-4, .col-8 {
+        flex: 1 1 100%;
+    }
+
+    /* Checklist wizard */
+    .wizard-progress {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .wizard-step {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Documentos grid */
+    .docs-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
