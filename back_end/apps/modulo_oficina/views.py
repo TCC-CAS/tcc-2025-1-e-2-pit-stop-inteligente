@@ -417,7 +417,7 @@ class TarefaExecucaoAPIView(APIView):
         tarefas = TarefaExecucao.objects.filter(os_id=os_id)
         return Response(TarefaExecucaoSerializer(tarefas, many=True).data, status=status.HTTP_200_OK)
 
-    def patch(self, request, os_id):
+    def post(self, request, os_id):
         get_object_or_404(OrdemServico, id=os_id, oficina=_get_oficina_atual(request))
         dados = request.data.copy()
         dados['os_id'] = os_id
