@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pit Stop · Status do pagamento</title>
+    <link rel="stylesheet" href="../../../../shared/vendor/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="../style/retorno.css">
+</head>
+<body>
+    <main class="pag-wrapper">
+        <section class="pag-card" id="cardRetorno">
+            <div class="pag-spinner" id="loader"></div>
+            <h1 class="pag-title" id="titulo">Aguardando confirmação…</h1>
+            <p class="pag-subtitle" id="subtitulo">
+                Estamos consultando o status do seu pagamento. Isso normalmente leva alguns segundos.
+            </p>
+            <dl class="pag-stats" id="detalhes" hidden>
+                <dt>Valor</dt><dd id="detalheValor">—</dd>
+                <dt>Descrição</dt><dd id="detalheDescricao">—</dd>
+                <dt>Método</dt><dd id="detalheMetodo">—</dd>
+                <dt>Identificador</dt><dd id="detalheId">—</dd>
+            </dl>
+            <div class="pag-actions" id="acoes">
+                <button type="button" class="pag-btn secondary" id="btnAtualizar">
+                    <i class="fas fa-rotate" aria-hidden="true"></i> Verificar agora
+                </button>
+                <a class="pag-btn primary" id="linkVoltar"
+                   href="../../atualizar_dados_oficina/pages/atualizacao_dados_oficina.html">
+                    Voltar ao painel
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { obterStatusPagamento } from "../services/pagamentos-service.js";
+        import { recarregarGate } from "../../../../shared/services/assinatura-gate.js";
+
+        const params = new URLSearchParams(location.search);
+        const externalId = params.get("pagamento");
+
+        const ICONES = {
+            pendente: { classe: "aguardando", icone: "fa-clock" },
+            pago: { classe: "aprovado", icone: "fa-circle-check" },
+            falha: { classe: "falha", icone: "fa-circle-xmark" },
+            expirado: { classe: "expirado", icone: "fa-hourglass-end" },
+            cancelado: { classe: "cancelado", icone: "fa-circle-minus" },
+        };
+
+        const TITULOS = {
+            pendente: "Aguardando confirmação…",
+            pago: "Pagamento confirmado!",
+            falha: "Falha no pagamento",
+            expirado: "Pagamento expirado",
+            cancelado: "Pagamento cancelado",
+        };
+
+        const SUBTITULOS = {
+            pendente: "Estamos consultando o status do seu pagamento. Isso normalmente leva alguns segundos.",
+            pago: "Sua assinatura foi atualizada e o sistema já reflete o novo plano.",
+            falha: "Não foi possível processar a cobrança. Você pode tentar novamente quando quiser.",
+            expirado: "O prazo para pagar esta cobrança expirou. Gere uma nova quando estiver pronto.",
+            cancelado: "Você cancelou esta cobrança. Tudo continua como estava.",
+        };
+
+        let polling = null;
+        const INTERVALO_MS = 3000;
+        const TENTATIVAS_MAX = 40; // ~2 minutos
+        let tentativas = 0;
+
+        const titulo = document.getElementById("titulo");
+        const subtitulo = document.getElementById("subtitulo");
+        // `loader` é reatribuído por `trocarIcone()` quando o nó é
+        // substituído, por isso precisa ser `let` em vez de `const`.
+        let loader = document.getElementById("loader");
+        const card = document.getElementById("cardRetorno");
+        const detalhes = document.getElementById("detalhes");
+        const btnAtualizar = document.getElementById("btnAtualizar");
+
+        if (!externalId) {
+            mostrarErroParametro();
+        } else {
+            consultar();
+            polling = setInterval(consultar, INTERVALO_MS);
+            btnAtualizar.addEventListener("click", consultar);
+        }
+
+        async function consultar() {
+            tentativas += 1;
+            try {
+                const dados = await obterStatusPagamento(externalId);
+                aplicarEstado(dados);
+                if (["pago", "falha", "expirado", "cancelado"].includes(dados.status)) {
+                    pararPolling();
+                    // Pagamento concluído: força recarregar o gate (banner some,
+                    // sidebar libera, próximas páginas não bloqueiam mais).
+                    if (dados.status === "pago") {
+                        recarregarGate().catch(() => {});
+                    }
+                }
+                if (tentativas >= TENTATIVAS_MAX && dados.status === "pendente") {
+                    pararPolling();
+                    subtitulo.textContent =
+                        "Ainda não recebemos a confirmação do AbacatePay. " +
+                        "Pode atualizar manualmente — assim que o pagamento chegar, o sistema é notificado.";
+                }
+            } catch (err) {
+                console.error(err);
+                pararPolling();
+                titulo.textContent = "Erro ao consultar status";
+                subtitulo.textContent = err.message || "Tente novamente em alguns instantes.";
+                trocarIcone("falha", "fa-circle-exclamation");
+            }
+        }
+
+        function aplicarEstado(dados) {
+            const chave = dados.status || "pendente";
+            titulo.textContent = TITULOS[chave] || dados.status_display || "Status atualizado";
+            subtitulo.textContent = SUBTITULOS[chave] || "";
+            const icone = ICONES[chave] || ICONES.pendente;
+            trocarIcone(icone.classe, icone.icone);
+            renderDetalhes(dados);
+        }
+
+        function renderDetalhes(dados) {
+            detalhes.hidden = false;
+            const valor = (dados.valor_reais ?? 0).toFixed(2).replace(".", ",");
+            document.getElementById("detalheValor").textContent = `R$ ${valor}`;
+            document.getElementById("detalheDescricao").textContent =
+                dados.descricao || dados.tipo_display || "—";
+            document.getElementById("detalheMetodo").textContent =
+                dados.metodo_escolhido || (dados.status === "pago" ? "—" : "Aguardando escolha");
+            document.getElementById("detalheId").textContent = dados.abacatepay_id || dados.external_id || "—";
+        }
+
+        /**
+         * Troca o ícone do header da página entre estados (spinner, sucesso,
+         * erro, etc.). Cuidado importante: NÃO usar `loader.outerHTML = ...`
+         * porque isso remove o elemento original do DOM e cria outro novo;
+         * a variável `loader` continuaria apontando para o antigo (já sem
+         * parentNode), quebrando a próxima chamada com
+         * "Failed to set the 'outerHTML' property on 'Element': This element
+         * has no parent node.".
+         *
+         * Em vez disso, removemos o nó atual e inserimos o novo no mesmo
+         * lugar, re-vinculando a referência local.
+         */
+        function trocarIcone(classe, faIcon) {
+            if (!loader || !loader.parentNode) {
+                // Já foi substituído (race condition) — busca por id de novo.
+                const existente = document.getElementById("loader");
+                if (!existente) return;
+                loader = existente;
+            }
+            const novo = document.createElement("div");
+            novo.className = `pag-icon ${classe}`;
+            novo.id = "loader";
+            novo.innerHTML = `<i class="fas ${faIcon}" aria-hidden="true"></i>`;
+            loader.parentNode.replaceChild(novo, loader);
+            loader = novo;
+        }
+
+        function pararPolling() {
+            if (polling) {
+                clearInterval(polling);
+                polling = null;
+            }
+        }
+
+        function mostrarErroParametro() {
+            titulo.textContent = "Pagamento não identificado";
+            subtitulo.textContent =
+                "Esta página é aberta automaticamente após o checkout. Se você chegou aqui sem um " +
+                "pagamento associado, volte ao painel para iniciar uma nova cobrança.";
+            trocarIcone("falha", "fa-circle-exclamation");
+            btnAtualizar.hidden = true;
+        }
+    </script>
+</body>
+</html>

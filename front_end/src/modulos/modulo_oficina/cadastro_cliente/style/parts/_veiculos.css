@@ -1,0 +1,172 @@
+/* _veiculos.css — aba "Veículos do cliente": cards de veículo, dados em grid, histórico de OS. */
+
+.vehicles-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.vehicle-tab-card {
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.vehicle-tab-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.vehicle-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gray-50);
+}
+
+.vehicle-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.vehicle-card-title i { color: var(--primary); }
+
+/* Grid de dados do veículo */
+.vehicle-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1.75rem;
+}
+
+/* Mini-card individual */
+.modern-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.25rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.25s;
+}
+
+.modern-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--primary-light, #eff6ff);
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-icon i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.card-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--gray-600);
+}
+
+.card-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+/* Histórico de serviços do veículo */
+.history-cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.history-card .card-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    font-size: 1.2rem;
+}
+
+.history-card .card-content {
+    min-width: 0;
+    overflow: hidden;
+    flex: 1;
+}
+
+.history-card.modern-card {
+    padding: 0.75rem 1rem;
+    cursor: default;
+    align-items: center;
+}
+
+.history-card .os-id-link {
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.history-card .os-id-link:hover {
+    text-decoration: underline;
+}
+
+.status-badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.empty-vehicles {
+    text-align: center;
+    padding: 2rem;
+    color: var(--secondary);
+}
+
+.empty-vehicles i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--gray-300);
+}
+
+@media (max-width: 768px) {
+    .vehicle-info-grid {
+        grid-template-columns: 1fr;
+        padding: 1.25rem;
+    }
+    .vehicle-card-header { padding: 1rem 1.25rem; }
+    .vehicle-history     { padding: 0 1.25rem 1.25rem; }
+}

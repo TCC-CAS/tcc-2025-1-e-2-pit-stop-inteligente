@@ -3,26 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pit Stop Inteligente - Visão Geral OS</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <meta name="description" content="Visão geral da Ordem de Serviço — checklist, diagnóstico, aprovação, execução, documentos e histórico.">
+    <meta name="theme-color" content="#2563eb">
+    <title>Visão Geral OS | Pit Stop Inteligente</title>
+
     <link rel="stylesheet" href="../../../../../shared/styles/variables.css">
     <link rel="stylesheet" href="../../../../../shared/styles/global.css">
     <link rel="stylesheet" href="../../../../../shared/styles/responsive-tablet.css">
     <link rel="stylesheet" href="../../../../../shared/styles/responsive-mobile.css">
     <link rel="stylesheet" href="os-visao-geral.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../../../shared/vendor/fontawesome/css/all.min.css">
 </head>
 <body>
-    
+
+    <a class="skip-link" href="#mainContent">Pular para o conteúdo</a>
+
     <oficina-header></oficina-header>
 
     <div class="app-body">
         <oficina-sidebar class="sidebar-left" page="operacoes"></oficina-sidebar>
 
-        <main class="main-content-wrapper" id="mainContent">
-            
+        <main class="main-content-wrapper" id="mainContent" role="main" aria-label="Visão geral da Ordem de Serviço">
+
             <!-- Cabeçalho da OS - ESTRUTURA ESTÁVEL -->
             <div class="os-header card fade-in">
                 <div class="os-header-top">
@@ -35,13 +37,22 @@
                         </div>
                     </div>
                     <div class="header-actions-top">
-                        <button class="btn-outline" id="btnImprimirOS">
-                            <i class="fas fa-print"></i> Imprimir
+                        <button class="btn-outline" id="btnAbrirListaOS" type="button" aria-controls="osListPanel" aria-expanded="false">
+                            <i class="fas fa-list" aria-hidden="true"></i> Ver lista
+                        </button>
+                        <button class="btn-outline" id="btnCodigoAcessoOS" type="button" title="Gerar código de acesso para o cliente">
+                            <i class="fas fa-key" aria-hidden="true"></i> Código do cliente
+                        </button>
+                        <button class="btn-outline" id="btnBaixarPdfOS" type="button" title="Baixar relatório da OS em PDF">
+                            <i class="fas fa-file-pdf" aria-hidden="true"></i> PDF
+                        </button>
+                        <button class="btn-outline" id="btnImprimirOS" type="button" title="Imprimir relatório da OS">
+                            <i class="fas fa-print" aria-hidden="true"></i> Imprimir
                         </button>
                     </div>
                 </div>
-                <div class="os-status-bar">
-                    <span class="badge badge-warning">Em Análise</span>
+                <div class="os-status-bar" aria-live="polite">
+                    <status-badge type="os" status="pendente"></status-badge>
                 </div>
             </div>
 
@@ -75,9 +86,14 @@
 
         </main>
 
-        <aside class="sidebar-right">
+        <aside class="sidebar-right" id="osListPanel" aria-label="Lista de Ordens de Serviço">
+            <button class="sidebar-right-close" id="btnFecharListaOS" type="button"
+                    aria-label="Fechar lista de Ordens de Serviço">
+                <i class="fas fa-xmark" aria-hidden="true"></i>
+            </button>
             <os-list></os-list>
         </aside>
+        <div class="sidebar-right-overlay" id="osListOverlay" aria-hidden="true"></div>
     </div>
 
     <!-- Modais -->
@@ -225,6 +241,7 @@
     <script type="module" src="../../../../../shared/components/oficina-sidebar.js"></script>
     <script type="module" src="../../../../../shared/components/oficina-tabs.js"></script>
     <script type="module" src="../../../../../shared/components/oficina-modal.js"></script>
+    <script type="module" src="../../../../../shared/components/status-badge.js"></script>
     <script type="module" src="../components/os-list.js"></script>
     <script type="module" src="os-visao-geral.js"></script>
 

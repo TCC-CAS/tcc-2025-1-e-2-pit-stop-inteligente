@@ -1,0 +1,302 @@
+/* _categorias.css — grid de categorias de veículo + cards. */
+
+.card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.category-card {
+    background-color: white;
+    border: 1px solid var(--border-light);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.2s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.category-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary);
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.cat-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.cat-title {
+    font-weight: 700;
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+.cat-input-container { margin-top: auto; }
+
+.cat-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-light);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #f8fafc;
+}
+
+.cat-input-wrapper input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-light);
+    outline: none;
+}
+
+/* -------- Card "Outros" (categorias customizadas) -------- */
+.category-card-outros {
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+.category-card-outros .category-header {
+    margin-bottom: 0.75rem;
+    align-items: center;
+}
+.cat-contagem {
+    margin-left: auto;
+    background: #e2e8f0;
+    color: #475569;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.cat-outros-corpo {
+    flex: 1;
+    margin-bottom: 0.75rem;
+}
+.cat-outros-vazio {
+    margin: 0;
+    padding: 12px;
+    background: #f1f5f9;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    color: #475569;
+    font-size: 12px;
+    line-height: 1.4;
+}
+.cat-outros-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.cat-outros-item:hover {
+    border-color: #94a3b8;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+}
+.cat-outros-item > i {
+    font-size: 14px;
+    flex-shrink: 0;
+    width: 22px;
+    text-align: center;
+}
+.cat-outros-nome {
+    flex: 1;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #0f172a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cat-input-wrapper-sm {
+    padding: 3px 8px;
+    width: 90px;
+    flex-shrink: 0;
+}
+.cat-input-wrapper-sm input {
+    font-size: 12.5px;
+    text-align: right;
+}
+.cat-outros-remover {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border: none;
+    background: transparent;
+    color: #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cat-outros-remover:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+.btn-add-categoria {
+    width: 100%;
+    margin-top: auto;
+    padding: 9px 12px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.btn-add-categoria:hover {
+    background: #eff6ff;
+    border-color: #2563eb;
+}
+
+/* Modal de criar nova categoria custom */
+.cat-novo-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 1500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: catFadeIn 0.15s ease;
+}
+@keyframes catFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.cat-novo-card {
+    width: min(440px, 92vw);
+    max-height: 90vh;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.22);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: catSlideUp 0.18s ease;
+}
+@keyframes catSlideUp {
+    from { transform: translateY(10px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+.cat-novo-card header {
+    padding: 14px 18px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.cat-novo-card header h3 {
+    margin: 0;
+    font-size: 14.5px;
+    color: #0f172a;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.cat-novo-card header h3 i { color: #2563eb; }
+.cat-novo-card form {
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+}
+.cat-novo-card form label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: #475569;
+    font-weight: 600;
+}
+.cat-novo-card input[type="text"],
+.cat-novo-card input[type="number"] {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 13px;
+}
+.cat-novo-card input[type="color"] {
+    width: 40px;
+    height: 32px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 0;
+    cursor: pointer;
+}
+.cat-icones {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 5px;
+}
+.cat-icone-opt {
+    flex: 0 0 auto;
+    margin: 0;
+    cursor: pointer;
+}
+.cat-icone-opt input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+.cat-icone-opt span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #475569;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.cat-icone-opt input:checked + span {
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+.cat-novo-card footer {
+    padding: 12px 18px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    background: #f8fafc;
+}

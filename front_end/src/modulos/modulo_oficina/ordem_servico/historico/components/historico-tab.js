@@ -1,6 +1,12 @@
 // historico-tab.js
-import { jsPDF } from 'https://cdn.skypack.dev/jspdf@2.5.1';
-import html2canvas from 'https://cdn.skypack.dev/html2canvas@1.4.1';
+// jsPDF e html2canvas são servidos localmente (UMD). Importados por efeito
+// colateral; os builds UMD expõem window.jspdf e window.html2canvas.
+import "../../../../../shared/vendor/jspdf/jspdf.umd.min.js";
+import "../../../../../shared/vendor/html2canvas/html2canvas.min.js";
+import { apiUrl } from '../../../../../shared/config/api-config.js';
+
+const { jsPDF } = window.jspdf;
+const html2canvas = window.html2canvas;
 
 let currentOSId = null;
 
@@ -95,7 +101,9 @@ async function loadHistory(osId) {
     }
 
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/historico/`);
+        const response = await fetch(apiUrl(`/os/${osId}/historico/`), {
+            credentials: 'include'
+        });
         if (!response.ok) throw new Error(`HTTP error ${response.status}`);
         const data = await response.json();
         renderTimeline(data);

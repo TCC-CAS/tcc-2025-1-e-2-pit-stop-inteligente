@@ -1,162 +1,98 @@
-function getCSRFToken() {
-  const name = "csrftoken";
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    const [key, value] = cookie.trim().split("=");
-    if (key === name) return value;
-  }
-  return "";
+import { apiUrl, getCsrfToken } from "../../../../../shared/config/api-config.js";
+
+const jsonHeaders = () => ({
+    "Content-Type": "application/json",
+    "X-CSRFToken": getCsrfToken(),
+});
+
+async function handleResponse(response, label) {
+    if (response.ok) return response.json();
+    const errorText = await response.text();
+    throw new Error(`Erro ${label} (${response.status}): ${errorText}`);
 }
 
-// diagnostico-service.js
-const API_BASE = "http://127.0.0.1:8000/api/oficina";
-
 export const DiagnosticoService = {
-  /**
-   * Obtém todos os itens de orçamento de uma OS.
-   * @param {number} osId - ID da Ordem de Serviço
-   * @returns {Promise<Array>}
-   */
-  async getItensOrcamento(osId) {
-    const response = await fetch(`${API_BASE}/os/${osId}/itens/`);
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Erro ao buscar itens: ${response.status} - ${errorText}`,
-      );
-    }
-    return response.json();
-  },
+    async getItensOrcamento(osId) {
+        const response = await fetch(apiUrl(`/os/${osId}/itens/`), {
+            credentials: 'include'
+        });
+        return handleResponse(response, "ao buscar itens");
+    },
 
-  /**
-   * Obtém um item específico.
-   * @param {number} osId - ID da OS
-   * @param {number} itemId - ID do item
-   * @returns {Promise<Object>}
-   */
-  async getItem(osId, itemId) {
-    const response = await fetch(`${API_BASE}/os/${osId}/itens/${itemId}/`);
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Erro ao buscar item: ${response.status} - ${errorText}`);
-    }
-    return response.json();
-  },
+    async getItem(osId, itemId) {
+        const response = await fetch(apiUrl(`/os/${osId}/itens/${itemId}/`), {
+            credentials: 'include'
+        });
+        return handleResponse(response, "ao buscar item");
+    },
 
-  /**
-   * Cria um novo item de orçamento.
-   * @param {Object} itemData - Dados do item (sem os_id)
-   * @param {number} osId - ID da OS
-   * @returns {Promise<Object>}
-   */
-  async salvarItem(itemData, osId) {
-    const payload = { ...itemData, os_id: osId };
-    const response = await fetch(`${API_BASE}/os/${osId}/itens/`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCSRFToken(),
-      },
-      body: JSON.stringify(payload),
-    });
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Erro ao salvar item (${response.status}): ${errorText}`);
-    }
-    return response.json();
-  },
+    async salvarItem(itemData, osId) {
+        const payload = { ...itemData, os_id: osId };
+        const response = await fetch(apiUrl(`/os/${osId}/itens/`), {
+            method: "POST",
+            credentials: "include",
+            headers: jsonHeaders(),
+            body: JSON.stringify(payload),
+        });
+        return handleResponse(response, "ao salvar item");
+    },
 
-  /**
-   * Atualiza um item existente.
-   * @param {Object} itemData - Dados a atualizar
-   * @param {number} osId - ID da OS
-   * @param {number} itemId - ID do item
-   * @returns {Promise<Object>}
-   */
-  async atualizarItem(itemData, osId, itemId) {
-    const payload = { ...itemData, os_id: osId };
-    const response = await fetch(`${API_BASE}/os/${osId}/itens/${itemId}/`, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCSRFToken(),
-      },
-      body: JSON.stringify(payload),
-    });
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Erro ao atualizar item: ${response.status} - ${errorText}`,
-      );
-    }
-    return response.json();
-  },
+    async atualizarItem(itemData, osId, itemId) {
+        const payload = { ...itemData, os_id: osId };
+        const response = await fetch(apiUrl(`/os/${osId}/itens/${itemId}/`), {
+            method: "PUT",
+            credentials: "include",
+            headers: jsonHeaders(),
+            body: JSON.stringify(payload),
+        });
+        return handleResponse(response, "ao atualizar item");
+    },
 
-  /**
-   * Remove um item.
-   * @param {number} osId - ID da OS
-   * @param {number} itemId - ID do item
-   * @returns {Promise<boolean>}
-   */
-  async deletarItem(osId, itemId) {
-    const response = await fetch(`${API_BASE}/os/${osId}/itens/${itemId}/`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: { "X-CSRFToken": getCSRFToken() },
-    });
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Erro ao deletar item: ${response.status} - ${errorText}`,
-      );
-    }
-    return true;
-  },
+    async deletarItem(osId, itemId) {
+        const response = await fetch(apiUrl(`/os/${osId}/itens/${itemId}/`), {
+            method: "DELETE",
+            credentials: "include",
+            headers: { "X-CSRFToken": getCsrfToken() },
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Erro ao deletar item: ${response.status} - ${errorText}`);
+        }
+        return true;
+    },
 
-  /**
-   * Atualiza o status de aprovação de um ou mais itens.
-   * @param {number} osId - ID da OS
-   * @param {Array} itensStatus - Lista de objetos { id, status }
-   * @returns {Promise<Object>}
-   */
-  async atualizarStatusItens(osId, itensStatus) {
-    const response = await fetch(`${API_BASE}/os/${osId}/itens/status/`, {
-      method: "PATCH",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCSRFToken(),
-      },
-      body: JSON.stringify({ itens: itensStatus }),
-    });
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Erro ao atualizar status: ${response.status} - ${errorText}`,
-      );
-    }
-    return response.json();
-  },
+    async atualizarStatusItens(osId, itensStatus) {
+        const response = await fetch(apiUrl(`/os/${osId}/itens/status/`), {
+            method: "PATCH",
+            credentials: "include",
+            headers: jsonHeaders(),
+            body: JSON.stringify({ itens: itensStatus }),
+        });
+        return handleResponse(response, "ao atualizar status");
+    },
 
-  // --- NOVOS MÉTODOS PARA AUTOCOMPLETE ---
+    // ---- Auxiliares para autocomplete ----
+    async getServicos() {
+        const response = await fetch(apiUrl("/servicos/"), {
+            credentials: 'include'
+        });
+        if (!response.ok) throw new Error("Erro ao buscar serviços");
+        return response.json();
+    },
 
-  async getServicos() {
-    const response = await fetch(`${API_BASE}/servicos/`);
-    if (!response.ok) throw new Error("Erro ao buscar serviços");
-    return response.json();
-  },
+    async getCategorias() {
+        const response = await fetch(apiUrl("/categorias/"), {
+            credentials: 'include'
+        });
+        if (!response.ok) throw new Error("Erro ao buscar categorias");
+        return response.json();
+    },
 
-  async getCategorias() {
-    const response = await fetch(`${API_BASE}/categorias/`);
-    if (!response.ok) throw new Error("Erro ao buscar categorias");
-    return response.json();
-  },
-
-  async getConfiguracao() {
-    const response = await fetch(`${API_BASE}/configuracao/`);
-    if (!response.ok) throw new Error("Erro ao buscar configuracao");
-    return response.json();
-  },
+    async getConfiguracao() {
+        const response = await fetch(apiUrl("/configuracao/"), {
+            credentials: 'include'
+        });
+        if (!response.ok) throw new Error("Erro ao buscar configuração");
+        return response.json();
+    },
 };

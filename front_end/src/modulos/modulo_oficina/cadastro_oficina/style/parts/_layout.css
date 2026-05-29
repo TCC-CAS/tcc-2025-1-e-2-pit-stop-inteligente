@@ -1,0 +1,165 @@
+/* _layout.css — body, header público, container do card e footer.
+   Layout coluna única, centralizado, com paleta moderna. */
+
+:root {
+    --signup-primary: #2563eb;
+    --signup-primary-dark: #1d4ed8;
+    --signup-primary-light: #60a5fa;
+    --signup-success: #10b981;
+    --signup-success-dark: #059669;
+    --signup-danger: #ef4444;
+    --signup-warning: #f59e0b;
+
+    --signup-text: #0f172a;
+    --signup-muted: #64748b;
+    --signup-border: #e2e8f0;
+    --signup-soft: #f8fafc;
+
+    --signup-radius-sm: 10px;
+    --signup-radius-md: 14px;
+    --signup-radius-lg: 24px;
+
+    --signup-shadow-sm: 0 4px 12px -4px rgba(15, 23, 42, 0.08);
+    --signup-shadow-md: 0 12px 28px -10px rgba(15, 23, 42, 0.18);
+    --signup-shadow-lg: 0 30px 60px -20px rgba(15, 23, 42, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+.signup-body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--signup-text);
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+        radial-gradient(circle at 0% 0%, rgba(96, 165, 250, 0.45), transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.25), transparent 55%),
+        linear-gradient(135deg, #1e3a8a, #4338ca);
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* ---------- Header público (logo + voltar para login) ---------- */
+.public-header {
+    padding: 1.25rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    position: relative;
+    z-index: 5;
+}
+
+.public-header .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+.public-header .brand:hover { opacity: 0.85; }
+.public-header .brand i { font-size: 1.4rem; color: var(--signup-primary-light); }
+.public-header .brand strong { font-weight: 800; }
+
+.public-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: rgba(255, 255, 255, 0.92);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+}
+.public-login:hover,
+.public-login:focus-visible {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.65);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+/* ---------- Container principal do wizard ---------- */
+.signup-main {
+    flex: 1;
+    padding: 1.5rem 1.25rem 2.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.signup-card {
+    background: white;
+    width: 100%;
+    max-width: 720px;
+    border-radius: var(--signup-radius-lg);
+    box-shadow: var(--signup-shadow-lg);
+    padding: 2.5rem 2.25rem 2rem;
+    position: relative;
+    animation: signupRise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.signup-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.6), transparent 60%);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+}
+
+.signup-header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
+.signup-header h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+    color: var(--signup-text);
+}
+
+.signup-header p {
+    margin: 0 auto;
+    max-width: 520px;
+    color: var(--signup-muted);
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+/* ---------- Footer ---------- */
+.signup-footer {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 1rem;
+    font-size: 0.78rem;
+    margin-top: auto;
+}
+
+@keyframes signupRise {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Acessibilidade: respeitar preferência de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

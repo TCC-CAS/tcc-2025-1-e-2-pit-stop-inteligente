@@ -1,47 +1,71 @@
 // documentos-tab.js
-function getCSRFToken() {
-  const name = "csrftoken";
-  const cookies = document.cookie.split(";");
-  for (let cookie of cookies) {
-    const [key, value] = cookie.trim().split("=");
-    if (key === name) return value;
-  }
-  return "";
-}
+import { API_BASE_URL, apiUrl, getCsrfToken } from "../../../../../shared/config/api-config.js";
 
-const DJANGO_BASE_URL = "http://127.0.0.1:8000";
-const API_BASE = "http://127.0.0.1:8000/api/oficina";
+// Cache das regras de upload (carregadas do back-end). Permite mostrar
+// os limites na UI e validar localmente antes de enviar.
+let regrasUploadCache = null;
 
 const DocumentosService = {
   getDocumentos: async (osId) => {
-    const response = await fetch(`${API_BASE}/os/${osId}/documentos/`);
+    const response = await fetch(apiUrl(`/os/${osId}/documentos/`), {
+        credentials: 'include'
+    });
     if (!response.ok) throw new Error("Erro ao carregar documentos");
     const data = await response.json();
     // Mapeia para incluir a URL completa de download (usando o campo 'arquivo')
     return data.map((doc) => ({
       ...doc,
-      download_url: `${DJANGO_BASE_URL}${doc.arquivo}`, // ← usa a URL do arquivo
+      download_url: `${API_BASE_URL}${doc.arquivo}`,
     }));
+  },
+  getRegrasUpload: async () => {
+    if (regrasUploadCache) return regrasUploadCache;
+    try {
+      const response = await fetch(apiUrl("/upload-os/regras/"), {
+        credentials: "include",
+      });
+      if (!response.ok) throw new Error("Erro ao carregar regras de upload");
+      regrasUploadCache = await response.json();
+    } catch (err) {
+      // Fallback conservador para evitar quebra de UI se o endpoint falhar
+      regrasUploadCache = {
+        tamanho_max_mb: 10,
+        tamanho_max_bytes: 10 * 1024 * 1024,
+        mimes_permitidos: ["image/jpeg", "image/png", "application/pdf"],
+        extensoes_permitidas: ["jpg", "jpeg", "png", "pdf"],
+      };
+    }
+    return regrasUploadCache;
   },
   uploadDocumentos: async (osId, files) => {
     const formData = new FormData();
     for (let file of files) {
       formData.append("files", file);
     }
-    const response = await fetch(`${API_BASE}/os/${osId}/documentos/upload/`, {
+    const response = await fetch(apiUrl(`/os/${osId}/documentos/upload/`), {
       method: "POST",
       credentials: "include",
-      headers: { "X-CSRFToken": getCSRFToken() },
+      headers: { "X-CSRFToken": getCsrfToken() },
       body: formData,
     });
-    if (!response.ok) throw new Error("Erro ao fazer upload");
+    if (!response.ok) {
+      // Tenta extrair mensagem amigável do back (400/402)
+      let mensagem = `Erro HTTP ${response.status}`;
+      try {
+        const body = await response.json();
+        mensagem = body.erro || body.error || mensagem;
+      } catch { /* ignore */ }
+      const err = new Error(mensagem);
+      err.status = response.status;
+      throw err;
+    }
     return response.json();
   },
   removerDocumento: async (documentoId) => {
-    const response = await fetch(`${API_BASE}/documentos/${documentoId}/`, {
+    const response = await fetch(apiUrl(`/documentos/${documentoId}/`), {
       method: "DELETE",
       credentials: "include",
-      headers: { "X-CSRFToken": getCSRFToken() },
+      headers: { "X-CSRFToken": getCsrfToken() },
     });
     if (!response.ok) throw new Error("Erro ao remover documento");
   },
@@ -149,7 +173,7 @@ function setIconForType(iconElement, nomeOuExtensao) {
   }
 }
 
-function abrirModalDocumentos(modalElement, gridElement, templateElement) {
+async function abrirModalDocumentos(modalElement, gridElement, templateElement) {
   // Limpa conteúdo anterior do modal
   while (modalElement.firstChild) {
     modalElement.removeChild(modalElement.firstChild);
@@ -157,6 +181,16 @@ function abrirModalDocumentos(modalElement, gridElement, templateElement) {
 
   const osNumero =
     document.getElementById("header-os-id")?.textContent || currentOsId;
+
+  // Carrega regras de upload do servidor para configurar `accept` do input
+  // e exibir limites ao usuário.
+  const regras = await DocumentosService.getRegrasUpload();
+  const acceptAttr = (regras.extensoes_permitidas || [])
+    .map((e) => `.${e}`)
+    .join(",");
+  const tiposLegiveis = (regras.extensoes_permitidas || [])
+    .map((e) => e.toUpperCase())
+    .join(", ");
 
   const titleSpan = document.createElement("span");
   titleSpan.setAttribute("slot", "title");
@@ -169,10 +203,16 @@ function abrirModalDocumentos(modalElement, gridElement, templateElement) {
             <label for="fileUpload" class="btn btn-secondary">
                 <i class="fas fa-cloud-upload-alt"></i> Selecionar arquivos
             </label>
-            <input type="file" id="fileUpload" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" style="display: none;">
+            <input type="file" id="fileUpload" multiple accept="${acceptAttr}" style="display: none;">
             <span class="selected-files"></span>
             <button class="btn btn-primary" id="btnUploadArquivos" disabled>Enviar arquivos</button>
         </div>
+        <p class="upload-regras" style="margin: 8px 0 4px; color: #475569; font-size: 12px;">
+          <i class="fas fa-circle-info"></i>
+          Aceitamos ${tiposLegiveis || "todos os tipos"}
+          até <strong>${regras.tamanho_max_mb || 10} MB</strong> por arquivo.
+        </p>
+        <p class="upload-erros" style="margin: 0 0 8px; color: #b91c1c; font-size: 12px;"></p>
         <div class="docs-grid modal-docs-grid" id="modalDocsGrid"></div>
     `;
 
@@ -203,15 +243,29 @@ function abrirModalDocumentos(modalElement, gridElement, templateElement) {
   // Atualiza a grade sempre que o modal abrir
   carregarDocumentos(cloneGrid, templateElement);
 
+  const errosEl = modalElement.querySelector(".upload-erros");
+
   fileInput.addEventListener("change", () => {
-    const files = fileInput.files;
-    if (files.length > 0) {
-      selectedSpan.textContent = `${files.length} arquivo(s) selecionado(s)`;
-      btnUpload.disabled = false;
-    } else {
+    errosEl.textContent = "";
+    const files = Array.from(fileInput.files || []);
+    if (files.length === 0) {
       selectedSpan.textContent = "";
       btnUpload.disabled = true;
+      return;
     }
+
+    // Validação local com base nas regras carregadas
+    const erro = validarArquivosLocal(files, regras);
+    if (erro) {
+      errosEl.textContent = erro;
+      selectedSpan.textContent = "";
+      fileInput.value = "";
+      btnUpload.disabled = true;
+      return;
+    }
+
+    selectedSpan.textContent = `${files.length} arquivo(s) selecionado(s)`;
+    btnUpload.disabled = false;
   });
 
   btnUpload.addEventListener("click", async (event) => {
@@ -219,6 +273,7 @@ function abrirModalDocumentos(modalElement, gridElement, templateElement) {
     const files = fileInput.files;
     if (files.length === 0) return;
 
+    errosEl.textContent = "";
     btnUpload.disabled = true;
     btnUpload.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
@@ -237,8 +292,10 @@ function abrirModalDocumentos(modalElement, gridElement, templateElement) {
       btnUpload.disabled = true;
       btnUpload.innerHTML = "Enviar arquivos";
     } catch (error) {
+      // Mostra mensagem do servidor (ex.: limite/MIME/quota) em vez de
+      // alert genérico — UX significativamente melhor.
       console.error("Erro no upload:", error);
-      alert("Erro ao enviar arquivos. Verifique o console.");
+      errosEl.textContent = error.message || "Erro ao enviar arquivos.";
       btnUpload.disabled = false;
       btnUpload.innerHTML = "Enviar arquivos";
     }
@@ -248,4 +305,37 @@ function abrirModalDocumentos(modalElement, gridElement, templateElement) {
     .querySelector(".close-modal")
     .addEventListener("click", () => modalElement.close());
   modalElement.open();
+}
+
+
+/**
+ * Valida cada arquivo localmente antes de enviar — espelha a regra do
+ * backend para evitar request inútil + dar feedback imediato.
+ * Retorna string de erro do PRIMEIRO arquivo inválido, ou "" se tudo OK.
+ */
+function validarArquivosLocal(files, regras) {
+  const maxBytes = regras.tamanho_max_bytes || (regras.tamanho_max_mb || 10) * 1024 * 1024;
+  const mimes = new Set((regras.mimes_permitidos || []).map((m) => m.toLowerCase()));
+  const exts = new Set((regras.extensoes_permitidas || []).map((e) => e.toLowerCase()));
+
+  for (const file of files) {
+    // 1) Tamanho
+    if (maxBytes > 0 && file.size > maxBytes) {
+      const mb = (file.size / (1024 * 1024)).toFixed(1);
+      return `Arquivo "${file.name}" tem ${mb} MB — excede o limite de ${regras.tamanho_max_mb} MB.`;
+    }
+
+    // 2) MIME (quando disponível)
+    const mime = (file.type || "").toLowerCase();
+    if (mimes.size > 0 && mime && !mimes.has(mime)) {
+      return `Tipo "${mime}" não é aceito. Aceitos: ${[...mimes].join(", ")}.`;
+    }
+
+    // 3) Extensão (sanity check)
+    const ext = (file.name.split(".").pop() || "").toLowerCase();
+    if (exts.size > 0 && ext && !exts.has(ext)) {
+      return `Extensão ".${ext}" não é aceita. Aceitas: ${[...exts].map((e) => "." + e).join(", ")}.`;
+    }
+  }
+  return "";
 }

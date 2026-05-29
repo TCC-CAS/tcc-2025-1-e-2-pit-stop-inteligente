@@ -1,0 +1,168 @@
+/* _forms-empty.css — formulários reutilizáveis, autocomplete, empty state e área dinâmica. */
+
+#content-area {
+    animation: fadeSlideIn 0.25s ease;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Formulários compartilhados (também usados em modais) */
+.section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-divider {
+    border: 0;
+    border-top: 1px solid var(--gray-200);
+    margin: 1.5rem 0;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    font-size: 0.8rem;
+}
+
+.form-control {
+    height: 44px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: #0f172a;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    background-color: white;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-control::placeholder {
+    color: var(--gray-400);
+}
+
+input[readonly],
+select[disabled] {
+    background-color: var(--gray-100);
+    color: var(--gray-600);
+    cursor: not-allowed;
+}
+
+/* Grid simples para colunas em modais (col-4/6/8) */
+.row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.col-6 { flex: 0 0 calc(50% - 0.5rem); }
+.col-4 { flex: 0 0 calc(33.33% - 0.66rem); }
+.col-8 { flex: 1; }
+
+/* Botões padrão */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--gray-200);
+    color: var(--gray-800);
+}
+.btn-secondary:hover { background: var(--gray-300); }
+
+/* Autocomplete (cliente / veículo) */
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: var(--shadow-md);
+}
+
+.autocomplete-suggestions.d-none { display: none; }
+
+.suggestion-item {
+    padding: 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--gray-100);
+    transition: background 0.1s;
+}
+
+.suggestion-item:hover { background: var(--gray-50); }
+
+.suggestion-title {
+    font-weight: 600;
+    display: block;
+    font-size: 0.85rem;
+}
+
+.suggestion-subtitle {
+    font-size: 0.7rem;
+    color: var(--gray-600);
+}
+
+/* Empty state quando nenhuma OS está selecionada */
+.empty-state-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 3rem 2rem;
+    margin: 2rem auto;
+    max-width: 500px;
+    box-shadow: var(--shadow-md);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: var(--gray-300);
+    margin-bottom: 1rem;
+}

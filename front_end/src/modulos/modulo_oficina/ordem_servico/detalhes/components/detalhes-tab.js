@@ -1,4 +1,6 @@
 // detalhes-tab.js
+import { apiUrl } from "../../../../../shared/config/api-config.js";
+
 export function initDetalhes(osId) {
   if (!osId) {
     console.warn("Nenhuma OS selecionada para detalhes.");
@@ -22,13 +24,11 @@ function formatarCPFouCNPJ(valor) {
 
 async function carregarDetalhes(osId) {
   try {
-    const response = await fetch(
-      `http://127.0.0.1:8000/api/oficina/os/${osId}/`,
-    );
+    const response = await fetch(apiUrl(`/os/${osId}/`), {
+      credentials: 'include'
+    });
     if (!response.ok) throw new Error("Erro ao carregar detalhes da OS");
     const os = await response.json();
-
-    console.log("Dados da OS recebidos:", os);
 
     // Preenche os cards
     document.getElementById("detalhe-cliente-nome").textContent =
@@ -64,9 +64,9 @@ async function carregarChecklistResumo(osId) {
   const tbody = document.getElementById("checklist-body");
   if (!tbody) return;
   try {
-    const response = await fetch(
-      `http://127.0.0.1:8000/api/oficina/os/${osId}/checklist/`,
-    );
+    const response = await fetch(apiUrl(`/os/${osId}/checklist/`), {
+      credentials: 'include' 
+    });
     if (response.ok) {
       const checklist = await response.json();
       const itens = [

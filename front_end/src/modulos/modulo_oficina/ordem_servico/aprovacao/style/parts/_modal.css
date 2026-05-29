@@ -1,0 +1,181 @@
+/* _modal.css — conteúdo da modal de aprovação: cards de info, tabela, ações de item. */
+
+.aprovacao-modal-container { padding: 0.25rem; }
+
+/* Cards de informações do cliente / OS */
+.info-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--gray-50);
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--primary);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.info-card i { font-size: 1.5rem; color: var(--primary); }
+.info-card div { display: flex; flex-direction: column; }
+
+.info-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--gray-600);
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-weight: 600;
+    color: var(--gray-800);
+    font-size: 0.9rem;
+}
+
+/* Tabela dentro da modal */
+.itens-aprovacao { margin: 1.5rem 0; }
+
+.itens-aprovacao h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gray-800);
+}
+
+.table-container-modal {
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-200);
+}
+
+.modal-itens-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    background: white;
+}
+
+.modal-itens-table thead { background: var(--gray-50); }
+
+.modal-itens-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-600);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.modal-itens-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--gray-200);
+    color: var(--gray-800);
+    vertical-align: middle;
+}
+
+.modal-itens-table td.desc-col {
+    max-width: 250px;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.modal-itens-table .actions-cell {
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Botões de ação na modal */
+.btn-icon {
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.btn-approve { color: var(--success); }
+.btn-approve:hover {
+    background: #d1fae5;
+    color: var(--success-dark);
+    transform: scale(1.05);
+}
+
+.btn-reject { color: var(--danger); }
+.btn-reject:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+    transform: scale(1.05);
+}
+
+/* Feedback visual para itens com alteração pendente */
+.btn-approve.active-approve {
+    background-color: #10b981 !important;
+    color: white !important;
+    border-radius: 50%;
+    transform: scale(1.05);
+}
+
+.btn-reject.active-reject {
+    background-color: #ef4444 !important;
+    color: white !important;
+    border-radius: 50%;
+    transform: scale(1.05);
+}
+
+/* Ações da modal (rodapé) */
+.aprovacao-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.reenviar-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.reenviar-group span {
+    font-weight: 500;
+    color: var(--gray-600);
+    font-size: 0.85rem;
+}
+
+.reenviar-group .btn-icon {
+    color: var(--gray-600);
+    background: var(--gray-100);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.reenviar-group .btn-icon:hover {
+    background: var(--gray-200);
+    color: var(--primary);
+    transform: scale(1.05);
+}

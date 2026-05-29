@@ -1,0 +1,52 @@
+/* _charts.css — linhas de gráficos (1, 2 ou 3 colunas) e cards de chart. */
+
+.charts-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.charts-row.three-charts {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.chart-card {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-card:hover { box-shadow: var(--shadow-md); }
+
+.chart-card canvas {
+    max-height: 240px;
+    width: 100% !important;
+    height: auto !important;
+}
+
+.chart-header {
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.chart-header h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-header i { color: var(--color-primary); }

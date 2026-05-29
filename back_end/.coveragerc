@@ -1,0 +1,34 @@
+# Configuração de cobertura para o projeto Pit Stop.
+# Foca em apps/ — exclui venv, migrations geradas pelo Django e código
+# inerentemente difícil de testar (manage.py, asgi/wsgi/init de apps).
+
+[run]
+source = apps
+branch = True
+omit =
+    */migrations/*
+    */__init__.py
+    */apps.py
+    */admin.py
+    */tests/*
+    */venv/*
+    manage.py
+    */asgi.py
+    */wsgi.py
+
+[report]
+# Linhas que pytest não precisa cobrir (defensivos, branches "nunca acontece")
+exclude_lines =
+    pragma: no cover
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    raise AssertionError
+    \.\.\.
+precision = 1
+show_missing = True
+skip_covered = False
+sort = -Cover
+
+[html]
+directory = reports/coverage_html
+title = Pit Stop · Cobertura de Testes

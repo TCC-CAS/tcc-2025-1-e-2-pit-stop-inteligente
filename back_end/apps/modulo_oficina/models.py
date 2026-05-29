@@ -64,16 +64,64 @@ class Oficina(models.Model):
     def __str__(self):
         return self.nome
 
+
+class OficinaLimitesOverride(models.Model):
+    """Limites SaaS customizados por oficina.
+
+    O default vem das `ConfiguracaoGlobal` (`limite_<recurso>_<plano>`).
+    Este modelo permite ao admin SaaS sobrescrever individualmente — útil
+    para clientes em piloto, acordos comerciais, contas internas, etc.
+
+    Campo `None`/`null` significa "usar o default do plano". Apenas valores
+    explicitamente preenchidos sobrescrevem.
+    """
+
+    oficina = models.OneToOneField(
+        Oficina,
+        on_delete=models.CASCADE,
+        related_name="limites_override",
+    )
+    limite_usuarios = models.PositiveIntegerField(
+        blank=True, null=True,
+        help_text="Sobrescreve `limite_usuarios_<plano>` para esta oficina.",
+    )
+    limite_os_mensal = models.PositiveIntegerField(
+        blank=True, null=True,
+        help_text="Sobrescreve `limite_os_mensal_<plano>` para esta oficina.",
+    )
+    limite_storage_mb = models.PositiveIntegerField(
+        blank=True, null=True,
+        help_text="Sobrescreve `limite_storage_mb_<plano>` para esta oficina.",
+    )
+    motivo = models.CharField(
+        max_length=255, blank=True,
+        help_text="Justificativa para auditoria (ex.: 'piloto comercial', 'TCC').",
+    )
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+    atualizado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="overrides_oficina",
+    )
+
+    class Meta:
+        db_table = "oficina_limites_override"
+
+    def __str__(self):
+        return f"Override {self.oficina.nome}"
+
 # ==========================================
 # PRECIFICAÇÃO E CATÁLOGO DE SERVIÇOS
 # ==========================================
 
 class ConfigPreco(models.Model):
-    
+
     oficina = models.OneToOneField(Oficina, on_delete=models.CASCADE, related_name='config_preco')
-    
+
     valor_hora_mecanico = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    
+
     # Categorias de Veículo
     percentual_popular = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     percentual_eletrico = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
@@ -89,14 +137,61 @@ class ConfigPreco(models.Model):
     class Meta:
         db_table = 'config_preco'
 
+
+class CategoriaVeiculoCustom(models.Model):
+    """Categoria de veículo personalizada criada pela oficina ("Outros").
+
+    As 6 categorias fixas (popular, elétrico, luxo, esportivo, utilitário,
+    minivan) ficam em colunas de `ConfigPreco` por questão histórica. Quando
+    a oficina precisar de categorias adicionais — frota agrícola, motos
+    customizadas, caminhões — cria entradas neste modelo.
+
+    O endpoint /categorias/ agrega as 6 fixas + N custom em uma lista única
+    para o front, mantendo a UI homogênea.
+    """
+
+    oficina = models.ForeignKey(
+        Oficina,
+        on_delete=models.CASCADE,
+        related_name='categorias_custom',
+    )
+    nome = models.CharField(max_length=80)
+    percentual = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    icone = models.CharField(
+        max_length=40, default='fa-circle-plus',
+        help_text='Classe Font Awesome (ex: "fa-tractor", "fa-motorcycle").',
+    )
+    cor = models.CharField(
+        max_length=20, default='#64748b',
+        help_text='Cor hex usada para o card no painel de preços.',
+    )
+    ativa = models.BooleanField(default=True)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'categoria_veiculo_custom'
+        ordering = ('nome',)
+        unique_together = ('oficina', 'nome')
+
+    def __str__(self):
+        return f"{self.nome} ({self.oficina.nome})"
+
 class Servico(models.Model):
-    
+
     oficina = models.ForeignKey(Oficina, on_delete=models.CASCADE, related_name='catalogo_servicos')
 
     nome = models.CharField(max_length=255)
     descricao = models.TextField(blank=True, null=True)
     tempo_estimado = models.DecimalField(max_digits=5, decimal_places=2) # Em horas (ex: 1.5 Hrs)
-    
+    # Preço sugerido base — opcional. Usado para pré-preencher o valor
+    # unitário quando o serviço é adicionado ao orçamento.
+    preco_sugerido = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0,
+        help_text="Preço sugerido (R$) usado como sugestão no orçamento.",
+    )
+
     # Auditoria
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
@@ -138,7 +233,6 @@ class Cliente(models.Model):
 
     class Meta:
         db_table = 'cliente'
-        # Evita clientes duplicados na mesma oficina
         unique_together = ('oficina', 'cpf_cnpj')
 
     def __str__(self):
@@ -292,13 +386,91 @@ class TarefaExecucao(models.Model):
 
     descricao = models.CharField(max_length=255)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
-    
+
+    # Atribuição: múltiplos responsáveis (mecânicos) podem ser alocados na
+    # mesma tarefa. Quando vazia, qualquer técnico pode pegar.
+    responsaveis = models.ManyToManyField(
+        'Funcionario',
+        blank=True,
+        related_name='tarefas_atribuidas',
+        help_text='Funcionários responsáveis pela execução desta tarefa.',
+    )
+
+    # Tempo: estimativa em horas (vem da tarefa padrão do serviço quando
+    # gerada automaticamente) e marcações de início/fim para calcular o
+    # tempo gasto real.
+    tempo_estimado_h = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0,
+        help_text='Tempo estimado em horas.',
+    )
+    iniciada_em = models.DateTimeField(blank=True, null=True)
+    concluida_em = models.DateTimeField(blank=True, null=True)
+    tempo_gasto_minutos = models.PositiveIntegerField(
+        default=0,
+        help_text='Tempo gasto real em minutos. Calculado quando a tarefa é concluída.',
+    )
+
     # Auditoria
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'tarefa_execucao'
+
+    def __str__(self):
+        return f"{self.descricao} ({self.get_status_display()})"
+
+
+class ServicoTarefaPadrao(models.Model):
+    """Tarefa-padrão associada a um Servico do catálogo.
+
+    Quando o cliente aprova um item de orçamento que aponta para um
+    `Servico`, criamos automaticamente uma `TarefaExecucao` para cada
+    `ServicoTarefaPadrao` ativo do serviço — assim o mecânico já encontra
+    o checklist pronto na aba Execução.
+
+    Exemplo:
+        Servico("Troca de óleo") tem tarefas padrão:
+          ordem=1 "Remover óleo antigo" · 0.5h · obrigatória
+          ordem=2 "Substituir filtro"   · 0.3h · obrigatória
+          ordem=3 "Adicionar novo óleo" · 0.4h · obrigatória
+    """
+
+    servico = models.ForeignKey(
+        Servico,
+        on_delete=models.CASCADE,
+        related_name='tarefas_padrao',
+    )
+    descricao = models.CharField(max_length=255)
+    ordem = models.PositiveSmallIntegerField(
+        default=0,
+        help_text='Ordem de exibição/execução dentro do serviço.',
+    )
+    tempo_estimado_h = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0,
+        help_text='Tempo estimado em horas para esta tarefa.',
+    )
+    obrigatoria = models.BooleanField(
+        default=True,
+        help_text='Quando True, marca o checklist como obrigatório.',
+    )
+    ativa = models.BooleanField(
+        default=True,
+        help_text='Quando False, deixa de ser usada para popular novas OS.',
+    )
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'servico_tarefa_padrao'
+        ordering = ('servico', 'ordem', 'id')
+        indexes = [
+            models.Index(fields=('servico', 'ordem')),
+        ]
+
+    def __str__(self):
+        return f"{self.servico.nome} · {self.descricao}"
 
 class Documento(models.Model):
     ORIGEM_CHOICES = [
@@ -358,3 +530,99 @@ class HistoricoOS(models.Model):
 
     def __str__(self):
         return f"{self.os} - {self.descricao}"
+
+
+# ==========================================
+# GERENCIAMENTO DE USUÁRIOS DA OFICINA
+# ==========================================
+
+class ManutencaoPreventiva(models.Model):
+    """Plano de manutenção preventiva associado a um veículo.
+
+    Cada item representa uma manutenção esperada (ex.: troca de óleo a cada
+    10.000 km / 6 meses). O sistema avisa quando o alvo é atingido (por
+    quilometragem OU por data) e permite gerar uma OS diretamente a partir
+    do plano.
+    """
+
+    PERIODICIDADE_CHOICES = [
+        ("km", "Por quilometragem"),
+        ("tempo", "Por tempo"),
+        ("ambos", "Quilometragem ou tempo"),
+    ]
+    STATUS_CHOICES = [
+        ("pendente", "Pendente"),
+        ("agendado", "Agendado"),
+        ("realizado", "Realizado"),
+        ("vencido", "Vencido"),
+    ]
+
+    veiculo = models.ForeignKey(
+        "Veiculo",
+        on_delete=models.CASCADE,
+        related_name="manutencoes_preventivas",
+    )
+    titulo = models.CharField(max_length=120)
+    descricao = models.TextField(blank=True)
+    periodicidade = models.CharField(
+        max_length=10, choices=PERIODICIDADE_CHOICES, default="ambos",
+    )
+    intervalo_km = models.IntegerField(blank=True, null=True)
+    intervalo_meses = models.IntegerField(blank=True, null=True)
+    km_proxima = models.IntegerField(blank=True, null=True)
+    data_proxima = models.DateField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pendente")
+    ultima_revisao_em = models.DateField(blank=True, null=True)
+    ultima_revisao_km = models.IntegerField(blank=True, null=True)
+    os_gerada = models.ForeignKey(
+        "OrdemServico",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="manutencoes_origem",
+    )
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "manutencao_preventiva"
+        ordering = ("data_proxima", "km_proxima")
+        indexes = [
+            models.Index(fields=("veiculo", "status")),
+        ]
+
+    def __str__(self):
+        return f"{self.titulo} ({self.veiculo})"
+
+
+class Funcionario(models.Model):
+    PERMISSOES = [
+        ('admin', 'Administrador'),
+        ('gerente', 'Gerente'),
+        ('mecanico', 'Mecânico'),
+        ('atendente', 'Atendente'),
+        ('visualizador', 'Visualizador'),
+    ]
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='funcionario_oficina'
+    )
+    oficina = models.ForeignKey(
+        Oficina,
+        on_delete=models.CASCADE,
+        related_name='funcionarios'
+    )
+    permissao = models.CharField(max_length=20, choices=PERMISSOES, default='visualizador')
+    is_active = models.BooleanField(default=True)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'funcionario'
+        unique_together = ('oficina', 'user')
+
+    def __str__(self):
+        return f"{self.user.get_full_name() or self.user.email} - {self.oficina.nome}"

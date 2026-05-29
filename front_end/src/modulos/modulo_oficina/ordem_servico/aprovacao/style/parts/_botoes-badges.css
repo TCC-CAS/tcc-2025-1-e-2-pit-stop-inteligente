@@ -1,0 +1,57 @@
+/* _botoes-badges.css — botões (primary/success/secondary) e badges de status. */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--gray-100);
+    color: var(--gray-800);
+}
+
+.btn i { font-size: 1rem; }
+
+.btn-primary { background-color: var(--primary); color: white; }
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-success { background-color: var(--success); color: white; }
+.btn-success:hover:not(:disabled) {
+    background-color: var(--success-dark);
+    transform: translateY(-1px);
+}
+.btn-success:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary { background-color: var(--gray-700); color: white; }
+.btn-secondary:hover {
+    background-color: var(--gray-800);
+    transform: translateY(-1px);
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    background: var(--gray-100);
+    color: var(--gray-600);
+}
+
+.badge-success { background: #d1fae5; color: #065f46; }
+.badge-danger  { background: #fee2e2; color: #b91c1c; }
+.badge-warning { background: #fef3c7; color: #92400e; }

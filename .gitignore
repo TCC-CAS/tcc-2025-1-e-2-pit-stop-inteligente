@@ -22,6 +22,11 @@ lib-cov
 coverage
 *.lcov
 
+# Relatórios gerados pelo pytest / coverage (Python)
+back_end/reports/
+back_end/.coverage
+back_end/htmlcov/
+
 # nyc test coverage
 .nyc_output
 
@@ -37,9 +42,12 @@ bower_components
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
 
-# Pastas de mídia e documentos 
+# Pastas de mídia e documentos
 back_end/media/
 back_end/documentos/
+
+# Estáticos coletados (gerados por collectstatic / volume em produção)
+back_end/staticfiles/
 
 # Dependency directories
 node_modules/
@@ -73,6 +81,7 @@ web_modules/
 .env
 .env.*
 !.env.example
+!.env.production.example
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

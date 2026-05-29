@@ -1,0 +1,157 @@
+/* ============================================================
+   base.css — Variáveis locais, reset, layout principal,
+   cabeçalhos da página, status cards e abas (tabs).
+   ============================================================ */
+
+:root {
+    /* Cores, superfícies e bordas vêm do design system central
+       (shared/styles/variables.css), que já trata claro e escuro.
+       Aqui ficam apenas os aliases legados que os parciais desta tela
+       usam e que não existem lá, mais as variáveis de layout próprias.
+       Assim o tema tem uma única fonte de verdade. */
+    --card-light: var(--bg-card);
+    --text-light: var(--text-primary);
+
+    --header-height: 70px;
+    --sidebar-width: 250px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ---- Layout principal ---- */
+body {
+    background-color: var(--light);
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-top: var(--header-height);
+}
+
+oficina-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--header-height);
+    z-index: 1000;
+}
+
+.main-container {
+    display: flex;
+    width: 100%;
+    flex: 1;
+    position: relative;
+}
+
+oficina-sidebar {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    min-height: calc(100vh - var(--header-height));
+}
+
+.content {
+    flex: 1;
+    padding: 2rem;
+    margin-left: 0;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* ---- Cabeçalhos ---- */
+.breadcrumb { color: var(--secondary); margin-bottom: 1rem; font-size: 0.9rem; }
+.page-header { margin-bottom: 2rem; }
+.page-header h1 { font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--primary); }
+
+/* ---- Status Cards ---- */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.status-card {
+    background: var(--card-light);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--border-light);
+}
+
+.icon-box {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.icon-box.info    { background: #dbeafe; color: var(--primary); }
+.icon-box.warning { background: #fef9c3; color: var(--warning); }
+.icon-box.success { background: #dcfce7; color: var(--success); }
+
+.card-info h3 { font-size: 0.9rem; color: var(--secondary); margin-bottom: 0.2rem; }
+.card-info p  { font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem; }
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+.badge.success { background: #dcfce7; color: #166534; }
+.badge.warning { background: #fef9c3; color: #854d0e; }
+.badge.danger  { background: #fee2e2; color: #991b1b; }
+
+/* ---- Tabs ---- */
+.tabs-container {
+    background: var(--card-light);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-light);
+    background: rgba(0, 0, 0, 0.02);
+    overflow-x: auto;
+}
+
+.tab-btn {
+    padding: 1rem 1.5rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--secondary);
+    font-weight: 600;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+}
+
+.tab-btn:hover  { color: var(--primary); background: rgba(0, 0, 0, 0.05); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: var(--card-light); }
+
+.tab-content-wrapper { padding: 2rem; min-height: 400px; }
+.tab-content         { display: none; animation: fadeIn 0.3s ease; }
+.tab-content.active  { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

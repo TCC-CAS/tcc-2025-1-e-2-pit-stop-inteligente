@@ -1,0 +1,170 @@
+/* _tabela.css — card, abas de filtro, tabela, badges e ações da listagem. */
+
+.tab-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 768px) {
+    .tab-card { padding: 1.5rem; }
+}
+
+.tab-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+@media (min-width: 768px) {
+    .tab-card-header { margin-bottom: 1.5rem; }
+}
+
+.tab-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+/* Filtros (Todos / Peças / Serviços) */
+.item-filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.5rem;
+}
+
+.filter-tab {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1e293b;
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.2s;
+}
+
+.filter-tab:hover {
+    background-color: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+}
+
+.filter-tab.active {
+    color: #2563eb;
+    border-bottom: 2px solid #2563eb;
+    font-weight: 600;
+}
+
+/* Tabela */
+.table-container {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+th {
+    background-color: #f8fafc;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+td {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
+    vertical-align: middle;
+    text-align: center;
+}
+
+td.descricao-item {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: help;
+    text-align: left;
+}
+
+td.nome-item {
+    text-align: left;
+    font-weight: 500;
+}
+
+/* Badges */
+.badge-info,
+.badge-warning {
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-info    { background-color: #dbeafe; color: #1e40af; }
+.badge-warning { background-color: #fef3c7; color: #92400e; }
+
+/* Ações na linha (editar/excluir) */
+.actions-cell {
+    text-align: center;
+    white-space: nowrap;
+    min-width: 100px;
+}
+
+.btn-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.4rem 0.7rem;
+    margin: 0 0.2rem;
+    border-radius: 30px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.btn-icon .btn-text { font-size: 0.85rem; }
+
+.btn-edit { color: #2563eb; }
+.btn-edit:hover { background-color: #dbeafe; transform: scale(1.02); }
+
+.btn-delete { color: #dc2626; }
+.btn-delete:hover { background-color: #fee2e2; transform: scale(1.02); }
+
+/* Responsividade adicional */
+@media (max-width: 768px) {
+    .item-filter-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    .filter-tab {
+        flex: 0 0 auto;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    th, td { padding: 0.6rem 0.5rem; font-size: 0.85rem; }
+    td.descricao-item { max-width: 160px; }
+    .btn-icon .btn-text { display: none; }
+}

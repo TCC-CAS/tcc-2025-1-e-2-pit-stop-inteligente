@@ -1,0 +1,124 @@
+/* _wizard.css — wizard multi-passo: header, stepper e painel ativo. */
+
+.checklist-wizard {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.wizard-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--gray-200);
+    padding-bottom: 1rem;
+}
+
+.wizard-header h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 0.25rem;
+}
+
+.wizard-header h3 i {
+    color: var(--primary);
+    margin-right: 0.5rem;
+}
+
+.wizard-header p {
+    color: var(--gray-600);
+    font-size: 0.85rem;
+}
+
+/* Stepper */
+.wizard-steps {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    background: var(--gray-50);
+    padding: 0.75rem;
+    border-radius: 2rem;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 1.5rem;
+    background: transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.step-item:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+.step-item.active {
+    background: white;
+    box-shadow: var(--shadow-sm);
+    opacity: 1;
+    font-weight: 600;
+    color: var(--primary);
+    transform: scale(1.02);
+}
+
+.step-item .step-icon {
+    width: 36px;
+    height: 36px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.25rem;
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+    transition: all 0.3s ease;
+}
+
+.step-item.active .step-icon {
+    background: var(--primary);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.step-item span {
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+/* Painel ativo do passo */
+.panel-card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray-200);
+    animation: fadeSlide 0.3s ease;
+}
+
+.panel-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-left: 3px solid var(--primary);
+    padding-left: 0.75rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}

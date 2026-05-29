@@ -1,0 +1,125 @@
+/* _stepper.css — barra horizontal de progresso (5 passos).
+   Estados: ativo (azul cheio), completed (verde com check), pendente (cinza outline).
+   A linha base fica ATRÁS dos círculos com z-index, e o "fill" é animado. */
+
+.stepper {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2.25rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    position: relative;
+    counter-reset: step;
+}
+
+/* Linha base (fundo cinza) que conecta os círculos */
+.stepper::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: calc(10% + 18px);
+    right: calc(10% + 18px);
+    height: 3px;
+    background: var(--signup-border);
+    border-radius: 999px;
+    z-index: 0;
+}
+
+/* Linha de progresso (gradiente azul) sobreposta com width animada */
+.stepper::after {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: calc(10% + 18px);
+    height: 3px;
+    width: var(--progress, 0%);
+    background: linear-gradient(90deg, var(--signup-success), var(--signup-primary));
+    border-radius: 999px;
+    z-index: 0;
+    transition: width 0.4s ease;
+    max-width: calc(80% - 36px);
+}
+
+/* Cada passo: bolinha + label embaixo */
+.stepper .step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    color: var(--signup-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+    padding: 0;
+    z-index: 1;
+}
+
+.stepper .step:hover { color: var(--signup-primary); }
+
+.stepper .step .step-num {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: white;
+    color: var(--signup-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: 2px solid var(--signup-border);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04);
+}
+
+/* ---------- Estado ativo (passo atual) ---------- */
+.stepper .step.active {
+    color: var(--signup-text);
+    font-weight: 700;
+}
+.stepper .step.active .step-num {
+    background: linear-gradient(135deg, var(--signup-primary), var(--signup-primary-dark));
+    color: white;
+    border-color: var(--signup-primary);
+    box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.18),
+        0 8px 18px -6px rgba(37, 99, 235, 0.55);
+    transform: scale(1.1);
+}
+
+/* ---------- Estado completed (passos anteriores) ---------- */
+.stepper .step.completed { color: var(--signup-success-dark); }
+.stepper .step.completed .step-num {
+    background: linear-gradient(135deg, var(--signup-success), var(--signup-success-dark));
+    color: white;
+    border-color: var(--signup-success);
+}
+.stepper .step.completed .step-num::after {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.9rem;
+}
+.stepper .step.completed .step-num > * {
+    display: none; /* esconde o número original quando há check */
+}
+
+/* O label embaixo do círculo */
+.stepper .step > span:not(.step-num) {
+    line-height: 1.2;
+    max-width: 90%;
+}
+
+/* Responsivo: stepper em mobile fica mais compacto */
+@media (max-width: 640px) {
+    .stepper { margin-bottom: 1.75rem; }
+    .stepper .step .step-num { width: 32px; height: 32px; font-size: 0.85rem; }
+    .stepper::before, .stepper::after { top: 16px; }
+    .stepper .step > span:not(.step-num) {
+        font-size: 0.65rem;
+    }
+}

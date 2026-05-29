@@ -1,0 +1,492 @@
+/* _modernizacao.css — modernização da tela "Gerenciamento de Clientes"
+   (2026-05). Hero alinhado com OS, contadores nas abas, toolbar coesa e
+   empty states refinados. */
+
+/* ----------------------------------------------------------------
+   Hero card (cabeçalho moderno)
+   ---------------------------------------------------------------- */
+.cliente-hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: var(--radius-lg, 0.75rem);
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 60%, #4338ca 100%);
+    color: #fff;
+    box-shadow: 0 18px 36px -18px rgba(37, 99, 235, 0.55);
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .cliente-hero {
+        grid-template-columns: 1.5fr auto auto;
+        padding: 1.75rem 2rem;
+    }
+}
+
+.cliente-hero-text { min-width: 0; }
+.cliente-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 0.6rem;
+}
+.cliente-hero-title {
+    margin: 0;
+    font-size: clamp(1.3rem, 1.1rem + 1vw, 1.85rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+}
+.cliente-hero-sub {
+    margin: 0.3rem 0 0;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.95rem;
+    max-width: 540px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    align-items: center;
+}
+
+.cliente-completude-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+.cliente-completude-chip.ok      { background: rgba(22, 163, 74, 0.32); }
+.cliente-completude-chip.warning { background: rgba(245, 158, 11, 0.35); }
+.cliente-completude-chip.danger  { background: rgba(220, 38, 38, 0.38); }
+.cliente-completude-aux { font-size: 0.8rem; opacity: 0.88; }
+
+.cliente-hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(72px, 1fr));
+    gap: 0.65rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 14px;
+    padding: 0.65rem 0.85rem;
+    text-align: center;
+    min-width: 220px;
+}
+.cliente-hero-stats > div { padding: 0.2rem 0.1rem; }
+.cliente-hero-stats strong {
+    display: block;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+}
+.cliente-hero-stats span {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.cliente-hero .header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+.cliente-hero .header-actions .btn {
+    min-height: 42px;
+}
+.cliente-hero .header-actions .btn-primary {
+    background: #ffffff;
+    color: var(--color-primary, #2563eb);
+    border-color: #ffffff;
+    box-shadow: 0 8px 20px -10px rgba(15, 23, 42, 0.45);
+}
+.cliente-hero .header-actions .btn-primary:hover,
+.cliente-hero .header-actions .btn-primary:focus-visible {
+    background: rgba(255, 255, 255, 0.92);
+    transform: translateY(-1px);
+}
+.cliente-hero .header-actions .btn-outline-secondary {
+    background: transparent;
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+.cliente-hero .header-actions .btn-outline-secondary:hover,
+.cliente-hero .header-actions .btn-outline-secondary:focus-visible {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: #ffffff;
+}
+
+@media (max-width: 540px) {
+    .cliente-hero .header-actions { width: 100%; justify-content: stretch; }
+    .cliente-hero .header-actions .btn { flex: 1 1 auto; justify-content: center; }
+}
+
+/* ----------------------------------------------------------------
+   Abas com contadores
+   ---------------------------------------------------------------- */
+.tab-btn .tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 0.45rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    background: var(--bg-muted, #f1f5f9);
+    color: var(--text-secondary, #475569);
+    margin-left: 0.3rem;
+}
+.tab-btn.active .tab-count {
+    background: var(--color-primary, #2563eb);
+    color: #fff;
+}
+
+/* ----------------------------------------------------------------
+   Toolbar de cada aba (título + ações)
+   ---------------------------------------------------------------- */
+.aba-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 0.85rem;
+    padding-bottom: 0.85rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-light, #e2e8f0);
+}
+.aba-titulo {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--color-primary, #2563eb);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.aba-sub {
+    margin: 0.2rem 0 0;
+    color: var(--text-secondary, #475569);
+    font-size: 0.88rem;
+}
+.aba-toolbar-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.aba-toolbar-actions .form-control-sm { min-width: 180px; }
+
+@media (max-width: 540px) {
+    .aba-toolbar { flex-direction: column; align-items: stretch; }
+    .aba-toolbar-actions { width: 100%; }
+    .aba-toolbar-actions .form-control-sm { width: 100%; }
+    .aba-toolbar > div:first-child .btn { width: 100%; justify-content: center; }
+}
+
+/* ----------------------------------------------------------------
+   Empty state suave (lighter que o empty-state da OS)
+   ---------------------------------------------------------------- */
+.empty-state-soft {
+    text-align: center;
+    padding: 2.5rem 1.25rem;
+    border: 1px dashed var(--border-medium, #cbd5e1);
+    border-radius: var(--radius-md, 0.5rem);
+    background: var(--bg-muted, #f8fafc);
+    color: var(--text-secondary, #475569);
+}
+.empty-state-soft i {
+    font-size: 2.25rem;
+    color: var(--text-muted, #94a3b8);
+    display: block;
+    margin-bottom: 0.6rem;
+}
+.empty-state-soft p { margin: 0; font-size: 0.92rem; }
+
+/* ----------------------------------------------------------------
+   Refinamento da aba de veículos
+   ---------------------------------------------------------------- */
+.vehicle-tab-card {
+    border-radius: var(--radius-lg, 0.75rem) !important;
+    border: 1px solid var(--border-light, #e2e8f0);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+.vehicle-tab-card:hover {
+    box-shadow: 0 12px 28px -16px rgba(15, 23, 42, 0.2) !important;
+    transform: translateY(-1px);
+    transition: all 0.18s ease;
+}
+.vehicle-card-header {
+    padding: 1rem 1.25rem !important;
+}
+.vehicle-card-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.vehicle-card-actions .btn-icon-mini {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary, #475569);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+}
+.vehicle-card-actions .btn-icon-mini:hover {
+    background: var(--bg-muted, #f1f5f9);
+    color: var(--color-primary, #2563eb);
+}
+.vehicle-card-actions .btn-icon-mini.danger:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* ----------------------------------------------------------------
+   Histórico timeline simplificado
+   ---------------------------------------------------------------- */
+.cliente-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+.cliente-timeline > li {
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--bg-card, #fff);
+    border: 1px solid var(--border-light, #e2e8f0);
+    border-radius: 10px;
+    transition: box-shadow 0.15s, transform 0.15s;
+}
+.cliente-timeline > li:hover {
+    box-shadow: 0 8px 22px -16px rgba(15, 23, 42, 0.25);
+    transform: translateY(-1px);
+}
+.cliente-timeline .tl-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-muted, #f1f5f9);
+    color: var(--color-primary, #2563eb);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.cliente-timeline .tl-body strong { display: block; color: var(--text-primary, #0f172a); font-size: 0.95rem; }
+.cliente-timeline .tl-body small  { color: var(--text-secondary, #475569); font-size: 0.78rem; }
+
+/* ----------------------------------------------------------------
+   Plano de manutenção preventiva
+   ---------------------------------------------------------------- */
+.manut-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+.manut-item {
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    gap: 0.75rem;
+    padding: 0.75rem 0.85rem;
+    background: var(--bg-card, #fff);
+    border: 1px solid var(--border-light, #e2e8f0);
+    border-left: 4px solid var(--color-primary, #2563eb);
+    border-radius: 10px;
+    align-items: center;
+}
+.manut-item.warn   { border-left-color: var(--color-warning, #ca8a04); }
+.manut-item.info   { border-left-color: var(--color-info, #0284c7); }
+.manut-item.ok     { border-left-color: var(--color-success, #16a34a); }
+.manut-item.danger { border-left-color: var(--color-danger, #dc2626); background: #fef2f2; }
+
+.manut-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--bg-muted, #f1f5f9);
+    color: var(--color-primary, #2563eb);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.manut-item.danger .manut-icon { background: #fee2e2; color: var(--color-danger, #dc2626); }
+.manut-item.ok .manut-icon { background: var(--color-success-light, #dcfce7); color: var(--color-success, #16a34a); }
+
+.manut-body { min-width: 0; }
+.manut-body strong { display: block; color: var(--text-primary, #0f172a); font-size: 0.95rem; }
+.manut-meta {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--text-secondary, #475569);
+    margin-top: 0.15rem;
+}
+.manut-desc {
+    margin: 0.45rem 0 0;
+    font-size: 0.82rem;
+    color: var(--text-secondary, #475569);
+}
+
+.manut-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+}
+.manut-buttons {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.status-pill {
+    display: inline-block;
+    padding: 0.12rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.status-pill.warn   { background: #fef9c3; color: #854d0e; }
+.status-pill.info   { background: #e0f2fe; color: #075985; }
+.status-pill.ok     { background: #dcfce7; color: #166534; }
+.status-pill.danger { background: #fee2e2; color: #991b1b; }
+
+@media (max-width: 600px) {
+    .manut-item { grid-template-columns: 40px 1fr; }
+    .manut-actions { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; }
+}
+
+/* ----------------------------------------------------------------
+   Modal "Novo veículo"
+   ---------------------------------------------------------------- */
+.veic-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1300;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+}
+.veic-modal-overlay.open { opacity: 1; pointer-events: auto; }
+.veic-modal-card {
+    width: min(560px, 100%);
+    background: var(--bg-card, #fff);
+    border-radius: 14px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.25);
+    max-height: 92vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+.veic-modal-card header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.95rem 1.25rem;
+    border-bottom: 1px solid var(--border-light, #e2e8f0);
+}
+.veic-modal-card header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: var(--color-primary, #2563eb);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.veic-modal-body {
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+.veic-modal-body label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary, #475569);
+    font-weight: 600;
+}
+.veic-modal-body .row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+}
+.veic-modal-body .form-control {
+    height: 42px;
+    padding: 0 0.85rem;
+    border: 1px solid var(--border-medium, #cbd5e1);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: var(--bg-card, #fff);
+    color: var(--text-primary, #0f172a);
+}
+.veic-modal-body .required { color: var(--color-danger, #dc2626); }
+.veic-modal-card footer {
+    padding: 0.85rem 1.25rem;
+    border-top: 1px solid var(--border-light, #e2e8f0);
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.veic-modal-card .check-line {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #475569);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+@media (max-width: 540px) {
+    .veic-modal-body .row-2 { grid-template-columns: 1fr; }
+    .veic-modal-card footer { flex-direction: column-reverse; align-items: stretch; }
+    .veic-modal-card footer .btn,
+    .veic-modal-card .check-line { width: 100%; justify-content: center; }
+    .veic-modal-card .check-line { margin: 0 0 0.4rem; }
+}
+
+/* ----------------------------------------------------------------
+   Dark-mode tweaks
+   ---------------------------------------------------------------- */
+.dark-mode .cliente-hero { box-shadow: 0 18px 36px -18px rgba(15, 23, 42, 0.8); }
+.dark-mode .empty-state-soft { background: var(--bg-card); border-color: var(--border-medium); }
+.dark-mode .vehicle-tab-card { background: var(--bg-card); border-color: var(--border-light); }
+.dark-mode .cliente-timeline > li { background: var(--bg-card); border-color: var(--border-light); }
+.dark-mode .veic-modal-card { background: var(--bg-card); }
+.dark-mode .veic-modal-body .form-control { background: #0f172a; color: #f1f5f9; border-color: #334155; }

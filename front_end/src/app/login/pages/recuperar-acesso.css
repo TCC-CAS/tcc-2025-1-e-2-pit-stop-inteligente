@@ -1,0 +1,79 @@
+/* recuperar-acesso.css — estilos exclusivos da tela "Esqueceu a senha?". */
+
+.recover-mode {
+    display: flex;
+    gap: 0.6rem;
+    border: none;
+    padding: 0;
+    margin: 0 0 0.85rem;
+    flex-wrap: wrap;
+}
+
+.radio-pill {
+    flex: 1 1 140px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.85rem;
+    border: 1px solid var(--border-medium, #cbd5e1);
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--text-secondary, #475569);
+    background: var(--bg-card, #fff);
+    transition: all 0.15s ease;
+    min-height: 44px;
+}
+.radio-pill input { position: absolute; opacity: 0; pointer-events: none; }
+.radio-pill:hover { border-color: var(--color-primary, #2563eb); color: var(--color-primary, #2563eb); }
+.radio-pill:has(input:checked) {
+    background: var(--color-primary-light, #eff6ff);
+    border-color: var(--color-primary, #2563eb);
+    color: var(--color-primary, #2563eb);
+}
+.radio-pill:focus-within {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+.radio-pill i { font-size: 0.95rem; }
+
+.recover-hint {
+    margin: 0 0 1rem;
+    color: var(--text-secondary, #475569);
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.recover-success {
+    text-align: center;
+    padding: 1.5rem 0 0.5rem;
+}
+.recover-success h2 {
+    margin: 0.85rem 0 0.5rem;
+    color: var(--text-primary, #0f172a);
+    font-size: 1.3rem;
+}
+.recover-success p {
+    margin: 0 auto 1.25rem;
+    color: var(--text-secondary, #475569);
+    max-width: 320px;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+.success-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: var(--color-success-light, #dcfce7);
+    color: var(--color-success, #16a34a);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.dark-mode .radio-pill { background: var(--bg-card); }
+.dark-mode .radio-pill:has(input:checked) { background: rgba(37, 99, 235, 0.2); }

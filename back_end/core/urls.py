@@ -18,8 +18,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse
+
+
+def healthz(_request):
+    """Health check leve para nginx/Docker/monitoramento (não toca no banco)."""
+    return JsonResponse({"status": "ok"})
+
 
 urlpatterns = [
+    path('healthz', healthz, name='healthz'),
     path('admin/', admin.site.urls),
     path('api/oficina/', include('apps.modulo_oficina.urls')),
+    path('api/cliente/', include('apps.modulo_cliente.urls')),
+    path('api/admin/', include('apps.modulo_adm.urls')),
+    path('api/pagamentos/', include('apps.modulo_pagamentos.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Suporte da Oficina — abra chamados e acompanhe respostas da equipe.">
+    <meta name="theme-color" content="#2563eb">
+    <title>Suporte | Pit Stop Inteligente</title>
+
+    <link rel="stylesheet" href="../../../../shared/styles/variables.css">
+    <link rel="stylesheet" href="../../../../shared/styles/global.css">
+    <link rel="stylesheet" href="../../../../shared/styles/responsive-tablet.css">
+    <link rel="stylesheet" href="../../../../shared/styles/responsive-mobile.css">
+    <link rel="stylesheet" href="../../../../shared/styles/suporte.css">
+    <link rel="stylesheet" href="../../../../shared/vendor/fontawesome/css/all.min.css">
+</head>
+<body>
+
+    <a class="skip-link" href="#mainContent">Pular para o conteúdo</a>
+
+    <oficina-header></oficina-header>
+
+    <div class="main-container">
+        <oficina-sidebar page="suporte"></oficina-sidebar>
+
+        <main class="main-content" id="mainContent" role="main" aria-label="Suporte">
+            <header class="page-header" style="margin-bottom: 1.25rem;">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-headset" aria-hidden="true"></i> Suporte da Oficina
+                    </h1>
+                    <p style="color: var(--text-secondary, #475569); margin: 0.25rem 0 0;">
+                        Abra chamados, acompanhe respostas e mantenha o histórico organizado.
+                    </p>
+                </div>
+            </header>
+
+            <div id="suporteContainer">
+                <div class="suporte-empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Carregando…</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="../../../../shared/components/oficina-header.js"></script>
+    <script type="module" src="../../../../shared/components/oficina-sidebar.js"></script>
+    <script type="module" src="./suporte.js"></script>
+</body>
+</html>

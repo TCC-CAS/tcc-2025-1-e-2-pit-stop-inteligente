@@ -1,0 +1,108 @@
+/* _photos-signatures.css — upload de fotos (dropzone) e canvas de assinatura. */
+
+.photo-dropzone {
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius);
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--gray-50);
+    margin-bottom: 0.5rem;
+}
+
+.photo-dropzone:hover {
+    border-color: var(--primary);
+    background: #eff6ff;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 80px));
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.photo-thumb {
+    width: 80px;
+    height: 80px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    border: 1px solid var(--gray-300);
+}
+
+.photo-counter {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    text-align: right;
+}
+
+/* Assinaturas */
+.signature-box { margin-bottom: 1.5rem; }
+
+.signature-pad-wrapper {
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    background: white;
+    height: 150px;
+    margin: 0.5rem 0;
+}
+
+.signature-pad {
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+.btn-clear {
+    background: var(--gray-100);
+    border: 1px solid var(--gray-300);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-clear:hover {
+    background: var(--gray-200);
+}
+
+/* ---- Bloqueio visual da assinatura do cliente (oficina) ---- */
+.signature-pad-wrapper {
+    position: relative;
+}
+.signature-pad.locked {
+    background: var(--gray-100, #f1f5f9);
+    opacity: 0.6;
+}
+.sig-locked-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: rgba(15, 23, 42, 0.04);
+    border: 2px dashed var(--border-medium, #cbd5e1);
+    border-radius: var(--radius, 0.5rem);
+    color: var(--text-secondary, #475569);
+    font-size: 0.82rem;
+    text-align: center;
+    padding: 0.6rem;
+    pointer-events: none;
+}
+.sig-locked-overlay i {
+    font-size: 1.4rem;
+    color: var(--color-warning, #ca8a04);
+}
+
+.btn-clear.locked {
+    background: var(--gray-100, #f1f5f9);
+    color: var(--gray-400, #94a3b8);
+    cursor: not-allowed;
+}

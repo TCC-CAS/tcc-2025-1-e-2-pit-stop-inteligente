@@ -1,0 +1,78 @@
+/* _card-tabela.css — card da aba e tabela principal de itens. */
+
+.tab-card {
+    background: #ffffff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.2s ease;
+}
+
+.tab-card:hover { box-shadow: var(--shadow-lg); }
+
+.tab-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.tab-card-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tab-card-title i {
+    color: var(--primary);
+    font-size: 1.4rem;
+}
+
+/* Tabela principal */
+.table-container {
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-200);
+    background: white;
+}
+
+#tabelaItensAprovacao {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+#tabelaItensAprovacao thead { background: var(--gray-50); }
+
+#tabelaItensAprovacao th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-600);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+#tabelaItensAprovacao td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+    color: var(--gray-800);
+    vertical-align: middle;
+}
+
+#tabelaItensAprovacao td.desc-col {
+    max-width: 300px;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+#tabelaItensAprovacao tbody tr:hover { background: var(--gray-50); }
+
+.text-center { text-align: center; }

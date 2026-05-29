@@ -1,21 +1,31 @@
-function getCSRFToken() {
-    const name = 'csrftoken';
-    const cookies = document.cookie.split(';');
-    for (let cookie of cookies) {
-        const [key, value] = cookie.trim().split('=');
-        if (key === name) return value;
+import { apiUrl, getCsrfToken } from "../../../../shared/config/api-config.js";
+
+const ENDPOINT = "/clientes/";
+const VIA_CEP = "https://viacep.com.br/ws";
+
+const jsonHeaders = () => ({
+    "Content-Type": "application/json",
+    "X-CSRFToken": getCsrfToken(),
+});
+
+async function jsonOrThrow(response, defaultMsg) {
+    if (response.ok) return response.json();
+    let payload;
+    try {
+        payload = await response.json();
+    } catch {
+        throw new Error(defaultMsg);
     }
-    return '';
+    throw new Error(JSON.stringify(payload));
 }
 
-const API_URL = 'http://127.0.0.1:8000/api/oficina/clientes/';
-
 export const ClienteService = {
-
     async buscarTodos() {
         try {
-            const response = await fetch(API_URL);
-            if (!response.ok) throw new Error('Erro ao buscar clientes');
+            const response = await fetch(apiUrl(ENDPOINT), {
+                credentials: 'include'
+            });
+            if (!response.ok) throw new Error("Erro ao buscar clientes");
             return await response.json();
         } catch (error) {
             console.error(error);
@@ -24,65 +34,54 @@ export const ClienteService = {
     },
 
     async buscarPorId(id) {
-        const response = await fetch(`${API_URL}${id}/`);
-        if (!response.ok) throw new Error('Cliente não encontrado');
-        return await response.json();
+        const response = await fetch(apiUrl(`${ENDPOINT}${id}/`), {
+            credentials: 'include'
+        });
+        if (!response.ok) throw new Error("Cliente não encontrado");
+        return response.json();
     },
 
     async criar(cliente) {
-        const response = await fetch(API_URL, {
-            method: 'POST',
+        const response = await fetch(apiUrl(ENDPOINT), {
+            method: "POST",
             credentials: "include",
-            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
-            body: JSON.stringify(cliente)
+            headers: jsonHeaders(),
+            body: JSON.stringify(cliente),
         });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(JSON.stringify(errorData));
-        }
-
-        return await response.json();
+        return jsonOrThrow(response, "Erro ao criar cliente");
     },
 
     async atualizar(id, cliente) {
-        const response = await fetch(`${API_URL}${id}/`, {
-            method: 'PUT',
+        const response = await fetch(apiUrl(`${ENDPOINT}${id}/`), {
+            method: "PUT",
             credentials: "include",
-            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken()},
-            body: JSON.stringify(cliente)
+            headers: jsonHeaders(),
+            body: JSON.stringify(cliente),
         });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(JSON.stringify(errorData));
-        }
-
-        return await response.json();
+        return jsonOrThrow(response, "Erro ao atualizar cliente");
     },
 
     async excluir(id) {
-        const response = await fetch(`${API_URL}${id}/`, {
-            method: 'DELETE',
+        const response = await fetch(apiUrl(`${ENDPOINT}${id}/`), {
+            method: "DELETE",
             credentials: "include",
-            headers: { 'X-CSRFToken': getCSRFToken()},
+            headers: { "X-CSRFToken": getCsrfToken() },
         });
-
-        if (!response.ok) throw new Error('Erro ao excluir cliente');
+        if (!response.ok) throw new Error("Erro ao excluir cliente");
         return true;
     },
 
     async buscarEnderecoPorCep(cep) {
-        const cleanCep = cep.replace(/\D/g, '');
+        const cleanCep = cep.replace(/\D/g, "");
         if (cleanCep.length !== 8) return null;
 
         try {
-            const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+            const response = await fetch(`${VIA_CEP}/${cleanCep}/json/`);
             const data = await response.json();
             return data.erro ? null : data;
         } catch (error) {
-            console.error('Erro na consulta do CEP', error);
+            console.error("Erro na consulta do CEP", error);
             return null;
         }
-    }
+    },
 };

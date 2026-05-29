@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="../../aprovacao/style/aprovacao-tab.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="../../../../../shared/vendor/fontawesome/css/all.min.css">
 
 <div class="tab-card fade-in">
     <div class="tab-card-header">
@@ -16,7 +16,7 @@
             <thead>
                 <tr>
                     <th>Peça / Serviço</th>
-                    <th>Descrição</th>   <!-- NOVA COLUNA -->
+                    <th>Descrição</th>
                     <th>Valor</th>
                     <th>Status</th>
                 </tr>
@@ -93,8 +93,11 @@
             </label>
         </div>
 
-        <!-- Ações de Reenvio e Aprovação Final -->
+        <!-- Ações distribuídas nas extremidades -->
         <div class="aprovacao-actions">
+            <button class="btn btn-secondary" id="btnExportarPDF">
+                <i class="fas fa-file-pdf"></i> Exportar PDF
+            </button>
             <div class="reenviar-group">
                 <span>Reenviar solicitação:</span>
                 <button class="btn-icon" id="btnReenviarWhatsApp" title="WhatsApp">
@@ -113,3 +116,6 @@
         </div>
     </div>
 </template>
+
+<!-- Dependência para geração de PDF (html2pdf) -->
+<script src="../../../../../shared/vendor/html2pdf/html2pdf.bundle.min.js"></script>

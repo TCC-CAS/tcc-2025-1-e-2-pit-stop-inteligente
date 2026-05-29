@@ -1,340 +1,288 @@
 // execucao-tab.js
-const ExecucaoService = {
-    getCSRFToken() {
-        const name = 'csrftoken';
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
-            const [key, value] = cookie.trim().split('=');
-            if (key === name) return value;
-        }
-        return '';
-    },
+//
+// Ponto de entrada da aba "Execução". Mantém apenas a orquestração:
+//
+//   execucao-state.js   — state (currentOsId, tarefas, filtro) + utilitários
+//   execucao-api.js     — service HTTP (tarefas + checklist + finalização)
+//   execucao-render.js  — render da lista + contadores
 
-    async _extractErrorMessage(response) {
-        let errorMsg = `Erro ${response.status}: ${response.statusText}`;
-        try {
-            const errorData = await response.json();
-            errorMsg = errorData.detail || errorData.message || JSON.stringify(errorData);
-        } catch (e) {
-            try {
-                const text = await response.text();
-                if (text) errorMsg = text;
-            } catch (textError) {}
-        }
-        return errorMsg;
-    },
+import { ExecucaoApi } from "./parts/execucao-api.js";
+import {
+  atualizarContadores,
+  exibirCarregamentoTarefas,
+  exibirErroTarefas,
+  renderizarListaTarefas,
+} from "./parts/execucao-render.js";
+import { state } from "./parts/execucao-state.js";
 
-    async getTarefas(osId) {
-        const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/tarefas/`, {
-            credentials: 'include',
-            headers: { 'X-CSRFToken': this.getCSRFToken() },
-            cache: 'no-store'
-        });
-        if (!response.ok) {
-            const errorMsg = await this._extractErrorMessage(response);
-            throw new Error(`Erro ao buscar: ${errorMsg}`);
-        }
-        return response.json();
-    },
-
-    async salvarTarefa(osId, tarefaData) {
-        const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/tarefas/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': this.getCSRFToken()
-            },
-            body: JSON.stringify(tarefaData),
-            credentials: 'include'
-        });
-        if (!response.ok) {
-            const errorMsg = await this._extractErrorMessage(response);
-            throw new Error(errorMsg);
-        }
-        return response.json();
-    },
-
-    async atualizarTarefa(osId, tarefaId, tarefaData) {
-        const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/tarefas/${tarefaId}/`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': this.getCSRFToken()
-            },
-            body: JSON.stringify(tarefaData),
-            credentials: 'include'
-        });
-        if (!response.ok) {
-            const errorMsg = await this._extractErrorMessage(response);
-            throw new Error(errorMsg);
-        }
-        return response.json();
-    },
-
-    async deletarTarefa(osId, tarefaId) {
-        const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/tarefas/${tarefaId}/`, {
-            method: 'DELETE',
-            headers: { 'X-CSRFToken': this.getCSRFToken() },
-            credentials: 'include'
-        });
-        if (!response.ok) {
-            const errorMsg = await this._extractErrorMessage(response);
-            throw new Error(errorMsg);
-        }
-        return true;
-    },
-
-    async finalizarOS(osId) {
-        const response = await fetch(`http://127.0.0.1:8000/api/oficina/os/${osId}/finalizar/`, {
-            method: 'POST',
-            headers: { 'X-CSRFToken': this.getCSRFToken() },
-            credentials: 'include'
-        });
-        if (!response.ok) {
-            const errorMsg = await this._extractErrorMessage(response);
-            throw new Error(errorMsg);
-        }
-        return response.json();
-    }
-};
-
-let currentOsId = null;
-let todasTarefas = [];
-let filtroAtual = 'todas';
 
 export function initExecucao(osId) {
-    currentOsId = osId;
-    if (!currentOsId) return;
+  state.currentOsId = osId;
+  if (!osId) return;
 
-    atualizarVisualBotao();
-    carregarTarefas();
+  atualizarVisualBotaoIncluir();
+  carregarTarefas();
+  configurarBotoesPrincipais();
+  configurarFiltros();
+}
 
-    const btnIncluir = document.getElementById('btnIncluirTarefa');
-    if (btnIncluir) {
-        btnIncluir.removeEventListener('click', adicionarTarefaHandler);
-        btnIncluir.addEventListener('click', adicionarTarefaHandler);
-    }
 
-    const btnFinalizar = document.getElementById('btnFinalizarOS');
-    if (btnFinalizar) {
-        btnFinalizar.removeEventListener('click', finalizarOSHandler);
-        btnFinalizar.addEventListener('click', finalizarOSHandler);
-    }
+// ---------------------------------------------------------------------------
+// Eventos
+// ---------------------------------------------------------------------------
 
-    const filtroSelect = document.getElementById('filtroStatus');
-    if (filtroSelect) {
-        filtroSelect.addEventListener('change', (e) => {
-            filtroAtual = e.target.value;
-            renderizarListaTarefas();
-        });
-    }
+function configurarBotoesPrincipais() {
+  const btnIncluir = document.getElementById("btnIncluirTarefa");
+  if (btnIncluir) btnIncluir.onclick = adicionarTarefa;
 
-    // Filtro via clique nos cards de resumo
-    document.querySelectorAll('.resumo-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const filtro = item.dataset.filtro;
-            if (filtro && filtroSelect) {
-                filtroSelect.value = filtro;
-                filtroAtual = filtro;
-                renderizarListaTarefas();
-            }
-        });
+  const btnFinalizar = document.getElementById("btnFinalizarOS");
+  if (btnFinalizar) btnFinalizar.onclick = finalizarOS;
+}
+
+
+function configurarFiltros() {
+  const select = document.getElementById("filtroStatus");
+  if (select) {
+    select.addEventListener("change", (e) => {
+      state.filtroAtual = e.target.value;
+      renderizar();
     });
+  }
+
+  // Filtro via clique nos cards de resumo
+  document.querySelectorAll(".resumo-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      const filtro = item.dataset.filtro;
+      if (!filtro) return;
+      if (select) select.value = filtro;
+      state.filtroAtual = filtro;
+      renderizar();
+    });
+  });
 }
 
-const adicionarTarefaHandler = () => adicionarTarefa();
-const finalizarOSHandler = () => finalizarOS();
 
-async function atualizarVisualBotao() {
-    const btnIncluir = document.getElementById('btnIncluirTarefa');
-    if (!btnIncluir) return;
-    
-    const status = await checarChecklistNoBackend();
-    if (!status.concluido) {
-        btnIncluir.style.opacity = '0.7';
-    } else {
-        btnIncluir.style.opacity = '1';
-    }
-}
-
-async function checarChecklistNoBackend() {
-    try {
-        const response = await fetch(`http://127.0.0.1:8000/api/oficina/checklist/${currentOsId}/`, {
-            credentials: 'include',
-            headers: { 'X-CSRFToken': ExecucaoService.getCSRFToken() }
-        });
-
-        if (response.ok) {
-            let data = await response.json();
-            if (data.results) data = data.results;
-            const dados = Array.isArray(data) ? data[0] : data;
-
-            if (dados) {
-                const concluido = (
-                    dados.concluido === true || 
-                    dados.concluido === 'true' ||
-                    String(dados.status).toLowerCase() === 'concluido' ||
-                    String(dados.status).toLowerCase() === 'concluído'
-                );
-                return { concluido: concluido, raw: dados };
-            }
-        }
-        return { concluido: false, erro: `HTTP ${response.status}` };
-    } catch (error) {
-        return { concluido: false, erro: error.message };
-    }
-}
+// ---------------------------------------------------------------------------
+// Fluxos principais
+// ---------------------------------------------------------------------------
 
 async function carregarTarefas() {
-    const lista = document.getElementById('listaTarefas');
-    if (!lista) return;
+  exibirCarregamentoTarefas();
+  try {
+    // Carrega tarefas + funcionários em paralelo na primeira vez. Os
+    // funcionários ficam em cache da aba (raramente mudam na sessão).
+    const [tarefas] = await Promise.all([
+      ExecucaoApi.getTarefas(state.currentOsId),
+      state.funcionarios.length ? Promise.resolve() : carregarFuncionarios(),
+    ]);
+    state.todasTarefas = Array.isArray(tarefas) ? tarefas : [];
+    atualizarContadores();
+    renderizar();
+  } catch (error) {
+    exibirErroTarefas(error.message);
+  }
+}
 
-    lista.innerHTML = '<li class="loading-placeholder"><i class="fas fa-spinner fa-pulse"></i> Carregando tarefas...</li>';
 
+async function carregarFuncionarios() {
+  try {
+    state.funcionarios = await ExecucaoApi.getFuncionarios();
+  } catch {
+    state.funcionarios = [];
+  }
+}
+
+
+function renderizar() {
+  renderizarListaTarefas({
+    onAlterarStatus: alterarStatusTarefa,
+    onRemover: removerTarefa,
+    onAtribuir: abrirSeletorResponsaveis,
+  });
+}
+
+
+/**
+ * Modal simples (lista checkable) para atribuir um ou mais funcionários
+ * à tarefa. Mantém o backend como única fonte da verdade — o front só
+ * envia o conjunto novo via PUT.
+ */
+function abrirSeletorResponsaveis(tarefaId) {
+  const tarefa = state.todasTarefas.find((t) => Number(t.id) === Number(tarefaId));
+  if (!tarefa) return;
+
+  const idsAtribuidos = new Set(
+    (tarefa.responsaveis_detalhes || []).map((r) => Number(r.id)),
+  );
+
+  const modal = obterOuCriarModalAtribuir();
+  modal.querySelector(".atribuir-titulo").textContent =
+    `Atribuir responsáveis · ${tarefa.descricao}`;
+  const corpo = modal.querySelector(".atribuir-corpo");
+
+  if (!state.funcionarios.length) {
+    corpo.innerHTML = `
+      <p class="text-muted">Nenhum funcionário ativo encontrado. Cadastre em
+      <em>Administração → Funcionários</em>.</p>
+    `;
+  } else {
+    corpo.innerHTML = state.funcionarios.map((f) => {
+      const id = Number(f.id);
+      const nome = escapeHtmlLocal(f.nome || f.email || `#${id}`);
+      const papel = escapeHtmlLocal(f.permissao || "");
+      const checked = idsAtribuidos.has(id) ? "checked" : "";
+      return `
+        <label class="atribuir-linha">
+          <input type="checkbox" value="${id}" ${checked}>
+          <span class="atribuir-nome">${nome}</span>
+          <small class="atribuir-papel">${papel}</small>
+        </label>
+      `;
+    }).join("");
+  }
+
+  modal.hidden = false;
+  requestAnimationFrame(() => modal.classList.add("open"));
+
+  modal.querySelector(".atribuir-salvar").onclick = async () => {
+    const ids = Array.from(corpo.querySelectorAll("input[type=checkbox]:checked"))
+      .map((c) => Number(c.value));
     try {
-        const tarefas = await ExecucaoService.getTarefas(currentOsId);
-        todasTarefas = Array.isArray(tarefas) ? tarefas : [];
-        atualizarContadores();
-        renderizarListaTarefas();
-    } catch (error) {
-        lista.innerHTML = `<li class="text-muted" style="color:red;">Erro ao carregar: ${escapeHtml(error.message)}</li>`;
+      const atualizada = await ExecucaoApi.atribuirResponsaveis(
+        state.currentOsId, tarefa.id, ids,
+      );
+      // Atualiza só a tarefa modificada — evita re-render geral
+      const idx = state.todasTarefas.findIndex(
+        (t) => Number(t.id) === Number(tarefa.id),
+      );
+      if (idx >= 0) state.todasTarefas[idx] = atualizada;
+      renderizar();
+      fecharModalAtribuir(modal);
+    } catch (err) {
+      alert(`Falha ao salvar responsáveis: ${err.message}`);
     }
+  };
 }
 
-function atualizarContadores() {
-    const total = todasTarefas.length;
-    const pendente = todasTarefas.filter(t => t.status === 'pendente').length;
-    const execucao = todasTarefas.filter(t => t.status === 'execucao' || t.status === 'em_execucao').length;
-    const concluido = todasTarefas.filter(t => t.status === 'concluido').length;
 
-    document.getElementById('totalCount').innerText = total;
-    document.getElementById('pendenteCount').innerText = pendente;
-    document.getElementById('execucaoCount').innerText = execucao;
-    document.getElementById('concluidoCount').innerText = concluido;
+function obterOuCriarModalAtribuir() {
+  let modal = document.getElementById("modalAtribuir");
+  if (modal) return modal;
+  modal = document.createElement("div");
+  modal.id = "modalAtribuir";
+  modal.className = "atribuir-modal";
+  modal.hidden = true;
+  modal.innerHTML = `
+    <div class="atribuir-overlay" data-fechar></div>
+    <div class="atribuir-card" role="dialog" aria-modal="true">
+      <header>
+        <h3 class="atribuir-titulo">Atribuir responsáveis</h3>
+        <button class="btn-icon" type="button" data-fechar aria-label="Fechar">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </header>
+      <div class="atribuir-corpo"></div>
+      <footer>
+        <button type="button" class="btn btn-outline-secondary" data-fechar>Cancelar</button>
+        <button type="button" class="btn btn-primary atribuir-salvar">
+          <i class="fas fa-check"></i> Salvar
+        </button>
+      </footer>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelectorAll("[data-fechar]").forEach((el) => {
+    el.addEventListener("click", () => fecharModalAtribuir(modal));
+  });
+  return modal;
 }
 
-function renderizarListaTarefas() {
-    const lista = document.getElementById('listaTarefas');
-    if (!lista) return;
 
-    let tarefasFiltradas = [...todasTarefas];
-    if (filtroAtual !== 'todas') {
-        let statusFiltro = filtroAtual;
-        if (statusFiltro === 'execucao') statusFiltro = 'execucao';
-        tarefasFiltradas = tarefasFiltradas.filter(t => {
-            const tStatus = (t.status === 'em_execucao') ? 'execucao' : t.status;
-            return tStatus === statusFiltro;
-        });
-    }
-
-    if (tarefasFiltradas.length === 0) {
-        lista.innerHTML = '<li class="text-muted">Nenhuma tarefa encontrada.</li>';
-        return;
-    }
-
-    lista.innerHTML = '';
-    tarefasFiltradas.forEach(t => {
-        const li = document.createElement('li');
-        li.className = 'task-item';
-        
-        let statusValue = t.status;
-        let statusClass = '';
-        if (statusValue === 'pendente') statusClass = 'status-pendente';
-        else if (statusValue === 'em_execucao' || statusValue === 'execucao') {
-            statusValue = 'execucao';
-            statusClass = 'status-execucao';
-        }
-        else if (statusValue === 'concluido') statusClass = 'status-concluido';
-
-        li.innerHTML = `
-            <select class="task-status ${statusClass}" data-id="${t.id}">
-                <option value="pendente" ${t.status === 'pendente' ? 'selected' : ''}>⏳ Pendente</option>
-                <option value="execucao" ${(t.status === 'em_execucao' || t.status === 'execucao') ? 'selected' : ''}>⚙️ Em Execução</option>
-                <option value="concluido" ${t.status === 'concluido' ? 'selected' : ''}>✅ Concluído</option>
-            </select>
-            <span class="task-desc-label">${escapeHtml(t.descricao)}</span>
-            <button class="btn-icon-danger" data-id="${t.id}" title="Remover tarefa">
-                <i class="fas fa-trash-alt"></i>
-            </button>
-        `;
-        lista.appendChild(li);
-    });
-
-    // Eventos de mudança de status
-    document.querySelectorAll('.task-status').forEach(select => {
-        select.removeEventListener('change', statusChangeHandler);
-        select.addEventListener('change', statusChangeHandler);
-    });
-
-    // Eventos de remoção
-    document.querySelectorAll('.btn-icon-danger').forEach(btn => {
-        btn.removeEventListener('click', deleteHandler);
-        btn.addEventListener('click', deleteHandler);
-    });
+function fecharModalAtribuir(modal) {
+  modal.classList.remove("open");
+  setTimeout(() => { modal.hidden = true; }, 180);
 }
 
-const statusChangeHandler = async (e) => {
-    const tarefaId = e.target.dataset.id;
-    let newStatus = e.target.value;
-    try {
-        await ExecucaoService.atualizarTarefa(currentOsId, tarefaId, { status: newStatus });
-        await carregarTarefas();
-    } catch (error) {
-        alert(`Erro ao atualizar status: ${error.message}`);
-        await carregarTarefas();
-    }
-};
 
-const deleteHandler = async (e) => {
-    const tarefaId = e.currentTarget.dataset.id;
-    if (confirm('Deseja remover esta tarefa permanentemente?')) {
-        try {
-            await ExecucaoService.deletarTarefa(currentOsId, tarefaId);
-            await carregarTarefas();
-        } catch (error) {
-            alert(error.message);
-        }
-    }
-};
+function escapeHtmlLocal(s) {
+  if (s === null || s === undefined) return "";
+  return String(s).replace(/[&<>"']/g, (m) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  })[m]);
+}
+
+
+async function alterarStatusTarefa(tarefaId, novoStatus) {
+  try {
+    await ExecucaoApi.atualizarTarefa(state.currentOsId, tarefaId, { status: novoStatus });
+    await carregarTarefas();
+  } catch (error) {
+    alert(`Erro ao atualizar status: ${error.message}`);
+    await carregarTarefas();
+  }
+}
+
+
+async function removerTarefa(tarefaId) {
+  if (!confirm("Deseja remover esta tarefa permanentemente?")) return;
+  try {
+    await ExecucaoApi.deletarTarefa(state.currentOsId, tarefaId);
+    await carregarTarefas();
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
 
 async function adicionarTarefa() {
-    const check = await checarChecklistNoBackend();
-    if (!check.concluido) {
-        const continuar = confirm(`⚠️ O checklist ainda não foi concluído.\nDeseja forçar a inclusão da tarefa mesmo assim?`);
-        if (!continuar) return;
-    }
+  const check = await ExecucaoApi.checarChecklist(state.currentOsId);
+  if (!check.concluido) {
+    const continuar = confirm(
+      "⚠️ O checklist ainda não foi concluído.\nDeseja forçar a inclusão da tarefa mesmo assim?",
+    );
+    if (!continuar) return;
+  }
 
-    const descricao = prompt('Descrição da nova tarefa:');
-    if (!descricao || descricao.trim() === '') return;
+  const descricao = prompt("Descrição da nova tarefa:");
+  if (!descricao || !descricao.trim()) return;
 
-    try {
-        await ExecucaoService.salvarTarefa(currentOsId, { 
-            descricao: descricao.trim(), 
-            status: 'pendente'
-        });
-        await carregarTarefas();
-    } catch (error) {
-        alert(`Erro ao salvar a tarefa:\n${error.message}`);
-    }
+  try {
+    await ExecucaoApi.salvarTarefa(state.currentOsId, {
+      descricao: descricao.trim(),
+      status: "pendente",
+    });
+    await carregarTarefas();
+  } catch (error) {
+    alert(`Erro ao salvar a tarefa:\n${error.message}`);
+  }
 }
+
 
 async function finalizarOS() {
-    if (!confirm('Deseja marcar esta O.S como finalizada?\nEsta ação não poderá ser desfeita.')) return;
-    try {
-        await ExecucaoService.finalizarOS(currentOsId);
-        alert('✅ OS finalizada com sucesso!');
-        const statusBadge = document.querySelector('.os-status-bar .badge');
-        if (statusBadge) statusBadge.textContent = 'Concluído';
-        window.dispatchEvent(new CustomEvent('os:criada'));
-    } catch (error) {
-        alert(`Erro ao finalizar OS:\n${error.message}`);
+  if (!confirm("Deseja marcar esta O.S como finalizada?\nEsta ação não poderá ser desfeita.")) {
+    return;
+  }
+  try {
+    await ExecucaoApi.finalizarOS(state.currentOsId);
+    alert("OS finalizada com sucesso!");
+    const bar = document.querySelector(".os-status-bar");
+    if (bar) {
+      bar.innerHTML = "";
+      const badge = document.createElement("status-badge");
+      badge.setAttribute("type", "os");
+      badge.setAttribute("status", "concluido");
+      bar.appendChild(badge);
     }
+    window.dispatchEvent(new CustomEvent("os:criada"));
+  } catch (error) {
+    alert(`Erro ao finalizar OS:\n${error.message}`);
+  }
 }
 
-function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>]/g, function(m) {
-        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
-        return map[m] || m;
-    });
+
+async function atualizarVisualBotaoIncluir() {
+  const btn = document.getElementById("btnIncluirTarefa");
+  if (!btn) return;
+  const status = await ExecucaoApi.checarChecklist(state.currentOsId);
+  btn.style.opacity = status.concluido ? "1" : "0.7";
 }

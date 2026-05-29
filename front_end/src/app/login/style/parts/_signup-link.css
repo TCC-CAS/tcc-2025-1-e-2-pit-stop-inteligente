@@ -1,0 +1,63 @@
+/* _signup-link.css — link "Cadastre-se" abaixo do botão Google e link "Voltar". */
+
+.login-signup {
+    margin: 1.5rem 0 0;
+    text-align: center;
+    font-size: 0.92rem;
+    color: var(--gray-600, #64748b);
+    line-height: 1.45;
+}
+
+.login-signup-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: 0.35rem;
+    color: var(--primary, #2563eb);
+    font-weight: 700;
+    text-decoration: none;
+    transition: gap 0.2s, color 0.2s;
+}
+
+.login-signup-link:hover,
+.login-signup-link:focus-visible {
+    color: var(--primary-dark, #1d4ed8);
+    gap: 0.6rem;
+    outline: none;
+    text-decoration: underline;
+}
+
+.back-home {
+    margin: 1.25rem 0 0;
+    text-align: center;
+}
+
+.back-home a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    transition: all 0.2s;
+}
+
+.back-home a:hover,
+.back-home a:focus-visible {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    outline: none;
+    transform: translateY(-1px);
+}
+
+/* Logo do header agora é um link — mantém estilos consistentes mesmo virando <a> */
+.login-header .logo-placeholder {
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.login-header .logo-placeholder:hover {
+    transform: scale(1.05);
+}

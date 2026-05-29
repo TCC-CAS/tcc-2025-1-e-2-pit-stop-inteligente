@@ -1,0 +1,94 @@
+/* _buttons.css — botão primário, divisor, botão Google e animações. */
+
+.btn {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-spinner { margin-left: 8px; }
+
+/* Divisor */
+.login-divider {
+    text-align: center;
+    margin: 1.5rem 0 1.2rem;
+    position: relative;
+}
+
+.login-divider span {
+    background: #fff;
+    padding: 0 12px;
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.login-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e2e8f0;
+    z-index: -1;
+}
+
+/* Botão Google */
+.btn-google {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 40px;
+    padding: 10px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #1e293b;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-google:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.google-logo {
+    width: 20px;
+    height: 20px;
+}
+
+/* Animações */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fadeInUp 0.3s ease-out; }

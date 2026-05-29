@@ -1,0 +1,318 @@
+/* _form.css — painéis do wizard, grid de campos, inputs, botões e nav.
+   Layout em coluna única (sem 2 colunas em desktop) para melhor leitura. */
+
+.signup-form { position: relative; }
+
+/* ---------- Painéis de cada passo ---------- */
+.wizard-panel {
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+.wizard-panel.active {
+    display: block;
+    animation: panelSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes panelSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Título do painel: ícone em badge circular + texto */
+.panel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--signup-text);
+    margin: 0 0 0.4rem;
+    padding: 0;
+}
+
+.panel-title i {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #dbeafe, #eff6ff);
+    color: var(--signup-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+}
+
+.panel-help {
+    margin: 0 0 1.5rem;
+    color: var(--signup-muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    padding-left: 56px; /* alinhar com o texto do título */
+}
+
+/* ---------- Grid de campos (coluna única responsiva) ---------- */
+.grid {
+    display: grid;
+    gap: 1rem 1.1rem;
+    grid-template-columns: 1fr;
+}
+
+.grid.two-cols { grid-template-columns: repeat(2, 1fr); }
+
+.span-2 { grid-column: 1 / -1; }
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.form-group label,
+.form-group .form-group__label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.form-group label small {
+    font-weight: 500;
+    color: var(--signup-muted);
+    margin-left: 0.25rem;
+}
+
+/* Inputs e selects */
+.form-control {
+    width: 100%;
+    height: 48px;
+    padding: 0 1rem;
+    font-size: 0.95rem;
+    color: var(--signup-text);
+    background: var(--signup-soft);
+    border: 1.5px solid var(--signup-border);
+    border-radius: var(--signup-radius-sm);
+    box-sizing: border-box;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.form-control::placeholder { color: #94a3b8; }
+
+.form-control:hover { border-color: #cbd5e1; }
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--signup-primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.form-control:invalid:not(:placeholder-shown) {
+    /* feedback sutil mas visível para campos preenchidos invalidamente */
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+textarea.form-control { min-height: 96px; padding: 0.7rem 1rem; resize: vertical; }
+
+select.form-control {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M6 8 0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 2.5rem;
+}
+
+/* CEP com botão de busca */
+.cep-input {
+    display: flex;
+    gap: 0.5rem;
+}
+.cep-input .form-control { flex: 1; min-width: 0; }
+
+.btn-icon-square {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border: 1.5px solid var(--signup-border);
+    border-radius: var(--signup-radius-sm);
+    background: white;
+    color: var(--signup-muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.btn-icon-square:hover {
+    border-color: var(--signup-primary);
+    color: var(--signup-primary);
+    transform: translateY(-1px);
+}
+
+.field-feedback {
+    font-size: 0.78rem;
+    margin-top: 0.1rem;
+    color: var(--signup-muted);
+    transition: color 0.2s;
+}
+.field-feedback[data-tipo="success"] { color: var(--signup-success-dark); }
+.field-feedback[data-tipo="warning"] { color: #b45309; }
+.field-feedback[data-tipo="error"]   { color: #b91c1c; }
+.field-feedback[data-tipo="info"]    { color: var(--signup-primary-dark); }
+
+/* ---------- Mensagem inline (substitui alert) ---------- */
+.mensagem-passo {
+    margin: 1rem 0 0.5rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--signup-radius-sm);
+    font-size: 0.9rem;
+    line-height: 1.45;
+    background: #fef2f2;
+    color: #991b1b;
+    border-left: 4px solid var(--signup-danger);
+    animation: mensagemFade 0.25s ease;
+}
+.mensagem-passo[data-tipo="success"] {
+    background: #ecfdf5;
+    color: #065f46;
+    border-left-color: var(--signup-success);
+}
+.mensagem-passo[data-tipo="info"] {
+    background: #eff6ff;
+    color: #1e40af;
+    border-left-color: var(--signup-primary);
+}
+
+@keyframes mensagemFade {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Seletor de dias (chips) ---------- */
+.week-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.week-selector input[type="checkbox"] { display: none; }
+.week-selector label {
+    cursor: pointer;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--signup-muted);
+    background: var(--signup-soft);
+    border: 1.5px solid var(--signup-border);
+    transition: all 0.2s;
+    user-select: none;
+    min-width: 56px;
+    text-align: center;
+}
+.week-selector label:hover {
+    color: var(--signup-primary);
+    border-color: var(--signup-primary-light);
+}
+.week-selector input[type="checkbox"]:checked + label {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: var(--signup-primary-dark);
+    border-color: var(--signup-primary);
+}
+
+/* ---------- Botões padrão ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    font-family: inherit;
+    white-space: nowrap;
+}
+.btn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--signup-primary), var(--signup-primary-dark));
+    color: white;
+    box-shadow: 0 8px 20px -8px rgba(37, 99, 235, 0.5);
+}
+.btn-primary:hover:not(:disabled) {
+    box-shadow: 0 14px 28px -10px rgba(37, 99, 235, 0.6);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--signup-success), var(--signup-success-dark));
+    color: white;
+    box-shadow: 0 8px 20px -8px rgba(16, 185, 129, 0.5);
+}
+.btn-success:hover:not(:disabled) {
+    box-shadow: 0 14px 28px -10px rgba(16, 185, 129, 0.6);
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    background: white;
+    color: var(--signup-muted);
+    border: 1.5px solid var(--signup-border);
+}
+.btn-outline:hover:not(:disabled) {
+    color: var(--signup-primary);
+    border-color: var(--signup-primary);
+    transform: translateY(-1px);
+}
+
+.btn-sm-icon { padding: 0.65rem 1.1rem; }
+
+/* ---------- Navegação inferior (Voltar | Indicador | Próximo) ---------- */
+.wizard-nav {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--signup-border);
+}
+
+/* Quando o botão Voltar está oculto (passo 1), mantém o indicador centralizado */
+.wizard-nav .btn[hidden] { display: none; }
+.wizard-nav .btn:first-child[hidden] + .step-counter { grid-column: 1 / 3; }
+
+.step-counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--signup-muted);
+    font-weight: 600;
+}
+
+.step-counter-bar {
+    width: min(220px, 100%);
+    height: 6px;
+    background: var(--signup-border);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+}
+
+.step-counter-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 20%;
+    background: linear-gradient(90deg, var(--signup-success), var(--signup-primary));
+    border-radius: 999px;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}

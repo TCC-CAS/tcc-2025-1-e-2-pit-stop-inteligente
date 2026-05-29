@@ -1,0 +1,86 @@
+/* _print-responsive.css — variantes para impressão (PDF) e telas pequenas. */
+
+@media print {
+    .tab-card {
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+    }
+    .btn, .btn-icon, .aprovacao-actions, .checkbox-container, .actions-cell,
+    #btnGerenciarAprovacao, .reenviar-group {
+        display: none !important;
+    }
+    .table-container, .table-container-modal {
+        border: 1px solid #ccc;
+        overflow: visible;
+    }
+    #tabelaItensAprovacao th, #tabelaItensAprovacao td,
+    .modal-itens-table th, .modal-itens-table td {
+        border: 1px solid #ddd;
+    }
+    .badge {
+        border: 1px solid #aaa;
+        background: none !important;
+        color: black !important;
+    }
+    .info-cards {
+        grid-template-columns: repeat(2, 1fr);
+        break-inside: avoid;
+    }
+    .aprovacao-modal-container { padding: 0; }
+}
+
+/* Modo "exportando para PDF" via classe (html2pdf) */
+.exportando-pdf .aprovacao-actions,
+.exportando-pdf .confirmacao-aprovacao,
+.exportando-pdf .actions-cell,
+.exportando-pdf .btn-icon,
+.exportando-pdf .btn,
+.exportando-pdf #btnAprovarComoCliente,
+.exportando-pdf #btnExportarPDF {
+    display: none !important;
+}
+
+.exportando-pdf .badge {
+    border: 1px solid #aaa;
+    background: none !important;
+    color: black !important;
+}
+
+.exportando-pdf .info-card {
+    border-left: 3px solid #000;
+}
+
+/* Tablet/Mobile */
+@media (max-width: 1024px) {
+    .info-cards { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .tab-card { padding: 1rem; }
+    .info-cards { grid-template-columns: 1fr; }
+    .aprovacao-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+    }
+    .reenviar-group { justify-content: center; flex-wrap: wrap; }
+    .btn-success    { justify-content: center; width: 100%; }
+    .modal-itens-table th, .modal-itens-table td {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+    .modal-itens-table td.desc-col,
+    #tabelaItensAprovacao td.desc-col {
+        max-width: 150px;
+    }
+    .table-container, .table-container-modal {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab-card-header { flex-direction: column; align-items: stretch; }
+    .tab-card-header .btn { width: 100%; justify-content: center; }
+}

@@ -1,0 +1,105 @@
+/* _layout-tabs.css — layout base, header da página e sistema de abas. */
+
+.app-body {
+    display: flex;
+    min-height: calc(100vh - 64px);
+    overflow: visible;
+    background-color: var(--bg-light);
+}
+
+.main-content-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+    position: relative;
+    min-width: 0;
+}
+
+@media (min-width: 768px) {
+    .main-content-wrapper { padding: 1.75rem; }
+}
+@media (max-width: 900px) {
+    .main-content-wrapper { padding: 4.5rem 1rem 1rem; }
+}
+
+.page-header-custom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.page-title {
+    font-size: clamp(1.25rem, 1.05rem + 1vw, 1.75rem);
+    color: var(--text-primary, var(--text-light));
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+}
+
+/* Abas */
+.tabs-container {
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 1.5rem;
+}
+
+.tabs {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+}
+
+@media (min-width: 768px) {
+    .tabs { gap: 2rem; flex-wrap: wrap; overflow-x: visible; }
+}
+
+.tab {
+    background: none;
+    border: none;
+    padding: 0.85rem 0.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--secondary);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    min-height: 44px;
+}
+
+.tab.active { color: var(--primary); }
+
+.tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary);
+    border-radius: 3px 3px 0 0;
+}
+
+/* Conteúdo das abas */
+.tab-pane {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-pane.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+    .page-header-custom { flex-direction: column; align-items: stretch; }
+    .page-header-custom .header-actions,
+    .page-header-custom > .btn { width: 100%; }
+    .page-header-custom .btn { width: 100%; justify-content: center; }
+}

@@ -77,7 +77,7 @@ export class OficinaTabs extends HTMLElement {
         // Adiciona o link do Font Awesome
         const fontAwesome = document.createElement('link');
         fontAwesome.rel = 'stylesheet';
-        fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        fontAwesome.href = new URL("../vendor/fontawesome/css/all.min.css", import.meta.url).href;
         this.shadowRoot.appendChild(fontAwesome);
 
         // Constrói o caminho absoluto para o CSS baseado na localização deste script

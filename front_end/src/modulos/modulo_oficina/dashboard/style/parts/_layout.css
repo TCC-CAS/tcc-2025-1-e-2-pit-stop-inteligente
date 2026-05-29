@@ -1,0 +1,181 @@
+/* _layout.css — wrapper principal, header da página, filtros e cards-resumo de topo. */
+
+.main-content-wrapper {
+    padding: 2rem;
+    background: #f4f6f9;
+    min-height: 100vh;
+}
+
+/* Loading state global do dashboard */
+body.dashboard-loading .main-content-wrapper {
+    opacity: 0.6;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--gray-800);
+}
+
+.text-secondary {
+    color: var(--gray-600);
+    margin-top: 0.25rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Botões */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: white;
+    color: var(--gray-800);
+    border: 1px solid var(--gray-300);
+}
+
+.btn i { font-size: 1rem; }
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-outline-secondary { background: transparent; }
+.btn-outline-secondary:hover {
+    background: var(--gray-100);
+    transform: translateY(-1px);
+}
+
+.btn-sm { padding: 0.4rem 0.85rem; font-size: 0.8rem; }
+
+/* Filtros */
+.filters-bar {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--gray-600);
+}
+
+.form-control-sm {
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-300);
+    font-size: 0.9rem;
+}
+
+/* Summary cards (totais gerais no topo) */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.summary-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, transform 0.2s;
+    border-left: 3px solid var(--primary);
+}
+
+.summary-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.summary-icon {
+    font-size: 1.5rem;
+    color: var(--primary);
+    background: rgba(37, 99, 235, 0.1);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.summary-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-600);
+}
+
+.summary-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+/* Container principal que envolve sidebar e conteúdo */
+.app-body {
+    display: flex;
+    min-height: 100vh; /* opcional, para ocupar toda a altura */
+}
+
+/* Sidebar fixa à esquerda */
+.sidebar-left {
+    width: 260px;           /* ou a largura desejada */
+    flex-shrink: 0;         /* impede que encolha */
+    /* você pode manter outras propriedades já existentes */
+}
+
+/* Área de conteúdo principal ocupa o restante */
+.main-content-wrapper {
+    flex: 1;
+    overflow-x: hidden;     /* evita scroll horizontal inesperado */
+}

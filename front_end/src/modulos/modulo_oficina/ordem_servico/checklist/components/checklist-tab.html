@@ -1,6 +1,6 @@
 <!-- front_end/src/modulos/modulo_oficina/ordem_servico/checklist/components/checklist-tab.html -->
 <link rel="stylesheet" href="../../checklist/style/checklist-tab.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="../../../../../shared/vendor/fontawesome/css/all.min.css">
 
 <div class="checklist-container">
     <!-- Card de Status Principal -->
@@ -219,10 +219,19 @@
             <div class="wizard-panel" data-step="6">
                 <div class="panel-card">
                     <div class="panel-title"><i class="fas fa-signature"></i> Assinaturas</div>
+
+                    <p class="form-text" style="margin-bottom: 0.85rem; color: var(--text-secondary, #475569); font-size: 0.85rem;">
+                        <i class="fas fa-circle-info" style="color: var(--color-info, #0284c7);"></i>
+                        A <strong>assinatura do cliente</strong> é coletada exclusivamente no
+                        portal do cliente (mediante código de acesso). Aqui na oficina,
+                        apenas a <strong>assinatura do técnico</strong> precisa ser registrada —
+                        ela valida o diagnóstico e libera as próximas etapas.
+                    </p>
+
                     <div class="signature-box">
-                        <label><i class="fas fa-user"></i> Assinatura do Cliente *</label>
-                        <div class="signature-pad-wrapper"><canvas id="sigClient" class="signature-pad"></canvas></div>
-                        <button type="button" class="btn-clear" data-canvas="sigClient">Limpar</button>
+                        <label><i class="fas fa-user"></i> Assinatura do Cliente <small>(somente leitura)</small></label>
+                        <div class="signature-pad-wrapper"><canvas id="sigClient" class="signature-pad locked"></canvas></div>
+                        <button type="button" class="btn-clear locked" data-canvas="sigClient" disabled>Bloqueado</button>
                     </div>
                     <div class="signature-box">
                         <label><i class="fas fa-user-cog"></i> Assinatura do Técnico *</label>
