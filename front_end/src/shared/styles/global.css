@@ -179,7 +179,13 @@ pre {
     }
 }
 
-@media (min-width: 1024px) {
+/* O Web Component <oficina-sidebar> deixa de ser drawer em > 900px
+   (ver MOBILE_BREAKPOINT em components/oficina-sidebar.js). Por isso
+   o container precisa virar `row` na MESMA largura — caso contrário,
+   entre 901px e 1023px a sidebar fica empilhada VERTICALMENTE acima
+   do conteúdo, parecendo um cabeçalho gigante (bug observado na
+   página de Clientes & Veículos). */
+@media (min-width: 901px) {
     .main-container {
         flex-direction: row;
     }
