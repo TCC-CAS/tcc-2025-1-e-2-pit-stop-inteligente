@@ -4,10 +4,17 @@
 //  - Configuração de dropzones (drag & drop + click para abrir picker)
 //  - Atualização das prévias por categoria e da prévia geral
 //  - Carregamento das fotos já enviadas para o servidor
+//  - Remoção de fotos (local + DELETE no servidor quando aplicável)
 //
 // O estado das fotos vive em state.fotosExterno / fotosInterno / fotosMecanica.
+// Cada `File` carrega dois atributos auxiliares anexados em runtime:
+//   - `_arrayKey`: a chave do array em `state` ("fotosExterno" etc.) — permite
+//                  descobrir o array de origem na grade geral.
+//   - `documentoId`: presente apenas em fotos vindas do back-end. Quando
+//                    existe, a remoção dispara DELETE na API antes de tirar
+//                    do array local.
 
-import { API_BASE_URL, apiUrl } from "../../../../../../shared/config/api-config.js";
+import { API_BASE_URL, apiUrl, getCsrfToken } from "../../../../../../shared/config/api-config.js";
 import { state } from "./checklist-state.js";
 
 
@@ -30,6 +37,13 @@ function bucketsPorCategoria() {
       counterSel: ".count-mecanica",
     },
   };
+}
+
+
+function buscarBucket({ arrayKey }) {
+  return Object.values(bucketsPorCategoria()).find(
+    (b) => b.arrayKey === arrayKey,
+  );
 }
 
 
@@ -86,29 +100,113 @@ function adicionarFotos(files, categoria, arrayKey, previewSel, counterSel) {
     const renomeado = new File([file], `${categoria}_${file.name}`, {
       type: file.type,
     });
+    // Marca a qual array essa foto pertence; usado pela grade geral
+    // para localizar o array correto na hora de remover.
+    renomeado._arrayKey = arrayKey;
     state[arrayKey].push(renomeado);
   });
-  atualizarPreviewCategoria(previewSel, counterSel, state[arrayKey]);
+  atualizarPreviewCategoria(previewSel, counterSel, state[arrayKey], arrayKey);
   atualizarPreviewGeral();
 }
 
 
-/** Renderiza miniaturas de uma categoria específica. */
-export function atualizarPreviewCategoria(previewSel, counterSel, arrayFotos) {
+/**
+ * Cria a miniatura (.photo-thumb) com o botão "X" de remover.
+ * Internamente lê o arquivo via FileReader e configura o handler de remoção.
+ * Quando `removivel` é false, retorna o thumb sem o botão (uso futuro / fallback).
+ */
+function _criarThumb({ file, onRemover, removivel = true }) {
+  const thumb = document.createElement("div");
+  thumb.className = "photo-thumb";
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    thumb.style.backgroundImage = `url(${e.target.result})`;
+  };
+  reader.readAsDataURL(file);
+
+  if (removivel && typeof onRemover === "function") {
+    const btnRemover = document.createElement("button");
+    btnRemover.type = "button";
+    btnRemover.className = "photo-thumb-remover";
+    btnRemover.setAttribute("aria-label", "Remover foto");
+    btnRemover.title = "Remover foto";
+    btnRemover.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i>';
+    btnRemover.addEventListener("click", async (ev) => {
+      ev.stopPropagation();
+      btnRemover.disabled = true;
+      try {
+        await onRemover();
+      } finally {
+        // O thumb será removido pelo re-render — não precisamos reabilitar.
+      }
+    });
+    thumb.appendChild(btnRemover);
+  }
+  return thumb;
+}
+
+
+/**
+ * Remove uma foto: se a foto já existe no servidor (tem documentoId),
+ * dispara DELETE na API; em seguida tira do array de state e re-renderiza
+ * as prévias afetadas.
+ */
+async function removerFoto({ arrayKey, file }) {
+  const arr = state[arrayKey];
+  const idx = arr.indexOf(file);
+  if (idx === -1) return;
+
+  if (file.documentoId) {
+    try {
+      const res = await fetch(apiUrl(`/documentos/${file.documentoId}/`), {
+        method: "DELETE",
+        credentials: "include",
+        headers: { "X-CSRFToken": getCsrfToken() },
+      });
+      if (!res.ok && res.status !== 404) {
+        const corpo = await res.text().catch(() => "");
+        console.error("[checklist-photos] DELETE falhou", res.status, corpo);
+        alert("Não foi possível remover a foto do servidor. Tente novamente.");
+        return;
+      }
+    } catch (err) {
+      console.error("[checklist-photos] erro ao remover foto:", err);
+      alert("Erro de conexão ao remover a foto. Verifique sua internet.");
+      return;
+    }
+  }
+
+  arr.splice(idx, 1);
+  const bucket = buscarBucket({ arrayKey });
+  if (bucket) {
+    atualizarPreviewCategoria(bucket.previewSel, bucket.counterSel, arr, arrayKey);
+  }
+  atualizarPreviewGeral();
+}
+
+
+/**
+ * Renderiza miniaturas de uma categoria específica.
+ *
+ * `arrayKey` é opcional — quando informado, cada miniatura ganha um botão
+ * "X" de remover. Sem ele, mantém comportamento legado (somente leitura).
+ */
+export function atualizarPreviewCategoria(previewSel, counterSel, arrayFotos, arrayKey) {
   const grid = document.querySelector(previewSel);
   const counter = document.querySelector(counterSel);
   if (!grid) return;
 
   grid.innerHTML = "";
   arrayFotos.forEach((file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const thumb = document.createElement("div");
-      thumb.className = "photo-thumb";
-      thumb.style.backgroundImage = `url(${e.target.result})`;
-      grid.appendChild(thumb);
-    };
-    reader.readAsDataURL(file);
+    const thumb = _criarThumb({
+      file,
+      removivel: Boolean(arrayKey),
+      onRemover: arrayKey
+        ? () => removerFoto({ arrayKey, file })
+        : null,
+    });
+    grid.appendChild(thumb);
   });
   if (counter) counter.innerText = `${arrayFotos.length} foto(s)`;
 }
@@ -128,14 +226,15 @@ export function atualizarPreviewGeral() {
 
   gridGeral.innerHTML = "";
   todas.forEach((file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const thumb = document.createElement("div");
-      thumb.className = "photo-thumb";
-      thumb.style.backgroundImage = `url(${e.target.result})`;
-      gridGeral.appendChild(thumb);
-    };
-    reader.readAsDataURL(file);
+    const arrayKey = file._arrayKey || _inferirArrayKey(file);
+    const thumb = _criarThumb({
+      file,
+      removivel: Boolean(arrayKey),
+      onRemover: arrayKey
+        ? () => removerFoto({ arrayKey, file })
+        : null,
+    });
+    gridGeral.appendChild(thumb);
   });
 
   if (counterGeral) {
@@ -146,11 +245,26 @@ export function atualizarPreviewGeral() {
 }
 
 
+/**
+ * Tenta descobrir o arrayKey de um arquivo pelo prefixo do nome
+ * (categoria_xxx.jpg). Usado como fallback caso `_arrayKey` esteja ausente.
+ */
+function _inferirArrayKey(file) {
+  const nome = file?.name || "";
+  if (nome.startsWith("externo_")) return "fotosExterno";
+  if (nome.startsWith("interno_")) return "fotosInterno";
+  if (nome.startsWith("mecanica_")) return "fotosMecanica";
+  return null;
+}
+
+
 /** Atualiza prévias das 3 categorias com o conteúdo atual de state. */
 export function atualizarTodasAsPrevias() {
   const buckets = bucketsPorCategoria();
   Object.values(buckets).forEach((cfg) => {
-    atualizarPreviewCategoria(cfg.previewSel, cfg.counterSel, state[cfg.arrayKey]);
+    atualizarPreviewCategoria(
+      cfg.previewSel, cfg.counterSel, state[cfg.arrayKey], cfg.arrayKey,
+    );
   });
 }
 
@@ -181,49 +295,27 @@ export async function carregarFotosDoServidor() {
     state.fotosInterno.length = 0;
     state.fotosMecanica.length = 0;
 
-    const todasFotos = [];
     for (const doc of fotos) {
       const urlCompleta = `${API_BASE_URL}${doc.arquivo}`;
       const response = await fetch(urlCompleta);
       const blob = await response.blob();
       const nomeArquivo = doc.nome_arquivo || "foto.jpg";
       const file = new File([blob], nomeArquivo, { type: blob.type });
-      todasFotos.push(file);
+      // ID do documento no banco — habilita o DELETE na API ao remover.
+      file.documentoId = doc.id;
 
       const categoria = categoriaDoDocumento(doc, nomeArquivo);
-      if (categoria === "externo") state.fotosExterno.push(file);
-      else if (categoria === "interno") state.fotosInterno.push(file);
-      else if (categoria === "mecanica") state.fotosMecanica.push(file);
+      const arrayKey =
+        categoria === "interno"  ? "fotosInterno"  :
+        categoria === "mecanica" ? "fotosMecanica" :
+                                    "fotosExterno";
+      file._arrayKey = arrayKey;
+      state[arrayKey].push(file);
     }
 
     atualizarTodasAsPrevias();
-    renderizarGridGeralComArquivos(todasFotos);
+    atualizarPreviewGeral();
   } catch (e) {
     console.error("Erro ao carregar fotos do servidor:", e);
-  }
-}
-
-
-function renderizarGridGeralComArquivos(arquivos) {
-  const gridGeral = document.getElementById("photoPreviewGrid");
-  const counterGeral = document.getElementById("photoCounter");
-  if (!gridGeral) return;
-
-  gridGeral.innerHTML = "";
-  arquivos.forEach((file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const thumb = document.createElement("div");
-      thumb.className = "photo-thumb";
-      thumb.style.backgroundImage = `url(${e.target.result})`;
-      gridGeral.appendChild(thumb);
-    };
-    reader.readAsDataURL(file);
-  });
-
-  if (counterGeral) {
-    counterGeral.innerText = `${arquivos.length} foto(s) no total`;
-    counterGeral.style.color =
-      arquivos.length >= 4 ? "var(--success)" : "var(--warning)";
   }
 }

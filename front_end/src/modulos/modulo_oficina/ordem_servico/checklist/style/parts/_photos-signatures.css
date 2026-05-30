@@ -30,6 +30,44 @@
     background-position: center;
     border-radius: 8px;
     border: 1px solid var(--gray-300);
+    /* Position relative para o botão "X" de remover ficar posicionado
+       absolutamente no canto superior direito da miniatura. */
+    position: relative;
+}
+
+/* Botão de remover foto (X no canto da miniatura). */
+.photo-thumb-remover {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(220, 38, 38, 0.92);   /* var(--color-danger) com alpha */
+    color: #ffffff;
+    font-size: 0.7rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: background 0.15s, transform 0.1s;
+    z-index: 1;
+}
+.photo-thumb-remover:hover,
+.photo-thumb-remover:focus-visible {
+    background: rgb(185, 28, 28);
+    outline: none;
+    transform: scale(1.08);
+}
+.photo-thumb-remover:active { transform: scale(0.94); }
+.photo-thumb-remover:disabled {
+    background: rgba(148, 163, 184, 0.7);
+    cursor: not-allowed;
+    transform: none;
 }
 
 .photo-counter {

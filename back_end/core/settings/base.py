@@ -99,7 +99,10 @@ ASGI_APPLICATION = "core.asgi.application"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        # back_end/templates/ guarda overrides locais (ex.: admin/base_site.html
+        # ocultando o botão de modo escuro). DIRS é checado antes de APP_DIRS,
+        # então nossos overrides vencem o template original do contrib.
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -275,3 +278,22 @@ ABACATEPAY_RETORNO_URL_PATH = config(
     "ABACATEPAY_RETORNO_URL_PATH",
     default="/front_end/src/modulos/modulo_oficina/pagamentos/pages/retorno-pagamento.html",
 )
+
+
+# ----------------------------------------------------------------------
+# Moderação de imagens em uploads (defesa contra conteúdo inapropriado)
+# ----------------------------------------------------------------------
+# Provedor de moderação de conteúdo. Por padrão "off" (somente validações
+# locais: tamanho, MIME, extensão, magic bytes via Pillow). Suporta:
+#   - "off"         : sem chamada externa (default).
+#   - "sightengine" : usa a API da Sightengine (free tier 500 ops/mês).
+# Em ambos os casos a verificação por magic bytes continua ativa.
+MODERACAO_IMAGEM_PROVEDOR = config("MODERACAO_IMAGEM_PROVEDOR", default="off")
+# Probabilidade limite (0-1). Acima dela o upload é rejeitado.
+MODERACAO_IMAGEM_LIMIAR = config(
+    "MODERACAO_IMAGEM_LIMIAR", default=0.6, cast=float,
+)
+# Credenciais do Sightengine (https://sightengine.com). Só usadas quando
+# `MODERACAO_IMAGEM_PROVEDOR=sightengine`.
+SIGHTENGINE_API_USER = config("SIGHTENGINE_API_USER", default="")
+SIGHTENGINE_API_SECRET = config("SIGHTENGINE_API_SECRET", default="")

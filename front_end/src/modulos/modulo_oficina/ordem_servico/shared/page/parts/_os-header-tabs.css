@@ -141,14 +141,30 @@ oficina-tabs {
 @media (max-width: 768px) {
     .os-header { padding: 1rem; }
     .os-header-top { flex-direction: column; align-items: stretch; }
-    .header-actions-top { justify-content: flex-end; }
+    /* Botões do header se reorganizam em uma grade fluida — todos
+       visíveis sem cortar nem espremer texto. */
+    .header-actions-top {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .header-actions-top .btn-outline {
+        flex: 1 1 calc(50% - 0.5rem);
+        justify-content: center;
+        min-height: 40px;
+        padding: 0.5rem 0.75rem;
+    }
     .os-title { font-size: 1.25rem; }
     .tab { padding: 0.4rem 0.85rem; font-size: 0.78rem; }
-    .btn-outline { width: auto; }
 }
 
 @media (max-width: 480px) {
-    .header-actions-top .btn-outline { flex: 1 1 auto; justify-content: center; }
+    /* Em telas bem estreitas cada botão ocupa a linha toda, evitando
+       textos cortados e mantendo a área de toque ergonômica (≥44px). */
+    .header-actions-top .btn-outline {
+        flex: 1 1 100%;
+        font-size: 0.85rem;
+    }
 }
 
 /* ---------- Modal de Código de Acesso (cliente) ---------- */

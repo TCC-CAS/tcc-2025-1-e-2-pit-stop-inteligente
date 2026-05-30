@@ -4,6 +4,15 @@
    Este arquivo cuida do conteúdo, abas, formulários e tabelas. */
 
 @media (max-width: 767px) {
+    /* Trava o scroll horizontal em mobile. Qualquer elemento fora do
+       viewport (mesmo que ele "vaze" por bug pontual) deixa de gerar
+       barra de rolagem lateral — mantém o app sempre na largura da
+       tela e evita "balançar" o layout. */
+    html, body {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
     /* Estrutura principal */
     .app-body {
         flex-direction: column;

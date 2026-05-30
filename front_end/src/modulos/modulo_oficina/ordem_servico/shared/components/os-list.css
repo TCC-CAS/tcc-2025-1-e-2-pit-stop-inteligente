@@ -204,12 +204,81 @@
     color: #dc3545;
 }
 
-/* Ajuste para telas muito pequenas */
+/* ===========================================================
+   Responsividade
+   ===========================================================
+   Em mobile a sidebar direita vira drawer offcanvas — mas o
+   conteúdo interno também precisa se adaptar. Garantimos que
+   nenhum elemento estoure horizontalmente (overflow oculto +
+   ellipsis nos textos) e que IDs/títulos longos não empurrem
+   o badge de status para fora do card.
+   =========================================================== */
+
+/* Garante que filhos flex não causem overflow horizontal (problema
+   clássico de flexbox: min-width: auto faz o conteúdo "empurrar"). */
+.os-card-header,
+.os-info,
+.os-client,
+.actions-row {
+    min-width: 0;
+}
+
+/* Permite o cabeçalho do card quebrar em duas linhas em telas estreitas,
+   mantendo ID e status legíveis sem sobreposição. */
+.os-card-header {
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+}
+.os-id {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.os-info strong,
+.os-info span,
+.os-client {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Tablet pequeno / mobile largo. */
+@media (max-width: 540px) {
+    .header {
+        padding: 1rem;
+    }
+    .actions-row {
+        flex-wrap: wrap;
+    }
+    .filter-select {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+    .list {
+        padding: 0.75rem;
+    }
+    .os-card {
+        padding: 0.85rem 2.6rem 0.85rem 0.85rem;
+        margin-bottom: 0.6rem;
+    }
+    .title { font-size: 1rem; }
+    .btn-primary { padding: 0.45rem 0.85rem; font-size: 0.8rem; }
+}
+
+/* Telas muito pequenas (smartphones compactos / iPhone SE). */
 @media (max-width: 400px) {
     .os-card {
         padding-right: 2.2rem;
     }
-    .os-id {
-        max-width: 60%;
+    .os-card-header {
+        gap: 0.25rem;
     }
+    .os-status {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+    }
+    .os-info strong { font-size: 0.9rem; }
+    .os-info span,
+    .os-client { font-size: 0.8rem; }
 }

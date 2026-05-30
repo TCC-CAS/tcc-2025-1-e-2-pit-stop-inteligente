@@ -47,10 +47,15 @@ function coletarPayload(sigTech) {
 
 
 async function uploadFotosCategoria(osId, arquivos, categoria) {
-  if (!arquivos.length) return;
+  // Filtra apenas fotos NOVAS: as que já têm `documentoId` foram baixadas do
+  // servidor em `carregarFotosDoServidor` e re-postá-las criaria duplicatas
+  // no banco. A remoção de fotos antigas já é tratada via DELETE em tempo
+  // real pelo botão "X" da miniatura (ver checklist-photos.js).
+  const novas = arquivos.filter((f) => !f.documentoId);
+  if (!novas.length) return;
 
   const formData = new FormData();
-  arquivos.forEach((f) => formData.append("files", f));
+  novas.forEach((f) => formData.append("files", f));
   formData.append("origem", "checklist");
   formData.append("categoria", categoria);
 

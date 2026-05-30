@@ -1,0 +1,28 @@
+{% extends "admin/base_site.html" %}
+
+{# ------------------------------------------------------------------
+   Override do admin/base_site.html. Mantém o template padrão do
+   Django Admin e apenas injeta CSS extra para ocultar o botão de
+   alternar tema (theme-toggle) e forçar `color-scheme: light`,
+   atendendo ao feedback do avaliador de ocultar o modo escuro.
+
+   Reativar é trivial: apague este arquivo (ou esvazie o bloco
+   extrahead) e o admin volta a oferecer dark mode automaticamente.
+   ------------------------------------------------------------------ #}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+  /* Esconde o botão de alternar tema do header do admin. */
+  .theme-toggle,
+  button.theme-toggle {
+    display: none !important;
+  }
+
+  /* Garante que mesmo se o JS antigo tiver setado data-theme="dark",
+     o navegador continue interpretando o admin como claro. */
+  html[data-theme="dark"] {
+    color-scheme: light !important;
+  }
+</style>
+{% endblock %}

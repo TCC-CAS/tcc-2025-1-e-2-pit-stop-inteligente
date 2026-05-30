@@ -64,20 +64,18 @@ export class OficinaHeader extends HTMLElement {
   // -------------------------------------------------------------------------
 
   loadTheme() {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    document.documentElement.classList.toggle("dark-mode", savedTheme === "dark");
-    document.body.classList.toggle("dark-mode", savedTheme === "dark");
+    // Modo escuro temporariamente ocultado (feedback do avaliador). Sempre
+    // força tema claro e limpa qualquer escolha antiga persistida em
+    // localStorage para não reaparecer no próximo carregamento.
+    document.documentElement.classList.remove("dark-mode");
+    document.body.classList.remove("dark-mode");
+    try { localStorage.removeItem("theme"); } catch (_) { /* no-op */ }
   }
 
   toggleTheme() {
-    const isDark = !document.documentElement.classList.contains("dark-mode");
-    document.documentElement.classList.toggle("dark-mode", isDark);
-    document.body.classList.toggle("dark-mode", isDark);
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-    this._sincronizarIconeTema(isDark);
-    // Notifica componentes não-CSS (Chart.js, canvases, etc.) que precisam
-    // recolorir elementos pintados manualmente quando o tema muda.
-    notificarMudancaTema();
+    // No-op enquanto o modo escuro estiver ocultado. Mantemos a função para
+    // não quebrar chamadas externas; o botão #themeToggle já é hidden no CSS.
+    return;
   }
 
   _sincronizarIconeTema(isDark) {
@@ -297,6 +295,12 @@ export class OficinaHeader extends HTMLElement {
         .brand-icon { font-size: 1.2rem; }
 
         .actions { display: flex; align-items: center; gap: 0.45rem; }
+
+        /* Modo escuro temporariamente ocultado (feedback do avaliador).
+           Mantemos o markup do botão no template para preservar
+           acessibilidade dos demais elementos, mas o botão fica oculto
+           visualmente e fora da ordem de tabulação. */
+        #themeToggle { display: none !important; }
 
         .icon-btn {
           width: 40px;
