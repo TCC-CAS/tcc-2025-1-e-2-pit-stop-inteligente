@@ -528,10 +528,13 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.25rem;
-    max-width: 880px;
+    max-width: 1200px;       /* acomoda 3 cards lado a lado em desktop */
     margin: 0 auto;
 }
+/* Tablet: 2 colunas (3 cards quebram, o ultimo ocupa a 2a linha). */
 @media (min-width: 768px) { .plans-grid { grid-template-columns: 1fr 1fr; } }
+/* Desktop: 3 colunas — Teste | Basico | Premium lado a lado. */
+@media (min-width: 1024px) { .plans-grid { grid-template-columns: repeat(3, 1fr); } }
 .plan-card {
     background: #fff;
     border: 1px solid var(--gray-200);

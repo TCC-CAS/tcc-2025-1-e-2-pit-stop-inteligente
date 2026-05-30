@@ -255,35 +255,55 @@
                     <p>Comece grátis, escale quando precisar.</p>
                 </div>
 
+                <!--
+                    Planos comerciais conforme capítulo 6 (Precificação) do TCC.
+                    Valores devem permanecer sincronizados com:
+                      - back_end/apps/modulo_pagamentos/migrations/0004_atualizar_planos_e_seed_teste.py
+                      - front_end/src/modulos/modulo_oficina/cadastro_oficina/pages/cadastro-oficina.html
+                -->
                 <div class="plans-grid">
                     <article class="plan-card animate-on-scroll">
                         <header>
-                            <span class="plan-tag">Básico</span>
-                            <strong class="plan-price"><span>R$</span>0<small>/mês</small></strong>
-                            <small>Para começar a digitalizar a operação.</small>
+                            <span class="plan-tag">Teste</span>
+                            <strong class="plan-price"><span>R$</span>0<small>/7 dias</small></strong>
+                            <small>Para conhecer a plataforma sem compromisso.</small>
                         </header>
                         <ul>
-                            <li><i class="fas fa-check" aria-hidden="true"></i> 1 oficina</li>
-                            <li><i class="fas fa-check" aria-hidden="true"></i> Até 3 funcionários</li>
-                            <li><i class="fas fa-check" aria-hidden="true"></i> Ordens de serviço ilimitadas</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 10 OS no período</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 1 usuário</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 1 GB de armazenamento</li>
                             <li><i class="fas fa-check" aria-hidden="true"></i> Portal do cliente</li>
                         </ul>
                         <a href="../../../modulos/modulo_oficina/cadastro_oficina/pages/cadastro-oficina.html" class="btn btn-outline btn-block">Começar grátis</a>
+                    </article>
+
+                    <article class="plan-card animate-on-scroll">
+                        <header>
+                            <span class="plan-tag">Básico</span>
+                            <strong class="plan-price"><span>R$</span>99,90<small>/mês</small></strong>
+                            <small>Para oficinas com volume moderado de OS.</small>
+                        </header>
+                        <ul>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 30 OS por mês</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 2 usuários ativos</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 1 GB de armazenamento</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Suporte padrão</li>
+                        </ul>
+                        <a href="../../../modulos/modulo_oficina/cadastro_oficina/pages/cadastro-oficina.html" class="btn btn-outline btn-block">Escolher Básico</a>
                     </article>
 
                     <article class="plan-card recommended animate-on-scroll">
                         <span class="plan-ribbon">Recomendado</span>
                         <header>
                             <span class="plan-tag">Premium</span>
-                            <strong class="plan-price"><span>R$</span>149<small>/mês</small></strong>
-                            <small>Para crescer com indicadores e auditoria.</small>
+                            <strong class="plan-price"><span>R$</span>199,90<small>/mês</small></strong>
+                            <small>Para oficinas em ritmo intenso de operação.</small>
                         </header>
                         <ul>
-                            <li><i class="fas fa-check" aria-hidden="true"></i> Até 5 oficinas</li>
-                            <li><i class="fas fa-check" aria-hidden="true"></i> Funcionários ilimitados</li>
-                            <li><i class="fas fa-check" aria-hidden="true"></i> Dashboard executivo</li>
-                            <li><i class="fas fa-check" aria-hidden="true"></i> Relatórios exportáveis (PDF/CSV)</li>
-                            <li><i class="fas fa-check" aria-hidden="true"></i> Auditoria detalhada</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 50 OS por mês</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 5 usuários ativos</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 5 GB de armazenamento</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Suporte preferencial</li>
                         </ul>
                         <a href="../../../modulos/modulo_oficina/cadastro_oficina/pages/cadastro-oficina.html" class="btn btn-primary btn-block">Assinar Premium</a>
                     </article>
