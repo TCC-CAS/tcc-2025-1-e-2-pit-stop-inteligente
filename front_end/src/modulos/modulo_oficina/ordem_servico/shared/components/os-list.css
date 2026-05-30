@@ -23,6 +23,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.5rem;
+}
+
+/* Em tablet/mobile a sidebar-right vira drawer e ganha um botão de
+   fechar (X) no canto superior direito posicionado em position:absolute
+   sobre o componente. Reservamos espaço à direita do .title-row para
+   que esse X não cubra o botão "Nova O.S.". */
+@media (max-width: 1023px) {
+    .title-row {
+        padding-right: 48px;
+    }
 }
 
 .title {
