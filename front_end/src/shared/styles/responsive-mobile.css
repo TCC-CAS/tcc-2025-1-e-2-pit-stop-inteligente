@@ -25,18 +25,15 @@
         overflow-y: visible;
     }
 
+    /* Em mobile mantemos o drawer offcanvas (não vira bloco embutido),
+       mas agora ocupando 95% da largura da tela em vez dos 420px do
+       tablet — assim a lista de OS abre realmente cobrindo a página,
+       sem cortar pela metade.
+       O `position: fixed`, `top: 64px`, `height` e `transition` são
+       herdados do bloco @media (max-width: 1023px) em _app-shell.css. */
     .sidebar-right {
-        flex: 0 0 auto;
-        width: 100%;
-        max-width: 100%;
-        position: static;
-        right: auto;
-        top: auto;
-        height: auto;
-        border-left: none;
-        border-top: 1px solid var(--border-light, #e2e8f0);
-        max-height: 320px;
-        box-shadow: none;
+        width: 95vw;
+        max-width: 95vw;
     }
 
     /* Cabeçalho da OS */
