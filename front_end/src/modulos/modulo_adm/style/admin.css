@@ -74,6 +74,13 @@
     flex-direction: column;
     gap: 0.15rem;
 }
+/* O atributo HTML5 `hidden` aplica `display: none` via UA stylesheet,
+   mas a regra `.admin-nav-item { display: flex }` abaixo o sobrescreve
+   (author CSS vence sobre user-agent). Restauramos o comportamento
+   esperado: itens com `hidden` somem totalmente do menu.
+   Para REATIVAR um item, basta remover o atributo `hidden` no HTML. */
+.admin-nav-item[hidden] { display: none !important; }
+
 .admin-nav-item {
     display: flex;
     align-items: center;

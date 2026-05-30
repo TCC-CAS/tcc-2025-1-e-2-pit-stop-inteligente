@@ -28,6 +28,17 @@
                 <span class="brand-text">Pit Stop · Admin</span>
             </header>
 
+            <!--
+                Itens do menu ocultos temporariamente (apresentação do TCC):
+                  - Ordens de Serviço, Saúde da aplicação, Segurança,
+                    Notificações, Auditoria, Backup do banco.
+
+                Cada item está marcado com o atributo `hidden` (HTML5 nativo).
+                Para REATIVAR um deles no futuro: basta REMOVER a palavra
+                `hidden` do <a> correspondente. A página, a view JS e a rota
+                continuam funcionando — não foi removido código, só escondemos
+                a entrada no menu.
+            -->
             <nav class="admin-nav" aria-label="Seções do painel">
                 <a href="#dashboard" class="admin-nav-item active" data-tab="dashboard">
                     <i class="fas fa-chart-pie" aria-hidden="true"></i><span>Dashboard</span>
@@ -38,30 +49,30 @@
                 <a href="#usuarios" class="admin-nav-item" data-tab="usuarios">
                     <i class="fas fa-user-shield" aria-hidden="true"></i><span>Usuários</span>
                 </a>
-                <a href="#os" class="admin-nav-item" data-tab="os">
+                <a href="#os" class="admin-nav-item" data-tab="os" hidden>
                     <i class="fas fa-clipboard-list" aria-hidden="true"></i><span>Ordens de Serviço</span>
                 </a>
                 <a href="#suporte" class="admin-nav-item" data-tab="suporte">
                     <i class="fas fa-headset" aria-hidden="true"></i><span>Suporte</span>
                     <span class="nav-badge" id="navBadgeSuporte" hidden>0</span>
                 </a>
-                <a href="#saude" class="admin-nav-item" data-tab="saude">
+                <a href="#saude" class="admin-nav-item" data-tab="saude" hidden>
                     <i class="fas fa-heart-pulse" aria-hidden="true"></i><span>Saúde da aplicação</span>
                 </a>
-                <a href="#seguranca" class="admin-nav-item" data-tab="seguranca">
+                <a href="#seguranca" class="admin-nav-item" data-tab="seguranca" hidden>
                     <i class="fas fa-shield-halved" aria-hidden="true"></i><span>Segurança</span>
                 </a>
                 <a href="#configuracoes" class="admin-nav-item" data-tab="configuracoes">
                     <i class="fas fa-sliders-h" aria-hidden="true"></i><span>Configurações</span>
                 </a>
-                <a href="#notificacoes" class="admin-nav-item" data-tab="notificacoes">
+                <a href="#notificacoes" class="admin-nav-item" data-tab="notificacoes" hidden>
                     <i class="fas fa-bell" aria-hidden="true"></i><span>Notificações</span>
                     <span class="nav-badge" id="navBadgeNotif" hidden>0</span>
                 </a>
-                <a href="#auditoria" class="admin-nav-item" data-tab="auditoria">
+                <a href="#auditoria" class="admin-nav-item" data-tab="auditoria" hidden>
                     <i class="fas fa-clipboard-check" aria-hidden="true"></i><span>Auditoria</span>
                 </a>
-                <a href="#backup" class="admin-nav-item" data-tab="backup">
+                <a href="#backup" class="admin-nav-item" data-tab="backup" hidden>
                     <i class="fas fa-database" aria-hidden="true"></i><span>Backup do banco</span>
                 </a>
             </nav>
