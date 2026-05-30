@@ -56,6 +56,12 @@
     z-index: -1;
 }
 
+/* O atributo `hidden` deve esconder, mas como .btn-google e .login-divider
+   redefinem `display`, precisamos restaurar com !important. Remova o atributo
+   `hidden` no HTML para reativar o login social com Google. */
+.btn-google[hidden],
+.login-divider[hidden] { display: none !important; }
+
 /* Botão Google */
 .btn-google {
     background: #fff;

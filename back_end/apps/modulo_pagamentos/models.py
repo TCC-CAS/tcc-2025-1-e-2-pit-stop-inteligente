@@ -43,6 +43,16 @@ class PlanoSaaS(models.Model):
         default=0,
         help_text="0 = sem limite específico (cai no default global).",
     )
+    limite_armazenamento_mb = models.PositiveIntegerField(
+        default=0,
+        help_text="Quota de armazenamento em MB (0 = sem limite específico, "
+                  "cai no default global). Ex.: 1024 = 1 GB.",
+    )
+    duracao_dias = models.PositiveIntegerField(
+        default=30,
+        help_text="Duração de uma vigência da assinatura, em dias. "
+                  "30 para planos mensais; 7 para o plano Teste de avaliação.",
+    )
     destaque = models.BooleanField(
         default=False,
         help_text="Marca como 'Recomendado' na UI de seleção.",

@@ -119,13 +119,19 @@ def _override(oficina, campo):
 
 
 def consumo_usuarios(oficina: Oficina) -> RecursoConsumo:
-    """Funcionários ativos vs limite do plano (com override por oficina)."""
+    """Funcionários ativos vs limite do plano (com override por oficina).
+
+    Defaults alinhados ao Quadro 6.3 do TCC (Planos de Assinatura):
+        teste   = 1 usuário
+        basico  = 2 usuários
+        premium = 5 usuários
+    """
     plano = oficina.plano_atual or "basico"
     limite = _override(oficina, "limite_usuarios")
     if limite is None:
         limite = _flag_int(
             f"limite_usuarios_{plano}",
-            {"basico": 5, "premium": 25}.get(plano, 5),
+            {"teste": 1, "basico": 2, "premium": 5}.get(plano, 2),
         )
     usados = Funcionario.objects.filter(oficina=oficina, is_active=True).count()
     return RecursoConsumo(
@@ -139,13 +145,20 @@ def consumo_usuarios(oficina: Oficina) -> RecursoConsumo:
 
 
 def consumo_os_mes(oficina: Oficina, agora: Optional[datetime] = None) -> RecursoConsumo:
-    """Ordens de Serviço criadas no mês corrente (com override por oficina)."""
+    """Ordens de Serviço criadas no mês corrente (com override por oficina).
+
+    Defaults alinhados ao Quadro 6.3 do TCC (Planos de Assinatura):
+        teste   = 10 OS (vale para os 7 dias do plano, mas usamos a mesma
+                  janela mensal — o plano expira antes do reset do mês)
+        basico  = 30 OS / mês
+        premium = 50 OS / mês
+    """
     plano = oficina.plano_atual or "basico"
     limite = _override(oficina, "limite_os_mensal")
     if limite is None:
         limite = _flag_int(
             f"limite_os_mensal_{plano}",
-            {"basico": 100, "premium": 1000}.get(plano, 100),
+            {"teste": 10, "basico": 30, "premium": 50}.get(plano, 30),
         )
     inicio_mes = _inicio_do_mes(agora)
     usadas = OrdemServico.objects.filter(
@@ -164,24 +177,23 @@ def consumo_os_mes(oficina: Oficina, agora: Optional[datetime] = None) -> Recurs
 def consumo_storage(oficina: Oficina) -> RecursoConsumo:
     """Soma do tamanho de anexos: documentos da OS + logo da oficina.
 
+    Defaults alinhados ao Quadro 6.3 do TCC (Planos de Assinatura):
+        teste   = 1 GB  (1024 MB)
+        basico  = 1 GB  (1024 MB)
+        premium = 5 GB  (5120 MB)
+
     Implementação:
       - Documento.arquivo: FileField. Lemos os bytes via storage.size()
         para evitar carregar o arquivo todo.
       - Logo da oficina: ImageField. Mesma estratégia.
       - Convertemos para MB (base 1024² seguindo convenção de armazenamento).
-
-    Por padrão a soma é feita em Python (storage.size é call por arquivo).
-    Para oficinas com milhares de anexos a primeira chamada pode demorar;
-    isso poderia ser otimizado armazenando o tamanho na criação do
-    Documento — fica como evolução. Para o volume atual (centenas) o
-    custo é aceitável.
     """
     plano = oficina.plano_atual or "basico"
     limite_mb = _override(oficina, "limite_storage_mb")
     if limite_mb is None:
         limite_mb = _flag_int(
             f"limite_storage_mb_{plano}",
-            {"basico": 1024, "premium": 10240}.get(plano, 1024),
+            {"teste": 1024, "basico": 1024, "premium": 5120}.get(plano, 1024),
         )
 
     bytes_totais = 0

@@ -32,7 +32,8 @@ from ..models import (
 from .abacatepay_client import AbacatePayClient, CheckoutCriado
 
 
-VALIDADE_MESES = 1  # cada pagamento estende a assinatura em 30 dias
+VALIDADE_MESES = 1  # mantido como fallback histórico
+VALIDADE_PADRAO_DIAS = 30  # usado quando o plano não declara duracao_dias
 AVISO_VENCIMENTO_DIAS = 7  # janela de "aviso amarelo" antes do vencimento
 
 
@@ -172,6 +173,58 @@ def obter_gate(oficina: Oficina) -> GateAssinatura:
         mensagem=mensagem,
         pode_acessar=list(PAGINAS_LIBERADAS_BLOQUEIO),
     )
+
+
+def ativar_plano_gratuito(
+    *,
+    oficina: Oficina,
+    plano_codigo: str,
+    usuario=None,
+) -> AssinaturaOficina:
+    """Ativa uma assinatura em plano gratuito (preço = 0) sem AbacatePay.
+
+    Usado pelo plano "Teste" (7 dias, 10 OS) entregue para novas oficinas
+    avaliarem a plataforma. Como não há cobrança, pulamos completamente
+    o checkout: criamos a assinatura no estado 'ativa', com `expira_em`
+    derivado de `plano.duracao_dias`.
+
+    Idempotente — chamar duas vezes para o mesmo plano estende a vigência.
+    """
+    plano = PlanoSaaS.objects.filter(codigo=plano_codigo, ativo=True).first()
+    if plano is None:
+        raise ValueError(f"Plano '{plano_codigo}' não está disponível.")
+    if plano.preco_centavos != 0:
+        raise ValueError(
+            f"Plano '{plano_codigo}' tem preço — use "
+            "iniciar_checkout_assinatura() em vez de ativar_plano_gratuito()."
+        )
+
+    agora = timezone.now()
+    assinatura = obter_ou_criar_assinatura(oficina)
+    dias = plano.duracao_dias or VALIDADE_PADRAO_DIAS
+    base = (
+        assinatura.expira_em
+        if assinatura.expira_em and assinatura.expira_em > agora
+        else agora
+    )
+    nova_expira = base + timezone.timedelta(days=dias)
+
+    with transaction.atomic():
+        AssinaturaOficina.objects.filter(pk=assinatura.pk).update(
+            plano=plano,
+            status="ativa",
+            inicio_em=assinatura.inicio_em or agora,
+            expira_em=nova_expira,
+            ultimo_pagamento_em=agora,
+            cancelada_em=None,
+        )
+        Oficina.objects.filter(pk=oficina.id).update(plano_atual=plano.codigo)
+        # Registra evento sem Pagamento associado para auditoria — facilita
+        # rastrear quem ativou o trial e quando.
+        # Não cria Pagamento: o histórico de cobrança fica limpo (sem R$ 0).
+
+    assinatura.refresh_from_db()
+    return assinatura
 
 
 def obter_ou_criar_assinatura(oficina: Oficina) -> AssinaturaOficina:
@@ -321,7 +374,6 @@ def aplicar_pagamento_aprovado(pagamento: Pagamento, *, metodo: str = "") -> Non
         if assinatura.expira_em and assinatura.expira_em > agora
         else agora
     )
-    nova_expira = base + timezone.timedelta(days=30 * VALIDADE_MESES)
 
     plano_codigo = (pagamento.metadados or {}).get("plano_codigo")
     plano = (
@@ -329,6 +381,12 @@ def aplicar_pagamento_aprovado(pagamento: Pagamento, *, metodo: str = "") -> Non
         if plano_codigo
         else assinatura.plano
     )
+
+    # Duração da nova vigência vem do próprio plano. Permite que o plano
+    # "Teste" expire em 7 dias enquanto Básico/Premium seguem em 30, sem
+    # bifurcar regras no service.
+    dias = getattr(plano, "duracao_dias", None) or VALIDADE_PADRAO_DIAS
+    nova_expira = base + timezone.timedelta(days=dias)
 
     with transaction.atomic():
         Pagamento.objects.filter(pk=pagamento.pk).update(

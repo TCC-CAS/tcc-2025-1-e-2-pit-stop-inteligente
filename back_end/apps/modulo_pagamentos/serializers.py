@@ -17,6 +17,7 @@ class PlanoSaaSSerializer(serializers.ModelSerializer):
             "codigo", "nome", "descricao",
             "preco_centavos", "preco_reais",
             "limite_usuarios", "limite_os_mensal",
+            "limite_armazenamento_mb", "duracao_dias",
             "destaque", "ativo", "ordem",
         )
 
