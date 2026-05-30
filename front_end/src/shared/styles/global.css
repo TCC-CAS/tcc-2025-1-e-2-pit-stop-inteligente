@@ -157,14 +157,29 @@ pre {
     padding-inline: var(--space-4);
 }
 
+/* Layout principal "sidebar + conteúdo" usado pela maioria das telas
+   (Clientes, Preços, Atualização de dados, etc.).
+
+   `flex-direction: row` é o padrão em QUALQUER tamanho de tela. Em
+   mobile (≤ 900 px) o Web Component <oficina-sidebar> assume
+   `position: fixed` e zera sua largura (ver oficina-sidebar.js,
+   bloco :host(.is-mobile)), de modo que ele sai do fluxo e o
+   .main-content ocupa a tela inteira automaticamente — não precisa
+   alternar entre row/column via media query.
+
+   Esta era a causa do bug "sidebar empilhada em cima do conteúdo" em
+   larguras intermediárias (entre o ponto em que a sidebar deixa de
+   ser drawer e o ponto em que o container virava row): bastava o
+   container já estar em row desde o início. */
 .main-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     min-height: 100vh;
 }
 
 .main-content {
     flex: 1;
+    min-width: 0;            /* impede que filhos largos empurrem layout */
     padding: var(--space-4);
     overflow-y: auto;
 }
@@ -176,27 +191,6 @@ pre {
 
     .main-content {
         padding: var(--space-6);
-    }
-}
-
-/* O Web Component <oficina-sidebar> deixa de ser drawer em > 900px
-   (ver MOBILE_BREAKPOINT em components/oficina-sidebar.js). Por isso
-   o container precisa virar `row` na MESMA largura — caso contrário,
-   entre 901px e 1023px a sidebar fica empilhada VERTICALMENTE acima
-   do conteúdo, parecendo um cabeçalho gigante (bug observado na
-   página de Clientes & Veículos). */
-@media (min-width: 901px) {
-    .main-container {
-        flex-direction: row;
-    }
-
-    /* A sidebar (260px) já ocupa espaço no flex — não é preciso
-       aplicar margin-left aqui. Caso uma tela use sidebar fixed
-       (position: fixed), ela deve adicionar a margem localmente. */
-    .main-content {
-        margin-left: 0;
-        padding: var(--space-6);
-        min-width: 0;
     }
 }
 
