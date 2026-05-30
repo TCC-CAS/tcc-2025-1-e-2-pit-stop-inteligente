@@ -4,6 +4,7 @@
 // Recebe callbacks para selecionar e excluir um cliente, mantendo
 // a tela principal desacoplada das ações.
 
+import { apiUrl } from "../../../../../../shared/config/api-config.js";
 import { ClienteService } from "../../services/cliente-service.js";
 import { state } from "./cliente-state.js";
 
@@ -13,6 +14,50 @@ export async function carregarListaClientes(callbacks) {
   renderizarLoading();
   state.clientes = await ClienteService.buscarTodos();
   renderizarLista(state.clientes, callbacks);
+  // Atualiza também os contadores do hero com os totais da OFICINA
+  // (independente do cliente selecionado).
+  atualizarStatsHero();
+}
+
+
+/**
+ * Atualiza os 3 KPIs do hero da tela (Clientes / Veículos / OS abertas)
+ * com totais agregados da oficina inteira. As chamadas a `/veiculos/`
+ * e `/os/` rodam em paralelo para reduzir latência.
+ */
+export async function atualizarStatsHero() {
+  // --- Clientes: já está em memória após `carregarListaClientes` ---
+  const statClientes = document.getElementById("statTotalClientes");
+  if (statClientes) statClientes.textContent = String(state.clientes.length);
+
+  // --- Veículos e OS abertas: busca em paralelo no back-end ---
+  try {
+    const [veiculos, ordens] = await Promise.all([
+      _fetchJson("/veiculos/"),
+      _fetchJson("/os/"),
+    ]);
+
+    const statVeic = document.getElementById("statTotalVeiculos");
+    if (statVeic) statVeic.textContent = String(Array.isArray(veiculos) ? veiculos.length : 0);
+
+    const statOS = document.getElementById("statTotalOS");
+    if (statOS) {
+      const abertas = (Array.isArray(ordens) ? ordens : []).filter(
+        (o) => o.status === "pendente" || o.status === "execucao",
+      ).length;
+      statOS.textContent = String(abertas);
+    }
+  } catch (err) {
+    console.error("[cliente-lista] falha ao atualizar stats do hero:", err);
+    // Sem alerta visível: KPIs ficam no valor anterior. Não bloqueia a tela.
+  }
+}
+
+
+async function _fetchJson(path) {
+  const res = await fetch(apiUrl(path), { credentials: "include" });
+  if (!res.ok) throw new Error(`GET ${path} -> HTTP ${res.status}`);
+  return res.json();
 }
 
 

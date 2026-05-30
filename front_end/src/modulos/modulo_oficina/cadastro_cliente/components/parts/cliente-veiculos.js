@@ -39,11 +39,11 @@ const STATUS_MAP = {
 
 
 function renderizarVeiculos(veiculos, container) {
-  // Atualiza contador de veículos na aba e no hero
+  // Atualiza somente o contador da aba (do cliente selecionado).
+  // O hero `#statTotalVeiculos` mostra o total da OFICINA inteira e é
+  // gerenciado por `cliente-lista.js#atualizarStatsHero()`.
   const tabCount = document.getElementById("tabCountVeiculos");
   if (tabCount) tabCount.textContent = veiculos.length;
-  const heroVeic = document.getElementById("statTotalVeiculos");
-  if (heroVeic) heroVeic.textContent = veiculos.length;
 
   if (veiculos.length === 0) {
     container.innerHTML = `

@@ -49,12 +49,9 @@ export async function carregarHistoricoDoCliente(clienteId) {
             .sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em));
 
         if (tabCount) tabCount.textContent = String(cacheOrdens.length);
-        const statHero = document.getElementById("statTotalOS");
-        if (statHero) {
-            statHero.textContent = String(
-                cacheOrdens.filter((o) => o.status === "pendente" || o.status === "execucao").length
-            );
-        }
+        // O hero `#statTotalOS` mostra o total da OFICINA inteira e é
+        // gerenciado por `cliente-lista.js#atualizarStatsHero()`. Não
+        // tocamos aqui para não confundir o usuário ao trocar de cliente.
 
         renderizar(container);
         configurarFiltro(container);
