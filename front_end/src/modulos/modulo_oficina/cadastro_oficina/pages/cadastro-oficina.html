@@ -58,13 +58,24 @@
                             <label for="adminEmail">E-mail *</label>
                             <input id="adminEmail" name="admin_email" type="email" class="form-control" required autocomplete="email" placeholder="seu-email@dominio.com">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group span-2">
                             <label for="adminSenha">Senha *</label>
-                            <input id="adminSenha" name="admin_senha" type="password" class="form-control" required autocomplete="new-password" minlength="8" placeholder="Mínimo 8 caracteres">
+                            <input id="adminSenha" name="admin_senha" type="password" class="form-control" required autocomplete="new-password" minlength="8" placeholder="Sua senha forte">
+                            <!-- Indicador visual da política de senha. Os
+                                 estados de cada item sao atualizados via
+                                 password-strength.js conforme o usuario digita. -->
+                            <ul class="password-rules" id="passwordRules" aria-live="polite">
+                                <li data-rule="length"><i class="fas fa-circle" aria-hidden="true"></i> Pelo menos 8 caracteres</li>
+                                <li data-rule="upper"><i class="fas fa-circle" aria-hidden="true"></i> 1 letra MAIÚSCULA</li>
+                                <li data-rule="lower"><i class="fas fa-circle" aria-hidden="true"></i> 1 letra minúscula</li>
+                                <li data-rule="number"><i class="fas fa-circle" aria-hidden="true"></i> 1 número</li>
+                                <li data-rule="special"><i class="fas fa-circle" aria-hidden="true"></i> 1 caractere especial (!@#$ etc.)</li>
+                            </ul>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group span-2">
                             <label for="adminSenhaConfirm">Confirmar senha *</label>
                             <input id="adminSenhaConfirm" name="admin_senha_confirmacao" type="password" class="form-control" required autocomplete="new-password" minlength="8" placeholder="Repita a senha">
+                            <small class="password-match-msg" id="passwordMatchMsg" aria-live="polite"></small>
                         </div>
                     </div>
                 </fieldset>

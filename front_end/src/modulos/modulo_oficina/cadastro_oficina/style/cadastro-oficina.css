@@ -98,6 +98,46 @@
     border: none;
 }
 
+/* Politica de senha — checklist visual atualizado em tempo real
+   por password-strength.js. Cada <li data-rule="..."> alterna entre
+   .pendente (cinza) e .ok (verde com checkmark). */
+.password-rules {
+    list-style: none;
+    padding: 0.5rem 0 0;
+    margin: 0.5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.25rem 1rem;
+    font-size: 0.78rem;
+    color: var(--text-secondary, #475569);
+}
+.password-rules li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.15s;
+}
+.password-rules li i {
+    font-size: 0.7rem;
+    width: 14px;
+    text-align: center;
+    color: var(--text-muted, #94a3b8);
+    transition: color 0.15s;
+}
+.password-rules li.pendente { color: var(--text-secondary, #475569); }
+.password-rules li.pendente i { color: var(--text-muted, #94a3b8); }
+.password-rules li.ok { color: var(--color-success, #16a34a); font-weight: 500; }
+.password-rules li.ok i { color: var(--color-success, #16a34a); }
+
+.password-match-msg {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.78rem;
+    min-height: 1em;
+}
+.password-match-msg.ok { color: var(--color-success, #16a34a); }
+.password-match-msg.erro { color: var(--color-danger, #dc2626); }
+
 /* Responsividade */
 @media (max-width: 768px) {
     .basic-layout {
@@ -106,4 +146,5 @@
     .basic-logo {
         order: -1;
     }
+    .password-rules { grid-template-columns: 1fr; }
 }

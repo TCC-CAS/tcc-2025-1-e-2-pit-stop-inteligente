@@ -77,7 +77,14 @@
                     </a>
                 </p>
 
-                <details class="legacy-toggle">
+                <!--
+                    Acesso legado por "Número da OS" ocultado temporariamente
+                    (decisão do TCC). O JS de login-cliente.js continua aceitando
+                    o campo, mas o cliente agora SO entra pelo código de acesso
+                    gerado pela oficina. Para REATIVAR: remova o atributo
+                    `hidden` do <details> abaixo.
+                -->
+                <details class="legacy-toggle" hidden>
                     <summary>Recebi apenas o número da OS (acesso antigo)</summary>
                     <div class="legacy-fields">
                         <label for="numeroOs" class="form-label-sm">Número da OS</label>

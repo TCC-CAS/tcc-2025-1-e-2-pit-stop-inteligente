@@ -13,11 +13,23 @@ import { obterGate, podeExibirItemMenu } from "../services/assinatura-gate.js";
 
 
 /**
- * Cada grupo agrega itens relacionados. Itens com `requer.papeis === "todos"`
- * aparecem para qualquer funcionário ativo; `requer.papeis: [...]` restringe
- * por papel da oficina; `requer.staffOuSuper` libera só para staff/superuser
- * do Django (painel SaaS).
+ * Cada grupo agrega itens relacionados. Itens podem declarar:
+ *   - `requer.papeis === "todos"`: visivel a qualquer funcionario ativo;
+ *   - `requer.papeis: [...]`     : restringe por papel da oficina;
+ *   - `requer.staffOuSuper: true`: libera so para staff/superuser;
+ *   - `requer.planos: [...]`     : disponivel apenas nos planos listados.
+ *
+ * Quando `requer.planos` esta ausente, o item aparece em qualquer plano
+ * (Teste, Basico, Premium). Quando presente, o plano corrente da oficina
+ * (perfil.oficina_atual.plano) precisa estar na lista.
+ *
+ * Politica do plano "Teste" (TCC, capitulo 6): expoe somente recursos
+ * essenciais para avaliacao do produto. Sao escondidos: Dashboard,
+ * Precos e Servicos (catalogo avancado), e qualquer pagina exclusiva
+ * de planos pagos.
  */
+const PLANOS_PAGOS = ["basico", "premium"];
+
 const GRUPOS = [
   {
     titulo: "Operação",
@@ -28,7 +40,7 @@ const GRUPOS = [
         descricao: "Indicadores e visão geral",
         icone: "fa-chart-line",
         rota: "modulos/modulo_oficina/dashboard/pages/dashboard.html",
-        requer: { papeis: "todos" },
+        requer: { papeis: "todos", planos: PLANOS_PAGOS },
       },
       {
         chave: "operacoes",
@@ -57,7 +69,7 @@ const GRUPOS = [
         descricao: "Catálogo e valor/hora",
         icone: "fa-coins",
         rota: "modulos/modulo_oficina/precos_servicos/configuracoes_gerais/pages/servicos.html",
-        requer: { papeis: ["admin", "gerente"] },
+        requer: { papeis: ["admin", "gerente"], planos: PLANOS_PAGOS },
       },
       {
         chave: "atualizacao",
@@ -176,11 +188,35 @@ export class OficinaSidebar extends HTMLElement {
   }
 
   _podeVer(item, perfil) {
+    // Restricao por staff/superuser (Painel SaaS).
     if (item.requer?.staffOuSuper) {
       return Boolean(perfil.user?.is_superuser || perfil.user?.is_staff);
     }
-    if (item.requer?.papeis === "todos") return true;
-    return (item.requer?.papeis || []).includes(perfil.oficina_atual?.permissao);
+
+    // Restricao por papel (admin/gerente/mecanico/...).
+    const papeis = item.requer?.papeis;
+    const okPapel = papeis === "todos"
+      ? true
+      : (papeis || []).includes(perfil.oficina_atual?.permissao);
+    if (!okPapel) return false;
+
+    // Restricao por plano contratado. Quando `requer.planos` esta
+    // ausente, o item aparece em qualquer plano (default). Quando
+    // presente, o plano corrente precisa estar na lista. Staff/super
+    // ignora essa restricao para nao perder visibilidade administrativa.
+    const planosPermitidos = item.requer?.planos;
+    if (Array.isArray(planosPermitidos) && planosPermitidos.length > 0) {
+      const isStaff = Boolean(perfil.user?.is_superuser || perfil.user?.is_staff);
+      if (isStaff) return true;
+      const planoAtual = (
+        perfil.oficina_atual?.plano
+        || perfil.oficina_atual?.plano_codigo
+        || perfil.oficina_atual?.plano_atual
+        || ""
+      ).toString().toLowerCase();
+      if (!planosPermitidos.includes(planoAtual)) return false;
+    }
+    return true;
   }
 
   _vincularEventos() {

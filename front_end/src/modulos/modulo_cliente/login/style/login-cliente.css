@@ -149,6 +149,12 @@
 }
 .form-hint i { margin-top: 0.15rem; color: var(--color-primary, #2563eb); }
 
+/* Permite ocultar o acesso legado "Número da OS" via atributo `hidden`
+   no HTML. Sem essa regra, alguns navegadores aplicam display especial
+   ao <details> e o atributo nao surtiria efeito visivel. Reativar e so
+   remover o `hidden` no HTML. */
+.legacy-toggle[hidden] { display: none !important; }
+
 /* Bloco "legacy" — colapsado por padrão */
 .legacy-toggle {
     margin-top: 1rem;

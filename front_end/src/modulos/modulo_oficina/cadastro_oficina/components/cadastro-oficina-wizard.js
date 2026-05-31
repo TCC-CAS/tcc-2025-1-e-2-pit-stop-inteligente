@@ -14,6 +14,10 @@
 
 import { CadastroOficinaService } from "../services/cadastro-oficina-service.js";
 import { iniciarCheckoutAssinatura } from "../../pagamentos/services/pagamentos-service.js";
+import {
+  avaliarSenha,
+  vincularValidacaoSenha,
+} from "../../../../shared/services/password-strength.js";
 
 
 const ESTADOS_BR = [
@@ -43,7 +47,18 @@ const validadores = {
 
     if (nome.length < 2) return "Informe seu nome (mínimo 2 caracteres).";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Informe um e-mail válido.";
-    if (senha.length < 8) return "A senha deve ter pelo menos 8 caracteres.";
+
+    // A politica de senha esta sincronizada com o back-end. O front so
+    // bloqueia o avanco se nem todas as regras forem atendidas — alem
+    // de mostrar feedback visual em tempo real (via password-strength.js).
+    const estado = avaliarSenha(senha);
+    if (!estado.atendeTudo) {
+      return (
+        "A senha não atende a política de segurança. " +
+        "Garanta: 8+ caracteres, com letra MAIÚSCULA, minúscula, número e " +
+        "caractere especial (!@#$ etc.)."
+      );
+    }
     if (senha !== senhaConfirm) return "A confirmação de senha não confere.";
     return null;
   },
@@ -85,9 +100,20 @@ document.addEventListener("DOMContentLoaded", () => {
   configurarMascaras();
   configurarBuscaCep();
   configurarPlanos();
+  configurarValidacaoSenha();
   configurarSubmit();
   atualizarUI();
 });
+
+
+function configurarValidacaoSenha() {
+  vincularValidacaoSenha({
+    senhaInput:     $("#adminSenha"),
+    confirmInput:   $("#adminSenhaConfirm"),
+    listaRegras:    $("#passwordRules"),
+    msgConfirmacao: $("#passwordMatchMsg"),
+  });
+}
 
 
 // ---------------------------------------------------------------------------
@@ -285,9 +311,21 @@ function configurarSubmit() {
 
     try {
       const formData = montarFormData(form);
-      await CadastroOficinaService.registrar(formData);
-      // Back já autenticou — agora dispara o checkout do plano escolhido.
+      const resposta = await CadastroOficinaService.registrar(formData);
       const plano = (form.querySelector('[name="plano"]')?.value || "basico").trim();
+
+      // Quando o backend ja ativou um plano gratuito (Teste), nao ha
+      // checkout para iniciar — basta levar o usuario direto ao dashboard
+      // para comecar a usar a aplicacao imediatamente.
+      if (resposta?.plano_gratuito_ativado) {
+        setEstadoBotao(btn, true, "Liberando seu acesso...");
+        // Pequeno delay so para o feedback visual ser percebido.
+        await new Promise((r) => setTimeout(r, 350));
+        window.location.href = "../../dashboard/pages/dashboard.html";
+        return;
+      }
+
+      // Caso contrario (planos pagos), dispara o checkout AbacatePay.
       await prosseguirParaCheckout(plano, btn);
     } catch (error) {
       mostrarErroNoStep(error.message);
