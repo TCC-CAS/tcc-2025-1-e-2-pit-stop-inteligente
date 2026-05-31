@@ -626,3 +626,90 @@ class Funcionario(models.Model):
 
     def __str__(self):
         return f"{self.user.get_full_name() or self.user.email} - {self.oficina.nome}"
+
+
+class TokenConfirmacaoEmail(models.Model):
+    """Token de confirmação de e-mail enviado no cadastro.
+
+    Cada novo cadastro gera UM token de 64 caracteres com validade de 72 h.
+    O usuário clica no link recebido por e-mail, o endpoint
+    `/api/oficina/auth/confirmar-email/<token>/` marca o token como usado
+    e seta `Funcionario.email_verificado=True` para todos os vínculos do
+    usuário.
+
+    A regra de "bloqueio até confirmar" é controlada pela flag
+    `EMAIL_CONFIRMACAO_OBRIGATORIA` em settings — quando False (padrão
+    seguro para apresentações), o token é gerado e enviado mas o acesso
+    não é bloqueado. Quando True, o middleware de paywall pode passar a
+    bloquear contas com `email_verificado=False`.
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='tokens_email',
+    )
+    token = models.CharField(max_length=64, unique=True, db_index=True)
+    criado_em = models.DateTimeField(auto_now_add=True, db_index=True)
+    expira_em = models.DateTimeField()
+    usado_em = models.DateTimeField(blank=True, null=True)
+    enviado_para = models.EmailField(blank=True)
+
+    class Meta:
+        db_table = 'token_confirmacao_email'
+        ordering = ('-criado_em',)
+        verbose_name = 'Token de confirmação de e-mail'
+        verbose_name_plural = 'Tokens de confirmação de e-mail'
+
+    def __str__(self):
+        status = "usado" if self.usado_em else "pendente"
+        return f"{self.user.email} · {status}"
+
+    @property
+    def expirado(self) -> bool:
+        from django.utils import timezone
+        return timezone.now() >= self.expira_em
+
+    @property
+    def valido(self) -> bool:
+        return self.usado_em is None and not self.expirado
+
+
+class RegistroCadastroIP(models.Model):
+    """Rastreia cadastros públicos por origem para conter abuso.
+
+    Cada novo cadastro de oficina via formulário público gera um registro
+    aqui, com IP, User-Agent, User criado e Oficina criada. O serviço de
+    registro consulta esta tabela antes de aceitar uma nova requisição —
+    se o IP já criou contas além do limite na janela definida (24 h por
+    padrão), a operação é rejeitada.
+    """
+
+    ip = models.GenericIPAddressField(db_index=True)
+    user_agent = models.CharField(max_length=400, blank=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='registros_ip',
+    )
+    oficina = models.ForeignKey(
+        Oficina,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='registros_ip',
+    )
+    criado_em = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        db_table = 'registro_cadastro_ip'
+        ordering = ('-criado_em',)
+        indexes = [
+            models.Index(fields=('ip', '-criado_em')),
+        ]
+        verbose_name = 'Registro de cadastro por IP'
+        verbose_name_plural = 'Registros de cadastro por IP'
+
+    def __str__(self):
+        quem = self.user.email if self.user_id else "(removido)"
+        return f"{self.ip} -> {quem} em {self.criado_em:%Y-%m-%d %H:%M}"

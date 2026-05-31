@@ -9,17 +9,68 @@ Chave de sessão: SESSION_OFICINA_KEY ('oficina_atual_id').
 Esse mesmo ID é lido em `utils.get_oficina_atual` para isolar as queries
 por oficina (multi-tenant).
 """
+from django.conf import settings
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import validate_email
 from django.db import transaction
+from django.utils import timezone
 
-from ..models import Funcionario, Oficina
+from ..models import Funcionario, Oficina, RegistroCadastroIP
 from .perfil_oficina_service import criar_oficina_e_vincular_admin
 
 
 SESSION_OFICINA_KEY = "oficina_atual_id"
+
+# Controle anti-abuso por IP no cadastro publico de oficinas.
+# Configuravel por env var; o default e conservador o suficiente para nao
+# bloquear cenarios legitimos (uma familia/escritorio compartilhando IP).
+LIMITE_CADASTROS_POR_IP = int(
+    getattr(settings, "ANTIABUSO_LIMITE_CADASTROS_POR_IP", 3),
+)
+JANELA_ANTIABUSO_HORAS = int(
+    getattr(settings, "ANTIABUSO_JANELA_HORAS", 24),
+)
+
+
+def _ip_da_request(request):
+    """Extrai o IP real do cliente.
+
+    Como o Nginx fica em frente ao Gunicorn, o IP do cliente vem em
+    X-Forwarded-For. Se nao estiver presente (chamada direta em dev),
+    cai no REMOTE_ADDR.
+    """
+    xff = request.META.get("HTTP_X_FORWARDED_FOR", "")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR") or ""
+
+
+def _assegurar_limite_cadastros_ip(request):
+    """Levanta ValueError quando o IP da request ja criou contas demais.
+
+    A janela e LIMITE_CADASTROS_POR_IP por JANELA_ANTIABUSO_HORAS. IPs
+    invalidos (string vazia) sao ignorados para nao bloquear chamadas
+    de testes automatizados que nao preenchem REMOTE_ADDR.
+    """
+    ip = _ip_da_request(request)
+    if not ip:
+        return
+    inicio_janela = timezone.now() - timezone.timedelta(
+        hours=JANELA_ANTIABUSO_HORAS,
+    )
+    qtd = RegistroCadastroIP.objects.filter(
+        ip=ip, criado_em__gte=inicio_janela,
+    ).count()
+    if qtd >= LIMITE_CADASTROS_POR_IP:
+        raise ValueError(
+            f"Detectamos {qtd} cadastros do seu endereço nas últimas "
+            f"{JANELA_ANTIABUSO_HORAS} horas. Para evitar uso indevido, "
+            "novos cadastros foram suspensos temporariamente. Tente novamente "
+            "mais tarde ou entre em contato com nosso suporte."
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -124,8 +175,12 @@ def registrar_oficina_completa(request, dados, arquivo_logo=None):
     admin_senha, admin_senha_confirmacao, termos_aceitos (truthy) e os
     campos da oficina (nome, cnpj, endereço, horários, plano, etc.).
 
+    Antes de criar qualquer registro, dispara o controle anti-abuso por IP
+    (LIMITE_CADASTROS_POR_IP cadastros em JANELA_ANTIABUSO_HORAS horas).
+
     Lança ValueError com mensagem amigável em caso de validação inválida.
     """
+    _assegurar_limite_cadastros_ip(request)
     _validar_dados_admin(dados)
 
     User = get_user_model()
@@ -134,10 +189,23 @@ def registrar_oficina_completa(request, dados, arquivo_logo=None):
        User.objects.filter(username__iexact=email).exists():
         raise ValueError("Já existe uma conta com este e-mail.")
 
+    # Aplica a politica completa de senhas configurada em
+    # AUTH_PASSWORD_VALIDATORS (tamanho, maiuscula+minuscula, numero,
+    # caractere especial, sem ser comum, sem similaridade com username).
+    # Validamos com um user "fantasma" so para alimentar o validator de
+    # similaridade — assim a senha nao pode replicar o e-mail.
+    senha = dados.get("admin_senha") or ""
+    user_fantasma = User(username=email, email=email,
+                         first_name=(dados.get("admin_nome") or "").strip())
+    try:
+        validate_password(senha, user_fantasma)
+    except DjangoValidationError as exc:
+        raise ValueError(" ".join(exc.messages))
+
     novo_user = User.objects.create_user(
         username=email,
         email=email,
-        password=dados["admin_senha"],
+        password=senha,
         first_name=(dados.get("admin_nome") or "").strip(),
         last_name=(dados.get("admin_sobrenome") or "").strip(),
     )
@@ -147,6 +215,26 @@ def registrar_oficina_completa(request, dados, arquivo_logo=None):
         arquivo_logo=arquivo_logo,
         usuario=novo_user,
     )
+
+    # Registra o IP/UA do cadastro para futuras checagens anti-abuso.
+    # Usa truncate manual pois o User-Agent pode ser arbitrariamente longo.
+    ua = (request.META.get("HTTP_USER_AGENT") or "")[:400]
+    RegistroCadastroIP.objects.create(
+        ip=_ip_da_request(request) or "0.0.0.0",
+        user_agent=ua,
+        user=novo_user,
+        oficina=oficina,
+    )
+
+    # Dispara o e-mail de confirmacao apos a criacao bem-sucedida. Falhas no
+    # SMTP nao bloqueiam o cadastro (token fica salvo e pode ser reenviado).
+    try:
+        from .email_confirmacao_service import gerar_token_e_enviar
+        gerar_token_e_enviar(novo_user, request)
+    except Exception:  # pragma: no cover — defesa contra import circular
+        # Logado pelo proprio service; aqui apenas garantimos que o
+        # registro nao falhe se algo der errado no envio.
+        pass
 
     # Login automático após o registro
     novo_user.backend = "django.contrib.auth.backends.ModelBackend"
@@ -266,7 +354,14 @@ def _listar_vinculos(user):
     )
     return [
         {
-            "oficina": {"id": f.oficina.id, "nome": f.oficina.nome, "cnpj": f.oficina.cnpj},
+            # `plano` (codigo do PlanoSaaS contratado) e exposto para o front
+            # decidir quais itens de menu exibir conforme o plano corrente.
+            "oficina": {
+                "id": f.oficina.id,
+                "nome": f.oficina.nome,
+                "cnpj": f.oficina.cnpj,
+                "plano": (f.oficina.plano_atual or "basico").lower(),
+            },
             "permissao": f.permissao,
             "is_active": f.is_active,
         }

@@ -134,10 +134,22 @@ DATABASES = {
 # Validação de senha
 # ----------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
+    # Built-in: bloqueia senhas muito similares ao username/email.
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    # Built-in: tamanho mínimo (configurado para 8 chars).
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 8},
+    },
+    # Built-in: rejeita senhas presentes na lista de 20k mais comuns.
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    # Built-in: rejeita senhas puramente numéricas (ex.: 12345678).
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+    # Custom (apps.modulo_adm.password_validators): exige composição forte.
+    {"NAME": "apps.modulo_adm.password_validators.UppercaseValidator"},
+    {"NAME": "apps.modulo_adm.password_validators.LowercaseValidator"},
+    {"NAME": "apps.modulo_adm.password_validators.NumberValidator"},
+    {"NAME": "apps.modulo_adm.password_validators.SpecialCharValidator"},
 ]
 
 
@@ -297,3 +309,50 @@ MODERACAO_IMAGEM_LIMIAR = config(
 # `MODERACAO_IMAGEM_PROVEDOR=sightengine`.
 SIGHTENGINE_API_USER = config("SIGHTENGINE_API_USER", default="")
 SIGHTENGINE_API_SECRET = config("SIGHTENGINE_API_SECRET", default="")
+
+
+# ----------------------------------------------------------------------
+# Anti-abuso no cadastro publico
+# ----------------------------------------------------------------------
+# Limite de cadastros de oficina permitidos a partir do mesmo IP dentro
+# da janela configurada (em horas). Atingir o limite bloqueia novos
+# cadastros e devolve mensagem amigavel ao front.
+ANTIABUSO_LIMITE_CADASTROS_POR_IP = config(
+    "ANTIABUSO_LIMITE_CADASTROS_POR_IP", default=3, cast=int,
+)
+ANTIABUSO_JANELA_HORAS = config(
+    "ANTIABUSO_JANELA_HORAS", default=24, cast=int,
+)
+
+
+# ----------------------------------------------------------------------
+# E-mail (confirmacao de cadastro + recuperacao de senha)
+# ----------------------------------------------------------------------
+# Em desenvolvimento, EMAIL_BACKEND default é 'console' (e-mails impressos
+# no terminal do runserver, util para copiar o link de confirmacao sem
+# precisar de SMTP real). Em producao, deve-se apontar para SMTP via .env.
+EMAIL_BACKEND = config(
+    "EMAIL_BACKEND",
+    default="django.core.mail.backends.console.EmailBackend",
+)
+EMAIL_HOST = config("EMAIL_HOST", default="")
+EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+DEFAULT_FROM_EMAIL = config(
+    "DEFAULT_FROM_EMAIL", default="Pit Stop <no-reply@pitstop.local>",
+)
+
+# URL base usada para montar links absolutos enviados por e-mail
+# (confirmacao de cadastro, recuperacao de senha, etc.). Em prod, deve
+# bater com o dominio HTTPS publico — ex.: https://pitstops.com.br.
+APP_BASE_URL = config("APP_BASE_URL", default="")
+
+# Quando True, o middleware de paywall (a ser plugado) podera bloquear
+# acesso de usuarios com e-mail nao confirmado. Default False para nao
+# atrapalhar apresentacoes do TCC: o token e gerado e enviado, mas o
+# acesso fica liberado mesmo sem confirmacao.
+EMAIL_CONFIRMACAO_OBRIGATORIA = config(
+    "EMAIL_CONFIRMACAO_OBRIGATORIA", default=False, cast=bool,
+)

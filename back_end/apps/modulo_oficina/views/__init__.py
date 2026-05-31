@@ -60,6 +60,7 @@ from .auth_views import (
     LogoutAPIView,
     MeAPIView,
     RegistrarOficinaAPIView,
+    ConfirmarEmailAPIView,
     SelecionarOficinaAPIView,
 )
 
@@ -109,5 +110,6 @@ __all__ = [
     "LogoutAPIView",
     "MeAPIView",
     "RegistrarOficinaAPIView",
+    "ConfirmarEmailAPIView",
     "SelecionarOficinaAPIView",
 ]

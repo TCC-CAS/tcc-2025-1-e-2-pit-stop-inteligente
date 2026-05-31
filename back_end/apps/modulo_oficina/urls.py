@@ -66,6 +66,7 @@ from .views import (
     LogoutAPIView,
     MeAPIView,
     RegistrarOficinaAPIView,
+    ConfirmarEmailAPIView,
     SelecionarOficinaAPIView,
 )
 
@@ -154,6 +155,7 @@ urlpatterns = [
     path("auth/me/", MeAPIView.as_view(), name="auth-me"),
     path("auth/oficinas/<int:oficina_id>/selecionar/", SelecionarOficinaAPIView.as_view(), name="auth-selecionar-oficina"),
     path("auth/registrar-oficina/", RegistrarOficinaAPIView.as_view(), name="auth-registrar-oficina"),
+    path("auth/confirmar-email/<str:token>/", ConfirmarEmailAPIView.as_view(), name="confirmar-email"),
 
     # ----- Suporte (delegado ao app modulo_suporte) -----
     path("suporte/", include("apps.modulo_suporte.urls_oficina")),
