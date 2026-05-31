@@ -236,6 +236,30 @@ def registrar_oficina_completa(request, dados, arquivo_logo=None):
         # registro nao falhe se algo der errado no envio.
         pass
 
+    # Quando o plano escolhido e gratuito (preco zero — atualmente o "Teste"),
+    # ativamos a assinatura diretamente, SEM passar pelo AbacatePay. Isso
+    # libera as funcionalidades basicas imediatamente para o usuario conhecer
+    # a aplicacao. O front consulta `plano_gratuito_ativado` para decidir
+    # entre ir para o dashboard ou para o checkout.
+    plano_gratuito_ativado = False
+    try:
+        from apps.modulo_pagamentos.models import PlanoSaaS
+        from apps.modulo_pagamentos.services.assinatura_service import (
+            ativar_plano_gratuito,
+        )
+        plano_obj = PlanoSaaS.objects.filter(
+            codigo=oficina.plano_atual or "", ativo=True,
+        ).first()
+        if plano_obj is not None and plano_obj.preco_centavos == 0:
+            ativar_plano_gratuito(
+                oficina=oficina, plano_codigo=plano_obj.codigo, usuario=novo_user,
+            )
+            plano_gratuito_ativado = True
+    except Exception:  # pragma: no cover — nao bloqueia o cadastro
+        # Se algo der errado na ativacao, o fluxo cai no caminho de checkout
+        # tradicional — usuario nao fica trancado.
+        plano_gratuito_ativado = False
+
     # Login automático após o registro
     novo_user.backend = "django.contrib.auth.backends.ModelBackend"
     django_login(request, novo_user)
@@ -245,6 +269,7 @@ def registrar_oficina_completa(request, dados, arquivo_logo=None):
         "user": _dados_usuario(novo_user),
         "oficinas": _listar_vinculos(novo_user),
         "oficina_atual_id": oficina.id,
+        "plano_gratuito_ativado": plano_gratuito_ativado,
     }
 
 
