@@ -154,6 +154,12 @@
     gap: 1rem;
 }
 
+/* Permite ocultar o bloco "Reenviar solicitação" via atributo `hidden`.
+   Sem essa regra, o `display: flex` abaixo venceria sobre o default do
+   user agent e o bloco continuaria visível. Remova `hidden` no HTML
+   para reativar. */
+.reenviar-group[hidden] { display: none !important; }
+
 .reenviar-group {
     display: flex;
     gap: 0.5rem;

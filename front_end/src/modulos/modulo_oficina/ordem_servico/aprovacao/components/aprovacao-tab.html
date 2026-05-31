@@ -98,7 +98,15 @@
             <button class="btn btn-secondary" id="btnExportarPDF">
                 <i class="fas fa-file-pdf"></i> Exportar PDF
             </button>
-            <div class="reenviar-group">
+            <!--
+                Bloco "Reenviar solicitação" ocultado temporariamente
+                (apresentação do TCC). A integração com canais externos
+                (WhatsApp/SMS/E-mail) ainda não está implementada.
+                Para REATIVAR: remova o atributo `hidden` abaixo e a
+                função `configurarReenvios()` de aprovacao-modal.js já
+                volta a vincular os handlers.
+            -->
+            <div class="reenviar-group" hidden>
                 <span>Reenviar solicitação:</span>
                 <button class="btn-icon" id="btnReenviarWhatsApp" title="WhatsApp">
                     <i class="fab fa-whatsapp"></i>
