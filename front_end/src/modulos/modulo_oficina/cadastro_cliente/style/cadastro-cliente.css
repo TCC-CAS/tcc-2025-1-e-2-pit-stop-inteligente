@@ -1,0 +1,15 @@
+/*
+ * cadastro-cliente.css — entry CSS da tela "Cadastro de Clientes".
+ *
+ * Estilos divididos em ./parts/* por responsabilidade visual. Manter este
+ * arquivo apenas como agregador (@import) facilita encontrar onde alterar
+ * cada bloco e mantém os arquivos pequenos.
+ */
+
+@import url("./parts/_layout.css");
+@import url("./parts/_form.css");
+@import url("./parts/_lista.css");
+@import url("./parts/_toast.css");
+@import url("./parts/_tabs.css");
+@import url("./parts/_veiculos.css");
+@import url("./parts/_modernizacao.css");

@@ -1,0 +1,72 @@
+/* _orcamento.css — rodapé do orçamento (total) e ações abaixo da tabela. */
+
+.orcamento-footer {
+    padding: 1.5rem;
+    text-align: right;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    margin-top: -1px;
+}
+
+.orcamento-footer strong {
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.orcamento-footer span {
+    color: #2563eb;
+    font-size: 1.3rem;
+    margin-left: 0.5rem;
+}
+
+/* Ações abaixo da tabela */
+.orcamento-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.action-group-left,
+.action-group-right {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+/* Botões padrão da aba */
+.btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.btn i { font-size: 1rem; }
+
+.btn-primary  { background-color: #2563eb; color: white; }
+.btn-primary:hover  { background-color: #1d4ed8; }
+
+.btn-success  { background-color: #10b981; color: white; }
+.btn-success:hover  { background-color: #059669; }
+
+.btn-secondary {
+    background-color: #e2e8f0;
+    color: #1e293b;
+    border: 1px solid #cbd5e1;
+}
+.btn-secondary:hover { background-color: #cbd5e1; }
+
+.btn-sm { padding: 0.4rem 1rem; font-size: 0.85rem; }

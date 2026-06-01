@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Acesse o Pit Stop Inteligente — plataforma de gestão de oficinas mecânicas.">
+    <meta name="theme-color" content="#2563eb">
+    <title>Login | Pit Stop Inteligente</title>
+
+    <link rel="stylesheet" href="../../../shared/styles/variables.css">
+    <link rel="stylesheet" href="../../../shared/styles/global.css">
+    <link rel="stylesheet" href="../style/login-page.css">
+    <link rel="stylesheet" href="../../../shared/vendor/fontawesome/css/all.min.css">
+</head>
+<body class="login-body">
+
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+
+    <main id="main-content" class="login-container fade-in" role="main">
+        <section class="login-card" aria-labelledby="login-title">
+
+            <header class="login-header">
+                <a class="logo-placeholder" href="index.html" aria-label="Voltar para a página inicial">
+                    <i class="fas fa-car-side" aria-hidden="true"></i>
+                </a>
+                <h1 id="login-title" class="login-title">Pit Stop Inteligente</h1>
+                <p class="login-subtitle">Bem-vindo de volta! Acesse sua conta.</p>
+            </header>
+
+            <form id="formLogin" class="login-form" novalidate aria-describedby="login-title">
+
+                <!-- Honeypot anti-bot: campo invisível para humanos (CSS + aria-hidden)
+                     que bots tendem a preencher por parsearem o HTML. O backend
+                     rejeita a request se este campo vier preenchido. NÃO remova. -->
+                <input type="text" name="url_optional" id="urlOptional" tabindex="-1"
+                       autocomplete="off" aria-hidden="true"
+                       style="position:absolute; left:-9999px; opacity:0; height:0; width:0;">
+
+                <div class="form-group floating-group">
+                    <i class="fas fa-user input-icon" aria-hidden="true"></i>
+                    <input type="text" id="username" name="username" class="form-control"
+                           placeholder=" " required aria-required="true"
+                           autocomplete="username" aria-describedby="error-username">
+                    <label for="username">E-mail ou Usuário</label>
+                    <span class="error-msg" id="error-username" role="alert" aria-live="polite"></span>
+                </div>
+
+                <div class="form-group floating-group">
+                    <i class="fas fa-lock input-icon" aria-hidden="true"></i>
+                    <input type="password" id="password" name="password" class="form-control"
+                           placeholder=" " required aria-required="true"
+                           autocomplete="current-password" aria-describedby="error-password">
+                    <label for="password">Senha</label>
+                    <button type="button" class="btn-toggle-pass" id="btnTogglePass"
+                            aria-label="Mostrar senha" aria-pressed="false">
+                        <i class="fas fa-eye" aria-hidden="true"></i>
+                    </button>
+                    <span class="error-msg" id="error-password" role="alert" aria-live="polite"></span>
+                </div>
+
+                <div class="form-actions-row">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">Lembrar de mim</span>
+                    </label>
+                    <a href="recuperar-acesso.html" class="forgot-password">Esqueceu a senha?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="btnEntrar">
+                    <span class="btn-text">Entrar</span>
+                    <i class="fas fa-circle-notch fa-spin btn-spinner" style="display: none;"></i>
+                </button>
+            </form>
+
+            <!--
+                Login social com Google ocultado temporariamente (apresentacao
+                do TCC). A integracao OAuth ainda nao esta implementada no
+                back-end. Para REATIVAR no futuro: remova o atributo `hidden`
+                tanto do <div class="login-divider"> quanto do <button id="btnGoogleLogin">.
+            -->
+            <div class="login-divider" hidden>
+                <span>ou continue com</span>
+            </div>
+
+            <button type="button" class="btn-google btn-block" id="btnGoogleLogin" hidden>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="google-logo">
+                    <g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g>
+                </svg>
+                Entrar com o Google
+            </button>
+
+            <p class="login-signup">
+                Ainda não tem cadastro?
+                <a href="../../../modulos/modulo_oficina/cadastro_oficina/pages/cadastro-oficina.html" class="login-signup-link">
+                    Cadastre sua oficina
+                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </a>
+            </p>
+
+            <p class="login-signup" style="margin-top: 0.4rem;">
+                É cliente da oficina?
+                <a href="../../../modulos/modulo_cliente/login/pages/login-cliente.html" class="login-signup-link">
+                    Acompanhar minha O.S.
+                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </a>
+            </p>
+
+        </section>
+
+        <p class="back-home">
+            <a href="index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar para a página inicial</a>
+        </p>
+    </main>
+
+    <script type="module" src="../components/login-page.js"></script>
+</body>
+</html>

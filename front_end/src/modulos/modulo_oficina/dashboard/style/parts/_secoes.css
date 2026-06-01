@@ -1,0 +1,217 @@
+/* _secoes.css — cards genéricos, status-stats, alertas, aprovações, equipe. */
+
+.two-columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.three-columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+}
+
+.card:hover { box-shadow: var(--shadow-md); }
+
+.card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+    padding-bottom: 0.75rem;
+}
+
+.card-header-flex h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gray-800);
+}
+
+.badge-info {
+    background: var(--primary);
+    color: white;
+    padding: 0.2rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* OS status (cards interativos) */
+.os-status-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.status-stat-item {
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    padding: 1rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--gray-200);
+    font: inherit;
+    color: inherit;
+    width: 100%;
+}
+
+.status-stat-item:hover,
+.status-stat-item:focus-visible {
+    background: #eff6ff;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.status-stat-item i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--gray-600);
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+/* Alertas com variantes coloridas */
+.alert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.alert-item {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    border-left: 4px solid var(--gray-300);
+    background: var(--gray-50);
+    color: var(--gray-800);
+}
+
+.alert-item i { font-size: 1.1rem; }
+
+.alert-success { border-left-color: var(--success); background: rgba(16, 185, 129, 0.08); color: var(--success-dark); }
+.alert-info    { border-left-color: var(--info);    background: rgba(6, 182, 212, 0.08);  color: #155e75; }
+.alert-warning { border-left-color: var(--warning); background: rgba(245, 158, 11, 0.1);  color: #92400e; }
+.alert-error   { border-left-color: var(--danger);  background: rgba(239, 68, 68, 0.08);  color: #991b1b; }
+
+/* Aprovações */
+.aprovacao-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.aprovacao-stats div {
+    background: var(--gray-50);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--gray-200);
+}
+
+.aprovacao-stats span {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.aprovacao-stats strong {
+    font-size: 1.4rem;
+    color: var(--gray-800);
+    margin-top: 0.25rem;
+}
+
+/* Equipe */
+.table-responsive { overflow-x: auto; }
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.custom-table th {
+    text-align: left;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 2px solid var(--gray-200);
+    color: var(--gray-600);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.custom-table td {
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--gray-200);
+    color: var(--gray-800);
+}
+
+.custom-table tbody tr:hover {
+    background: var(--gray-50);
+}
+
+/* Barra de eficiência (visual) */
+.eficiencia-bar {
+    position: relative;
+    height: 22px;
+    background: var(--gray-100);
+    border-radius: 12px;
+    overflow: hidden;
+    min-width: 120px;
+}
+
+.eficiencia-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: linear-gradient(90deg, var(--primary), #3b82f6);
+    transition: width 0.3s;
+}
+
+.eficiencia-bar span {
+    position: relative;
+    z-index: 1;
+    display: block;
+    text-align: center;
+    line-height: 22px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    mix-blend-mode: difference;
+    color: white;
+}

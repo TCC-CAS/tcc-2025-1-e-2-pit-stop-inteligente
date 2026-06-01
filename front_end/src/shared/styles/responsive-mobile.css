@@ -1,0 +1,162 @@
+/* responsive-mobile.css — telas ≤767px (smartphones).
+   A sidebar principal é tratada como drawer pelo Web Component
+   `oficina-sidebar` (botão hambúrguer fixo no canto superior esquerdo).
+   Este arquivo cuida do conteúdo, abas, formulários e tabelas. */
+
+@media (max-width: 767px) {
+    /* Trava o scroll horizontal em mobile. Qualquer elemento fora do
+       viewport (mesmo que ele "vaze" por bug pontual) deixa de gerar
+       barra de rolagem lateral — mantém o app sempre na largura da
+       tela e evita "balançar" o layout. */
+    html, body {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    /* Estrutura principal */
+    .app-body {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+
+    .main-content-wrapper {
+        padding: 4.5rem 1rem 1rem;
+        overflow-y: visible;
+    }
+
+    /* Em mobile mantemos o drawer offcanvas (não vira bloco embutido),
+       mas agora ocupando 95% da largura da tela em vez dos 420px do
+       tablet — assim a lista de OS abre realmente cobrindo a página,
+       sem cortar pela metade.
+       O `position: fixed`, `top: 64px`, `height` e `transition` são
+       herdados do bloco @media (max-width: 1023px) em _app-shell.css. */
+    .sidebar-right {
+        width: 95vw;
+        max-width: 95vw;
+    }
+
+    /* Cabeçalho da OS */
+    .os-header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .header-actions-top {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* Abas: grid horizontal scrollável + chips compactos */
+    .tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 4px;
+        padding-bottom: 4px;
+    }
+    .tab {
+        flex: 0 0 auto;
+        padding: 0.5rem 0.85rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        text-align: center;
+        justify-content: center;
+        scroll-snap-align: start;
+    }
+    .tab i { font-size: 1rem; }
+
+    /* Cards */
+    .tab-card { padding: 1rem; }
+    .tab-card-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    /* Grids */
+    .grid-col-2 { grid-template-columns: 1fr; gap: 1rem; }
+
+    /* Formulários */
+    .row { flex-direction: column; gap: 0.5rem; }
+    .col-6, .col-4, .col-8 { flex: 1 1 100%; }
+    .form-group { margin-bottom: 1rem; }
+    .form-control { font-size: 16px; } /* evita zoom do iOS */
+
+    /* Modal */
+    .modal-container {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        border-radius: 0;
+        height: 100dvh;
+        max-height: 100dvh;
+    }
+    .modal-header, .modal-body, .modal-footer {
+        padding: 1rem;
+    }
+    .modal-body { max-height: calc(100dvh - 140px); }
+    .modal-footer {
+        flex-direction: column-reverse;
+        gap: 0.5rem;
+    }
+    .modal-footer .btn { width: 100%; }
+
+    /* Checklist wizard */
+    .wizard-steps {
+        gap: 0.25rem;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }
+    .step-item {
+        flex: 0 0 auto;
+        font-size: 0.7rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+    .photo-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .signature-pad-wrapper { height: 140px; }
+
+    /* Documentos */
+    .docs-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+    .upload-area {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    .upload-area .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Tabelas com rolagem horizontal */
+    .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { font-size: 0.85rem; min-width: 480px; }
+    th, td { padding: 0.5rem; }
+
+    /* Botões */
+    .btn { padding: 0.6rem 1rem; font-size: 0.9rem; min-height: 44px; }
+    .btn-sm { padding: 0.4rem 0.7rem; min-height: 36px; }
+
+    /* OS list cards */
+    .os-card {
+        padding: 0.75rem 2.2rem 0.75rem 0.75rem;
+    }
+    .os-id { max-width: 60%; }
+
+    /* Timeline (histórico) */
+    .timeline-item { gap: 0.5rem; }
+    .timeline-marker { width: 32px; height: 32px; font-size: 0.85rem; }
+}
+
+/* Smartphone pequeno — extra tweaks */
+@media (max-width: 380px) {
+    .main-content-wrapper { padding: 4.5rem 0.6rem 0.8rem; }
+    .tab { padding: 0.4rem 0.6rem; font-size: 0.75rem; }
+    .tab-card { padding: 0.85rem; }
+}

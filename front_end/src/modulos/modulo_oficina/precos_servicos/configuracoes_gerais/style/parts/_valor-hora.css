@@ -1,0 +1,84 @@
+/* _valor-hora.css — card de configuração do valor-hora do mecânico. */
+
+.hourly-rate-card {
+    background: linear-gradient(135deg, var(--primary), #1d4ed8);
+    border-radius: 1rem;
+    padding: 2rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.hourly-rate-icon {
+    background: rgba(255, 255, 255, 0.2);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.hourly-rate-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.hourly-rate-info h3 { margin-bottom: 0.5rem; font-size: 1.25rem; }
+.hourly-rate-info p  { opacity: 0.9; font-size: 0.9rem; margin: 0; }
+
+.hourly-rate-action {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem;
+    border-radius: 3rem;
+    backdrop-filter: blur(5px);
+}
+
+.input-currency-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+.currency-symbol {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+    opacity: 0.8;
+}
+
+.hourly-rate-action input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    width: 100px;
+    outline: none;
+}
+
+.hourly-rate-action input::placeholder { color: rgba(255, 255, 255, 0.5); }
+
+.btn-save-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background-color: white;
+    color: var(--primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.btn-save-circle:hover { transform: scale(1.1); }

@@ -1,0 +1,335 @@
+/* =============================================================
+   variables.css — Design System Pit Stop Inteligente
+   Tokens de cor, tipografia, espaçamento, sombras, transições
+   e breakpoints. Não inclui regras de elementos: somente tokens.
+   ============================================================= */
+
+:root {
+    /* ---------- Cores semânticas (paleta principal) ---------- */
+    --color-primary: #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-primary-dark: #1e40af;
+    --color-primary-light: #eff6ff;
+    --color-primary-contrast: #ffffff;
+
+    --color-secondary: #64748b;
+    --color-secondary-hover: #475569;
+    --color-secondary-light: #f1f5f9;
+
+    --color-success: #16a34a;
+    --color-success-light: #dcfce7;
+    --color-warning: #ca8a04;
+    --color-warning-light: #fef9c3;
+    --color-danger: #dc2626;
+    --color-danger-light: #fee2e2;
+    --color-info: #0284c7;
+    --color-info-light: #e0f2fe;
+
+    /* Aliases legados (não remover — vários CSS antigos referenciam) */
+    --primary: var(--color-primary);
+    --primary-dark: var(--color-primary-dark);
+    --secondary: var(--color-secondary);
+    --success: var(--color-success);
+    --warning: var(--color-warning);
+    --danger: var(--color-danger);
+    --light: #f8fafc;
+    --dark: #1e293b;
+    --gray: #94a3b8;
+
+    /* ---------- Superfícies e texto (modo claro) ---------- */
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-muted: #f1f5f9;
+    --bg-overlay: rgba(15, 23, 42, 0.5);
+
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-inverse: #ffffff;
+
+    --border-light: #e2e8f0;
+    --border-medium: #cbd5e1;
+    --border-strong: #94a3b8;
+
+    /* Aliases legados */
+    --bg-light: #ffffff;
+    --bg-dark: #0f172a;
+    --text-light: #1e293b;
+    --text-dark: #f1f5f9;
+    --border-dark: #334155;
+    --bg: var(--bg-card);
+    --text: var(--text-primary);
+    --border: var(--border-light);
+    --card: var(--bg-card);
+
+    /* ---------- Tipografia ---------- */
+    --font-sans: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+    /* Escala fluida (clamp gera responsividade automática) */
+    --font-size-xs:   0.75rem;   /* 12px */
+    --font-size-sm:   0.875rem;  /* 14px */
+    --font-size-base: 1rem;      /* 16px */
+    --font-size-md:   1.125rem;  /* 18px */
+    --font-size-lg:   1.25rem;   /* 20px */
+    --font-size-xl:   clamp(1.375rem, 1.2rem + 0.6vw, 1.625rem);
+    --font-size-2xl:  clamp(1.625rem, 1.4rem + 1vw, 2rem);
+    --font-size-3xl:  clamp(2rem, 1.7rem + 1.4vw, 2.5rem);
+
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    --line-height-tight: 1.2;
+    --line-height-base: 1.5;
+    --line-height-loose: 1.7;
+
+    /* ---------- Escala de espaçamento (base 4px) ---------- */
+    --space-1: 0.25rem;   /*  4px */
+    --space-2: 0.5rem;    /*  8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.25rem;   /* 20px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-8: 2rem;      /* 32px */
+    --space-10: 2.5rem;   /* 40px */
+    --space-12: 3rem;     /* 48px */
+    --space-16: 4rem;     /* 64px */
+
+    /* ---------- Bordas e raios ---------- */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-pill: 9999px;
+
+    /* ---------- Sombras ---------- */
+    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -2px rgba(15, 23, 42, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+
+    /* Anel de foco acessível (WCAG 2.4.7) */
+    --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.45);
+
+    /* ---------- Transições ---------- */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+
+    /* ---------- Layout ---------- */
+    --sidebar-width: 260px;
+    --header-height: 64px;
+    --container-max-width: 1280px;
+
+    /* ---------- Z-index ---------- */
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-header: 300;
+    --z-modal-backdrop: 900;
+    --z-modal: 1000;
+    --z-toast: 1100;
+
+    /* ---------- Breakpoints (referência apenas — CSS @media não lê var) ---------- */
+    --bp-mobile: 480px;
+    --bp-tablet: 768px;
+    --bp-desktop: 1024px;
+    --bp-wide: 1280px;
+}
+
+/* ---------- Modo escuro (opt-in via .dark-mode no <html> ou <body>) ---------- */
+.dark-mode {
+    --bg-page: #0f172a;
+    --bg-card: #1e293b;
+    --bg-muted: #334155;
+    --bg-light: #1e293b;            /* compat com nomes legados */
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-inverse: #0f172a;
+
+    --border-light: #334155;
+    --border-medium: #475569;
+    --border-strong: #64748b;
+
+    --color-primary-light: #1e3a8a;
+
+    /* Aliases legados */
+    --bg: var(--bg-card);
+    --text: var(--text-primary);
+    --border: var(--border-light);
+    --card: var(--bg-card);
+    --light: #1e293b;
+    --gray: #94a3b8;
+    --gray-50: #1e293b;
+    --gray-100: #334155;
+    --gray-200: #475569;
+    --gray-300: #475569;
+    --gray-600: #cbd5e1;
+    --gray-700: #e2e8f0;
+    --gray-800: #f1f5f9;
+
+    color-scheme: dark;
+}
+
+/* Componentes globais (light DOM) precisam respeitar a alternância de tema. */
+.dark-mode body,
+.dark-mode .main-content-wrapper,
+.dark-mode .app-body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+}
+.dark-mode .main-content-wrapper {
+    /* override do CSS antigo que usa #f4f6f9 hardcoded */
+    background-color: var(--bg-page);
+}
+
+/* Superfícies de card — cobre praticamente todos os módulos sem precisar
+   refatorar cada arquivo individualmente. */
+.dark-mode .card,
+.dark-mode .summary-card,
+.dark-mode .chart-card,
+.dark-mode .kpi-card,
+.dark-mode .filters-bar,
+.dark-mode .tab-card,
+.dark-mode .form-section,
+.dark-mode .tab-pane,
+.dark-mode .timeline-content,
+.dark-mode .info-card,
+.dark-mode .stat-card {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border-light);
+}
+/* Cabeçalhos/títulos em geral */
+.dark-mode .page-title,
+.dark-mode .chart-header h3,
+.dark-mode .card-header-flex h3,
+.dark-mode .summary-value,
+.dark-mode .kpi-value,
+.dark-mode .stat-number,
+.dark-mode .aprovacao-stats strong {
+    color: var(--text-primary);
+}
+.dark-mode .text-secondary,
+.dark-mode .summary-label,
+.dark-mode .kpi-label,
+.dark-mode .stat-label,
+.dark-mode .filter-group,
+.dark-mode .aprovacao-stats span {
+    color: var(--text-secondary);
+}
+
+/* Status stats / cards interativos do dashboard */
+.dark-mode .status-stat-item,
+.dark-mode .aprovacao-stats div {
+    background-color: var(--bg-muted);
+    border-color: var(--border-light);
+    color: var(--text-primary);
+}
+.dark-mode .status-stat-item:hover,
+.dark-mode .status-stat-item:focus-visible {
+    background-color: rgba(37, 99, 235, 0.18);
+    border-color: var(--color-primary);
+}
+
+/* Alertas (alert-item e variantes coloridas) — mantém matiz mas escurece
+   o fundo e clareia o texto para contraste AA. */
+.dark-mode .alert-item {
+    background-color: rgba(148, 163, 184, 0.12);
+    color: var(--text-primary);
+    border-left-color: var(--border-medium);
+}
+.dark-mode .alert-success { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+.dark-mode .alert-info    { background: rgba(6, 182, 212, 0.15);  color: #67e8f9; }
+.dark-mode .alert-warning { background: rgba(245, 158, 11, 0.18); color: #fcd34d; }
+.dark-mode .alert-error   { background: rgba(239, 68, 68, 0.18);  color: #fca5a5; }
+
+/* Tabelas */
+.dark-mode .custom-table th {
+    background-color: var(--bg-muted);
+    color: var(--text-secondary);
+    border-bottom-color: var(--border-medium);
+}
+.dark-mode .custom-table td {
+    color: var(--text-primary);
+    border-bottom-color: var(--border-light);
+}
+.dark-mode .custom-table tbody tr:hover {
+    background-color: rgba(148, 163, 184, 0.08);
+}
+
+/* Barra de progresso de eficiência */
+.dark-mode .eficiencia-bar { background-color: var(--bg-muted); }
+
+/* Inputs/selects */
+.dark-mode .form-control,
+.dark-mode .form-control-sm,
+.dark-mode .filter-select,
+.dark-mode .search-box,
+.dark-mode select,
+.dark-mode input[type="text"],
+.dark-mode input[type="email"],
+.dark-mode input[type="tel"],
+.dark-mode input[type="password"],
+.dark-mode input[type="number"],
+.dark-mode input[type="search"],
+.dark-mode textarea {
+    background-color: #0f172a;
+    color: var(--text-primary);
+    border-color: var(--border-light);
+}
+.dark-mode .form-control::placeholder,
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder { color: var(--text-muted); }
+.dark-mode th { background-color: #0f172a; color: var(--text-secondary); }
+.dark-mode td { color: var(--text-primary); border-color: var(--border-light); }
+
+/* Botões */
+.dark-mode .btn {
+    background-color: var(--bg-muted);
+    color: var(--text-primary);
+    border-color: var(--border-medium);
+}
+.dark-mode .btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-primary-contrast);
+    border-color: var(--color-primary);
+}
+.dark-mode .btn-outline,
+.dark-mode .btn-outline-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border-color: var(--border-medium);
+}
+.dark-mode .btn-outline:hover,
+.dark-mode .btn-outline-secondary:hover {
+    color: #fff;
+    border-color: var(--color-primary);
+    background: rgba(37, 99, 235, 0.18);
+}
+
+/* Breadcrumb (usado em várias telas) */
+.dark-mode .breadcrumb {
+    color: var(--text-secondary);
+}
+
+/* ---------- Preferência do sistema (modo escuro automático) ---------- */
+@media (prefers-color-scheme: dark) {
+    :root.auto-theme {
+        --bg-page: #0f172a;
+        --bg-card: #1e293b;
+        --bg-muted: #334155;
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --border-light: #334155;
+        --bg: var(--bg-card);
+        --text: var(--text-primary);
+        --border: var(--border-light);
+        --card: var(--bg-card);
+    }
+}

@@ -1,0 +1,94 @@
+/* ============================================================
+   security.css — Aba de Segurança (troca de senha).
+   ============================================================ */
+
+.security-container h3 {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-description {
+    color: var(--secondary);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.security-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.security-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    background: rgba(37, 99, 235, 0.1);
+    padding: 0.75rem;
+    border-radius: 12px;
+}
+
+.security-form .form-group { margin-bottom: 1.5rem; }
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.password-wrapper input {
+    padding-right: 2.5rem;
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    cursor: pointer;
+    color: var(--secondary);
+    transition: color 0.2s;
+    user-select: none;
+}
+.toggle-password:hover { color: var(--primary); }
+
+.password-rules {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--secondary);
+}
+.password-rules i {
+    font-size: 0.6rem;
+    margin-right: 4px;
+    color: var(--border-dark);
+}
+
+.form-hint {
+    text-align: right;
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+}
+.forgot-link            { color: var(--primary); text-decoration: none; }
+.forgot-link:hover      { text-decoration: underline; }
+.error-msg              { color: var(--danger); font-size: 0.85rem; margin-top: 0.25rem; display: block; }
+
+.separator              { margin: 1rem 0; border: 0; border-top: 1px solid var(--border-light); }
+.separator.section-divider { margin: 2.5rem 0; border-top: 2px solid var(--border-light); }
+
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-actions-security { margin-top: 0.5rem; }

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Painel administrativo SaaS — Pit Stop Inteligente.">
+    <meta name="theme-color" content="#2563eb">
+    <title>Administração | Pit Stop Inteligente</title>
+
+    <link rel="stylesheet" href="../../../shared/styles/variables.css">
+    <link rel="stylesheet" href="../../../shared/styles/global.css">
+    <link rel="stylesheet" href="../style/admin.css">
+    <link rel="stylesheet" href="../style/saude.css">
+    <link rel="stylesheet" href="../style/consumo.css">
+    <link rel="stylesheet" href="../../../shared/styles/suporte.css">
+    <link rel="stylesheet" href="../../../shared/vendor/fontawesome/css/all.min.css">
+</head>
+<body class="admin-body">
+
+    <a class="skip-link" href="#adminContent">Pular para o conteúdo</a>
+
+    <div class="admin-overlay" id="adminOverlay" aria-hidden="true"></div>
+
+    <div class="admin-shell">
+        <aside class="admin-sidebar" id="adminSidebar" aria-label="Menu do painel administrativo">
+            <header class="admin-brand">
+                <span class="brand-icon" aria-hidden="true">🔧</span>
+                <span class="brand-text">Pit Stop · Admin</span>
+            </header>
+
+            <!--
+                Itens do menu ocultos temporariamente (apresentação do TCC):
+                  - Ordens de Serviço, Saúde da aplicação, Segurança,
+                    Notificações, Auditoria, Backup do banco.
+
+                Cada item está marcado com o atributo `hidden` (HTML5 nativo).
+                Para REATIVAR um deles no futuro: basta REMOVER a palavra
+                `hidden` do <a> correspondente. A página, a view JS e a rota
+                continuam funcionando — não foi removido código, só escondemos
+                a entrada no menu.
+            -->
+            <nav class="admin-nav" aria-label="Seções do painel">
+                <a href="#dashboard" class="admin-nav-item active" data-tab="dashboard">
+                    <i class="fas fa-chart-pie" aria-hidden="true"></i><span>Dashboard</span>
+                </a>
+                <a href="#oficinas" class="admin-nav-item" data-tab="oficinas">
+                    <i class="fas fa-store" aria-hidden="true"></i><span>Oficinas</span>
+                </a>
+                <a href="#usuarios" class="admin-nav-item" data-tab="usuarios">
+                    <i class="fas fa-user-shield" aria-hidden="true"></i><span>Usuários</span>
+                </a>
+                <a href="#os" class="admin-nav-item" data-tab="os" hidden>
+                    <i class="fas fa-clipboard-list" aria-hidden="true"></i><span>Ordens de Serviço</span>
+                </a>
+                <a href="#suporte" class="admin-nav-item" data-tab="suporte">
+                    <i class="fas fa-headset" aria-hidden="true"></i><span>Suporte</span>
+                    <span class="nav-badge" id="navBadgeSuporte" hidden>0</span>
+                </a>
+                <a href="#saude" class="admin-nav-item" data-tab="saude" hidden>
+                    <i class="fas fa-heart-pulse" aria-hidden="true"></i><span>Saúde da aplicação</span>
+                </a>
+                <a href="#seguranca" class="admin-nav-item" data-tab="seguranca" hidden>
+                    <i class="fas fa-shield-halved" aria-hidden="true"></i><span>Segurança</span>
+                </a>
+                <a href="#configuracoes" class="admin-nav-item" data-tab="configuracoes">
+                    <i class="fas fa-sliders-h" aria-hidden="true"></i><span>Configurações</span>
+                </a>
+                <a href="#notificacoes" class="admin-nav-item" data-tab="notificacoes" hidden>
+                    <i class="fas fa-bell" aria-hidden="true"></i><span>Notificações</span>
+                    <span class="nav-badge" id="navBadgeNotif" hidden>0</span>
+                </a>
+                <a href="#auditoria" class="admin-nav-item" data-tab="auditoria" hidden>
+                    <i class="fas fa-clipboard-check" aria-hidden="true"></i><span>Auditoria</span>
+                </a>
+                <a href="#backup" class="admin-nav-item" data-tab="backup" hidden>
+                    <i class="fas fa-database" aria-hidden="true"></i><span>Backup do banco</span>
+                </a>
+            </nav>
+
+            <footer class="admin-footer">
+                <div class="admin-user">
+                    <div class="avatar" id="adminUserAvatar" aria-hidden="true">A</div>
+                    <div class="user-info">
+                        <strong id="adminUserName">…</strong>
+                        <small id="adminUserRole">…</small>
+                    </div>
+                </div>
+                <a class="admin-back-link" href="../../modulo_oficina/dashboard/pages/dashboard.html">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar à aplicação
+                </a>
+            </footer>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <button id="btnAbrirAdminMenu" class="admin-hamb" type="button"
+                        aria-controls="adminSidebar" aria-expanded="false" aria-label="Abrir menu">
+                    <span></span><span></span><span></span>
+                </button>
+                <h1 id="adminPageTitle" class="admin-page-title">Dashboard</h1>
+            </header>
+
+            <div id="adminContent" class="admin-content" role="region" aria-live="polite">
+                <div class="admin-loading">Inicializando painel…</div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="./admin.js"></script>
+</body>
+</html>

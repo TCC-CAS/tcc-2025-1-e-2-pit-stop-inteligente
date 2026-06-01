@@ -1,0 +1,12 @@
+# Dependências apenas para desenvolvimento e testes.
+# Em produção, instalar somente as de requirements.txt.
+-r requirements.txt
+
+pytest==8.3.4
+pytest-django==4.9.0
+
+# Relatórios de teste e cobertura (usados pelos comandos do README de
+# testes em docs/). Ver TESTES_GUIA.md para os comandos de geração.
+pytest-html==4.1.1
+pytest-cov==5.0.0
+coverage==7.6.10

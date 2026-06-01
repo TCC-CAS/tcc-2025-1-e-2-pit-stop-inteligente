@@ -1,0 +1,9 @@
+/*
+ * os-visao-geral.css — entry CSS da página "Visão Geral da OS".
+ * Estilos divididos em ./parts/* por responsabilidade.
+ */
+
+@import url("./parts/_tokens.css");
+@import url("./parts/_app-shell.css");
+@import url("./parts/_os-header-tabs.css");
+@import url("./parts/_forms-empty.css");

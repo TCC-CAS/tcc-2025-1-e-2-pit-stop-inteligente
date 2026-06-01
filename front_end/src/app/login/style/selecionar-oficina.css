@@ -1,0 +1,220 @@
+/*
+ * selecionar-oficina.css
+ * Tela mostrada quando o usuário precisa escolher qual oficina assumir
+ * após o login. Compartilha o "background" semitransparente do login.
+ */
+
+.login-body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #1e3a8a, #1e40af);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.selector-container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.25);
+    animation: fadeInUp 0.4s ease-out;
+}
+
+.selector-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.logo-placeholder {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    margin: 0 auto 1rem;
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.25);
+}
+
+.selector-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.25rem;
+}
+
+.selector-subtitle {
+    font-size: 0.9rem;
+    color: #475569;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.oficinas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1.5rem 0 1rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.oficina-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #f9fafb;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-family: inherit;
+    width: 100%;
+}
+
+.oficina-card:hover:not(:disabled),
+.oficina-card:focus-visible {
+    border-color: #2563eb;
+    background: #eff6ff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px -6px rgba(37, 99, 235, 0.4);
+    outline: none;
+}
+
+.oficina-card:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.oficina-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(37, 99, 235, 0.12);
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.oficina-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.oficina-nome {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.oficina-cnpj {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.oficina-papel {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: #1d4ed8;
+    background: #dbeafe;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    align-self: flex-start;
+    margin-top: 0.25rem;
+}
+
+.oficina-arrow {
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+.oficinas-loading,
+.sem-vinculo {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #475569;
+}
+
+.oficinas-loading i,
+.sem-vinculo i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #2563eb;
+}
+
+.sem-vinculo i {
+    color: #f59e0b;
+}
+
+.sem-vinculo h2 {
+    font-size: 1.1rem;
+    margin: 0.5rem 0 0.25rem;
+    color: #0f172a;
+}
+
+.sem-vinculo p {
+    margin: 0;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.selector-footer {
+    text-align: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-link {
+    background: transparent;
+    border: none;
+    color: #475569;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.btn-link:hover,
+.btn-link:focus-visible {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.08);
+    outline: none;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeInUp 0.3s ease-out; }
+
+@media (max-width: 480px) {
+    .selector-container { padding: 1.5rem 1.25rem; border-radius: 16px; }
+    .oficina-card       { padding: 0.85rem; }
+}

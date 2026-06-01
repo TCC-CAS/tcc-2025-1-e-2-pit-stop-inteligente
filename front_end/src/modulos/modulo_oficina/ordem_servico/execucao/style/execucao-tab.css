@@ -1,0 +1,9 @@
+/*
+ * execucao-tab.css — entry CSS da aba "Execução".
+ * Estilos divididos em ./parts/* por responsabilidade.
+ */
+
+@import url("./parts/_tokens.css");
+@import url("./parts/_card-resumo.css");
+@import url("./parts/_lista-tarefas.css");
+@import url("./parts/_atribuicao.css");

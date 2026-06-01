@@ -1,0 +1,12 @@
+/*
+ * checklist-tab.css — entry CSS da aba "Checklist".
+ * Estilos divididos em ./parts/* por responsabilidade.
+ */
+
+@import url("./parts/_tokens.css");
+@import url("./parts/_status-card.css");
+@import url("./parts/_resumo.css");
+@import url("./parts/_wizard.css");
+@import url("./parts/_form.css");
+@import url("./parts/_photos-signatures.css");
+@import url("./parts/_responsive.css");

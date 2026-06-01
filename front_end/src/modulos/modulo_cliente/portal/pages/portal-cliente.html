@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portal do cliente — acompanhe sua Ordem de Serviço, assine e aprove itens.">
+    <meta name="theme-color" content="#2563eb">
+    <title>Portal do Cliente | Pit Stop Inteligente</title>
+
+    <link rel="stylesheet" href="../../../../shared/styles/variables.css">
+    <link rel="stylesheet" href="../../../../shared/styles/global.css">
+    <link rel="stylesheet" href="../../../../shared/styles/responsive-tablet.css">
+    <link rel="stylesheet" href="../../../../shared/styles/responsive-mobile.css">
+    <link rel="stylesheet" href="../style/portal-cliente.css">
+    <link rel="stylesheet" href="../../../../shared/styles/suporte.css">
+    <link rel="stylesheet" href="../../../../shared/vendor/fontawesome/css/all.min.css">
+</head>
+<body>
+
+    <a class="skip-link" href="#mainContent">Pular para o conteúdo</a>
+
+    <cliente-header></cliente-header>
+
+    <div class="portal-overlay" aria-hidden="true"></div>
+
+    <div class="portal-body">
+        <aside class="portal-sidebar" id="portalSidebar" aria-label="Suas ordens de serviço">
+            <div class="sidebar-mobile-head" style="display: flex; justify-content: flex-end; padding: 0.4rem 0.6rem 0;">
+                <button id="btnFecharSidebar" type="button"
+                        aria-label="Fechar lista"
+                        style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:#475569;">
+                    ✕
+                </button>
+            </div>
+            <cliente-os-list></cliente-os-list>
+        </aside>
+
+        <main class="portal-main" id="mainContent" role="main" aria-label="Detalhes da OS selecionada">
+            <button class="btn-drawer" id="btnAbrirOSList"
+                    aria-controls="portalSidebar" aria-expanded="false">
+                <i class="fas fa-list" aria-hidden="true"></i> Minhas OS
+            </button>
+
+            <div class="os-summary" id="osSummary" role="region" aria-live="polite">
+                <div>
+                    <h1>Carregando…</h1>
+                    <p class="os-summary-sub">Aguarde, estamos preparando seus dados.</p>
+                </div>
+            </div>
+
+            <div class="cliente-tabs-wrap">
+                <oficina-tabs>
+                    <div class="tab active" role="tab" data-target="checklist">
+                        <i class="fas fa-clipboard-check" aria-hidden="true"></i> Checklist
+                    </div>
+                    <div class="tab" role="tab" data-target="documentos">
+                        <i class="fas fa-folder-open" aria-hidden="true"></i> Documentos
+                    </div>
+                    <div class="tab" role="tab" data-target="historico">
+                        <i class="fas fa-history" aria-hidden="true"></i> Histórico
+                    </div>
+                    <div class="tab" role="tab" data-target="aprovacoes">
+                        <i class="fas fa-check-circle" aria-hidden="true"></i> Aprovações
+                    </div>
+                    <div class="tab" role="tab" data-target="assinatura">
+                        <i class="fas fa-signature" aria-hidden="true"></i> Assinatura
+                    </div>
+                    <div class="tab" role="tab" data-target="suporte">
+                        <i class="fas fa-headset" aria-hidden="true"></i> Suporte
+                    </div>
+                </oficina-tabs>
+            </div>
+
+            <div id="contentArea" class="fade-in" role="region" aria-live="polite">
+                <div class="loading-state">Carregando conteúdo…</div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="../../../../shared/components/oficina-tabs.js"></script>
+    <script type="module" src="../../../../shared/components/status-badge.js"></script>
+    <script type="module" src="../components/cliente-header.js"></script>
+    <script type="module" src="../components/cliente-os-list.js"></script>
+    <script type="module" src="./portal-cliente.js"></script>
+</body>
+</html>

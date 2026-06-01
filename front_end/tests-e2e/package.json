@@ -1,0 +1,16 @@
+{
+  "name": "pitstop-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Testes end-to-end (Playwright) do Pit Stop Inteligente.",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report",
+    "install:browsers": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}

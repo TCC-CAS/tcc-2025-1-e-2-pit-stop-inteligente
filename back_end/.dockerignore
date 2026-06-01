@@ -1,0 +1,23 @@
+# Ambiente virtual e caches (não vão para a imagem)
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Segredos: as variáveis chegam via env_file do docker-compose, não na imagem
+.env
+.env.*
+!.env.example
+
+# Artefatos locais (regerados dentro do contêiner)
+staticfiles/
+media/
+reports/
+*.log
+db.sqlite3
+
+# Controle de versão / editor
+.git/
+.gitignore
+.vscode/
+.idea/

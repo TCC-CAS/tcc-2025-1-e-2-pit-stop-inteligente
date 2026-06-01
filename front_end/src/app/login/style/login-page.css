@@ -1,0 +1,9 @@
+/*
+ * login-page.css — entry CSS da tela de login.
+ * Estilos divididos em ./parts/* por responsabilidade.
+ */
+
+@import url("./parts/_overlay.css");
+@import url("./parts/_form.css");
+@import url("./parts/_buttons.css");
+@import url("./parts/_signup-link.css");

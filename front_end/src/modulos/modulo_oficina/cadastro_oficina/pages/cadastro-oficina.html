@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cadastre sua oficina no Pit Stop Inteligente em 5 passos rápidos">
+    <title>Pit Stop Inteligente - Cadastro de Oficina</title>
+
+    <link rel="stylesheet" href="../../../../shared/vendor/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="../../../../shared/styles/variables.css">
+    <link rel="stylesheet" href="../../../../shared/styles/global.css">
+    <link rel="stylesheet" href="../style/cadastro-oficina.css">
+</head>
+<body class="signup-body">
+    <!-- Cabeçalho público (sem sidebar) -->
+    <header class="public-header">
+        <a class="brand" href="../../../../app/login/pages/index.html">
+            <i class="fas fa-car-side" aria-hidden="true"></i>
+            <span>Pit Stop <strong>Inteligente</strong></span>
+        </a>
+        <a class="public-login" href="../../../../app/login/pages/login-page.html">
+            <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Já tenho conta
+        </a>
+    </header>
+
+    <main class="signup-main">
+        <section class="signup-card" aria-labelledby="signupTitle">
+            <header class="signup-header">
+                <h1 id="signupTitle">Cadastre sua oficina</h1>
+                <p>Em poucos passos sua oficina já estará pronta para emitir orçamentos, abrir OS e acompanhar a equipe.</p>
+            </header>
+
+            <!-- Stepper -->
+            <ol class="stepper" id="cadastroSteps" aria-label="Etapas do cadastro">
+                <li class="step active" data-step="1"><span class="step-num">1</span><span>Conta</span></li>
+                <li class="step" data-step="2"><span class="step-num">2</span><span>Oficina</span></li>
+                <li class="step" data-step="3"><span class="step-num">3</span><span>Endereço</span></li>
+                <li class="step" data-step="4"><span class="step-num">4</span><span>Funcionamento</span></li>
+                <li class="step" data-step="5"><span class="step-num">5</span><span>Termos</span></li>
+            </ol>
+
+            <form id="formCadastro" class="signup-form" novalidate>
+                <!-- ===================== PASSO 1 — CONTA DO ADMINISTRADOR ===================== -->
+                <fieldset class="wizard-panel active" data-step="1">
+                    <legend class="panel-title"><i class="fas fa-user-shield" aria-hidden="true"></i> Sua conta de administrador</legend>
+                    <p class="panel-help">Esta será a conta principal para gerenciar a oficina.</p>
+
+                    <div class="grid two-cols">
+                        <div class="form-group">
+                            <label for="adminNome">Nome *</label>
+                            <input id="adminNome" name="admin_nome" type="text" class="form-control" required autocomplete="given-name" placeholder="Ex: Maria">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminSobrenome">Sobrenome</label>
+                            <input id="adminSobrenome" name="admin_sobrenome" type="text" class="form-control" autocomplete="family-name" placeholder="Ex: Silva">
+                        </div>
+                        <div class="form-group span-2">
+                            <label for="adminEmail">E-mail *</label>
+                            <input id="adminEmail" name="admin_email" type="email" class="form-control" required autocomplete="email" placeholder="seu-email@dominio.com">
+                        </div>
+                        <div class="form-group span-2">
+                            <label for="adminSenha">Senha *</label>
+                            <input id="adminSenha" name="admin_senha" type="password" class="form-control" required autocomplete="new-password" minlength="8" placeholder="Sua senha forte">
+                            <!-- Indicador visual da política de senha. Os
+                                 estados de cada item sao atualizados via
+                                 password-strength.js conforme o usuario digita. -->
+                            <ul class="password-rules" id="passwordRules" aria-live="polite">
+                                <li data-rule="length"><i class="fas fa-circle" aria-hidden="true"></i> Pelo menos 8 caracteres</li>
+                                <li data-rule="upper"><i class="fas fa-circle" aria-hidden="true"></i> 1 letra MAIÚSCULA</li>
+                                <li data-rule="lower"><i class="fas fa-circle" aria-hidden="true"></i> 1 letra minúscula</li>
+                                <li data-rule="number"><i class="fas fa-circle" aria-hidden="true"></i> 1 número</li>
+                                <li data-rule="special"><i class="fas fa-circle" aria-hidden="true"></i> 1 caractere especial (!@#$ etc.)</li>
+                            </ul>
+                        </div>
+                        <div class="form-group span-2">
+                            <label for="adminSenhaConfirm">Confirmar senha *</label>
+                            <input id="adminSenhaConfirm" name="admin_senha_confirmacao" type="password" class="form-control" required autocomplete="new-password" minlength="8" placeholder="Repita a senha">
+                            <small class="password-match-msg" id="passwordMatchMsg" aria-live="polite"></small>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- ===================== PASSO 2 — DADOS DA OFICINA ===================== -->
+                <fieldset class="wizard-panel" data-step="2">
+                    <legend class="panel-title"><i class="fas fa-store-alt" aria-hidden="true"></i> Dados da oficina</legend>
+
+                    <div class="grid two-cols">
+                        <div class="form-group">
+                            <label for="oficNome">Nome da oficina *</label>
+                            <input id="oficNome" name="nome" type="text" class="form-control" required placeholder="Ex: Auto Center Pit Stop">
+                        </div>
+                        <div class="form-group">
+                            <label for="oficCnpj">CNPJ *</label>
+                            <input id="oficCnpj" name="cnpj" type="text" class="form-control" required placeholder="00.000.000/0000-00" maxlength="18">
+                        </div>
+                        <div class="form-group">
+                            <label for="oficEmail">E-mail de contato</label>
+                            <input id="oficEmail" name="email" type="email" class="form-control" placeholder="contato@oficina.com.br">
+                        </div>
+                        <div class="form-group">
+                            <label for="oficTelefone">Telefone / WhatsApp</label>
+                            <input id="oficTelefone" name="telefone" type="tel" class="form-control" placeholder="(11) 99999-9999">
+                        </div>
+                        <div class="form-group span-2">
+                            <label for="oficEspecialidade">Especialidade principal</label>
+                            <select id="oficEspecialidade" name="especialidade" class="form-control">
+                                <option value="geral">Mecânica Geral</option>
+                                <option value="eletrica">Elétrica</option>
+                                <option value="funilaria">Funilaria e Pintura</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group span-2 logo-field">
+                            <label for="inputLogo">Logo da oficina <small>(opcional)</small></label>
+                            <div class="logo-dropzone" id="logoDropzone" tabindex="0" role="button" aria-label="Selecionar logo">
+                                <img id="previewLogo" alt="" hidden>
+                                <div class="logo-placeholder" id="logoPlaceholder">
+                                    <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
+                                    <span>Clique ou arraste uma imagem aqui</span>
+                                    <small>PNG, JPG ou SVG • até 2 MB</small>
+                                </div>
+                                <input id="inputLogo" type="file" accept="image/*" hidden>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- ===================== PASSO 3 — ENDEREÇO ===================== -->
+                <fieldset class="wizard-panel" data-step="3">
+                    <legend class="panel-title"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Endereço</legend>
+
+                    <div class="grid two-cols">
+                        <div class="form-group">
+                            <label for="cep">CEP *</label>
+                            <div class="cep-input">
+                                <input id="cep" name="cep" type="text" class="form-control" maxlength="9" placeholder="00000-000" required>
+                                <button type="button" id="btnBuscarCep" class="btn-icon-square" aria-label="Buscar endereço pelo CEP">
+                                    <i class="fas fa-search" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            <small id="cepFeedback" class="field-feedback" aria-live="polite"></small>
+                        </div>
+                        <div class="form-group span-2">
+                            <label for="logradouro">Logradouro</label>
+                            <input id="logradouro" name="logradouro" type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="numero">Número</label>
+                            <input id="numero" name="numero" type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="complemento">Complemento</label>
+                            <input id="complemento" name="complemento" type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="bairro">Bairro</label>
+                            <input id="bairro" name="bairro" type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade">Cidade</label>
+                            <input id="cidade" name="cidade" type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <select id="estado" name="estado" class="form-control" data-estados></select>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- ===================== PASSO 4 — FUNCIONAMENTO + PLANO ===================== -->
+                <fieldset class="wizard-panel" data-step="4">
+                    <legend class="panel-title"><i class="fas fa-clock" aria-hidden="true"></i> Funcionamento e plano</legend>
+
+                    <div class="grid two-cols">
+                        <div class="form-group">
+                            <label for="horarioAbertura">Abertura</label>
+                            <input id="horarioAbertura" name="horario_abertura" type="time" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="horarioFechamento">Fechamento</label>
+                            <input id="horarioFechamento" name="horario_fechamento" type="time" class="form-control">
+                        </div>
+                        <div class="form-group span-2">
+                            <span class="form-group__label">Dias de funcionamento</span>
+                            <div class="week-selector" role="group" aria-label="Dias de funcionamento">
+                                <input type="checkbox" id="dia-seg" class="week-checkbox" value="seg">
+                                <label for="dia-seg">Seg</label>
+                                <input type="checkbox" id="dia-ter" class="week-checkbox" value="ter">
+                                <label for="dia-ter">Ter</label>
+                                <input type="checkbox" id="dia-qua" class="week-checkbox" value="qua">
+                                <label for="dia-qua">Qua</label>
+                                <input type="checkbox" id="dia-qui" class="week-checkbox" value="qui">
+                                <label for="dia-qui">Qui</label>
+                                <input type="checkbox" id="dia-sex" class="week-checkbox" value="sex">
+                                <label for="dia-sex">Sex</label>
+                                <input type="checkbox" id="dia-sab" class="week-checkbox" value="sab">
+                                <label for="dia-sab">Sáb</label>
+                                <input type="checkbox" id="dia-dom" class="week-checkbox" value="dom">
+                                <label for="dia-dom">Dom</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="plan-grid" role="radiogroup" aria-label="Plano">
+                        <button type="button" class="plan-card selected" data-plan="teste">
+                            <span class="plan-tag">Avaliação</span>
+                            <span class="plan-name">Teste</span>
+                            <span class="plan-price">Grátis<small>/7 dias</small></span>
+                            <ul class="plan-features">
+                                <li><i class="fas fa-check" aria-hidden="true"></i> 10 OS no período</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> 1 usuário</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> 1 GB de armazenamento</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Suporte padrão</li>
+                            </ul>
+                            <span class="plan-select-label">Selecionado</span>
+                        </button>
+                        <button type="button" class="plan-card" data-plan="basico">
+                            <span class="plan-name">Básico</span>
+                            <span class="plan-price">R$ 99,90<small>/mês</small></span>
+                            <ul class="plan-features">
+                                <li><i class="fas fa-check" aria-hidden="true"></i> 30 OS por mês</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> 2 usuários ativos</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> 1 GB de armazenamento</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Suporte padrão</li>
+                            </ul>
+                            <span class="plan-select-label">Selecionar</span>
+                        </button>
+                        <button type="button" class="plan-card featured" data-plan="premium">
+                            <span class="plan-tag">Recomendado</span>
+                            <span class="plan-name">Premium</span>
+                            <span class="plan-price">R$ 199,90<small>/mês</small></span>
+                            <ul class="plan-features">
+                                <li><i class="fas fa-check" aria-hidden="true"></i> 50 OS por mês</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> 5 usuários ativos</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> 5 GB de armazenamento</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Suporte preferencial</li>
+                            </ul>
+                            <span class="plan-select-label">Selecionar</span>
+                        </button>
+                    </div>
+                    <input type="hidden" name="plano" value="teste">
+                </fieldset>
+
+                <!-- ===================== PASSO 5 — TERMOS LEGAIS ===================== -->
+                <fieldset class="wizard-panel" data-step="5">
+                    <legend class="panel-title"><i class="fas fa-file-contract" aria-hidden="true"></i> Termos legais</legend>
+                    <p class="panel-help">
+                        Antes de concluir o cadastro, leia e aceite os documentos abaixo.
+                        Cada link abre o PDF em uma nova aba.
+                    </p>
+
+                    <div class="terms-card">
+                        <a href="../../../../assets/legal/termos-de-uso.pdf" target="_blank" rel="noopener" class="terms-link">
+                            <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                            <div>
+                                <strong>Termos de Uso</strong>
+                                <small>Leia em uma nova aba</small>
+                            </div>
+                            <i class="fas fa-external-link-alt arrow" aria-hidden="true"></i>
+                        </a>
+                        <a href="../../../../assets/legal/politica-de-privacidade.pdf" target="_blank" rel="noopener" class="terms-link">
+                            <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                            <div>
+                                <strong>Política de Privacidade</strong>
+                                <small>Leia em uma nova aba</small>
+                            </div>
+                            <i class="fas fa-external-link-alt arrow" aria-hidden="true"></i>
+                        </a>
+                    </div>
+
+                    <label class="terms-accept">
+                        <input type="checkbox" id="chkTermos" name="termos_aceitos" required>
+                        <span>
+                            Li e <strong>aceito</strong> os Termos de Uso e a Política de Privacidade
+                            do Pit Stop Inteligente.
+                        </span>
+                    </label>
+
+                </fieldset>
+
+                <!-- Mensagem de erro/feedback compartilhada entre passos -->
+                <div id="mensagemPasso" class="mensagem-passo" role="alert" aria-live="polite" hidden></div>
+
+                <!-- Navegação entre passos: Voltar | Indicador | Próximo/Concluir -->
+                <nav class="wizard-nav" aria-label="Navegação do cadastro">
+                    <button type="button" id="btnVoltar" class="btn btn-outline btn-sm-icon" hidden>
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                        <span>Voltar</span>
+                    </button>
+
+                    <div class="step-counter" aria-live="polite">
+                        <span id="stepCounterText">Passo 1 de 5</span>
+                        <div class="step-counter-bar" aria-hidden="true">
+                            <div class="step-counter-fill" id="stepCounterFill"></div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="btnProximo" class="btn btn-primary">
+                        <span>Próximo</span>
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    </button>
+                    <button type="submit" id="btnConcluir" class="btn btn-success" hidden>
+                        <i class="fas fa-check" aria-hidden="true"></i>
+                        <span class="btn-text">Concluir cadastro</span>
+                        <i class="fas fa-circle-notch fa-spin btn-spinner" hidden></i>
+                    </button>
+                </nav>
+            </form>
+        </section>
+    </main>
+
+    <footer class="signup-footer">
+        <small>&copy; 2026 Pit Stop Inteligente — Todos os direitos reservados.</small>
+    </footer>
+
+    <script type="module" src="../components/cadastro-oficina-wizard.js"></script>
+</body>
+</html>

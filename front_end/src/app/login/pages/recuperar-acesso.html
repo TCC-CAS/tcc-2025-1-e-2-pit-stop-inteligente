@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Recuperação de acesso — Pit Stop Inteligente">
+    <meta name="theme-color" content="#2563eb">
+    <title>Recuperar acesso | Pit Stop Inteligente</title>
+
+    <link rel="stylesheet" href="../../../shared/styles/variables.css">
+    <link rel="stylesheet" href="../../../shared/styles/global.css">
+    <link rel="stylesheet" href="../style/login-page.css">
+    <link rel="stylesheet" href="./recuperar-acesso.css">
+    <link rel="stylesheet" href="../../../shared/vendor/fontawesome/css/all.min.css">
+</head>
+<body class="login-body">
+
+    <a class="skip-link" href="#mainContent">Pular para o conteúdo</a>
+
+    <main id="mainContent" class="login-container fade-in" role="main">
+        <section class="login-card" aria-labelledby="recoverTitle">
+
+            <header class="login-header">
+                <div class="logo-placeholder" aria-hidden="true">
+                    <i class="fas fa-key"></i>
+                </div>
+                <h1 id="recoverTitle" class="login-title">Recuperar acesso</h1>
+                <p class="login-subtitle" id="recoverSubtitle">
+                    Vamos ajudá-lo a recuperar seu acesso ao Pit Stop Inteligente.
+                </p>
+            </header>
+
+            <!-- Etapa 1: solicitação -->
+            <form id="recoverForm" class="login-form" novalidate>
+                <!-- Honeypot anti-bot — invisível p/ humanos, bots tendem a preencher. -->
+                <input type="text" name="url_optional" id="urlOptional" tabindex="-1"
+                       autocomplete="off" aria-hidden="true"
+                       style="position:absolute; left:-9999px; opacity:0; height:0; width:0;">
+
+                <fieldset class="recover-mode" aria-describedby="recoverModeHint">
+                    <legend class="sr-only">Tipo de conta</legend>
+                    <label class="radio-pill">
+                        <input type="radio" name="modo" value="oficina" checked>
+                        <span><i class="fas fa-store" aria-hidden="true"></i> Sou da oficina</span>
+                    </label>
+                    <label class="radio-pill">
+                        <input type="radio" name="modo" value="cliente">
+                        <span><i class="fas fa-user" aria-hidden="true"></i> Sou cliente</span>
+                    </label>
+                </fieldset>
+
+                <p class="recover-hint" id="recoverModeHint">
+                    Selecione o tipo da sua conta para receber instruções específicas.
+                </p>
+
+                <div class="form-group floating-group">
+                    <i class="fas fa-envelope input-icon" aria-hidden="true"></i>
+                    <input type="email" id="emailRecover" name="email" class="form-control"
+                           placeholder=" " required aria-required="true"
+                           autocomplete="email" aria-describedby="erroEmail">
+                    <label for="emailRecover">E-mail cadastrado</label>
+                    <span class="error-msg" id="erroEmail" role="alert" aria-live="polite"></span>
+                </div>
+
+                <p class="form-feedback" id="recoverFeedback" role="alert" aria-live="polite"></p>
+
+                <button type="submit" class="btn btn-primary btn-block" id="btnRecuperar">
+                    <span class="btn-text"><i class="fas fa-paper-plane"></i> Enviar instruções</span>
+                </button>
+            </form>
+
+            <!-- Etapa 2: confirmação (renderizada por JS após sucesso) -->
+            <div id="recoverSuccess" class="recover-success" hidden>
+                <div class="success-icon" aria-hidden="true">
+                    <i class="fas fa-circle-check"></i>
+                </div>
+                <h2>Tudo certo!</h2>
+                <p id="recoverSuccessMsg"></p>
+                <a href="login-page.html" class="btn btn-primary btn-block">
+                    <i class="fas fa-arrow-left"></i> Voltar para o login
+                </a>
+            </div>
+
+            <p class="login-signup">
+                Lembrou da senha?
+                <a href="login-page.html" class="login-signup-link">
+                    Voltar para o login <i class="fas fa-arrow-right"></i>
+                </a>
+            </p>
+        </section>
+
+        <p class="back-home">
+            <a href="index.html"><i class="fas fa-arrow-left"></i> Voltar para a página inicial</a>
+        </p>
+    </main>
+
+    <script type="module" src="./recuperar-acesso.js"></script>
+</body>
+</html>

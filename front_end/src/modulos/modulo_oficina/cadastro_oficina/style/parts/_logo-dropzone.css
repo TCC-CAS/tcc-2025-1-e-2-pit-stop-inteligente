@@ -1,0 +1,62 @@
+/* _logo-dropzone.css — área de upload da logo (clique ou arrastar). */
+
+.logo-field { margin-top: 0.25rem; }
+
+.logo-dropzone {
+    margin-top: 0.4rem;
+    border: 2px dashed var(--signup-border);
+    border-radius: var(--signup-radius-md);
+    background: var(--signup-soft);
+    padding: 1.25rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 140px;
+    justify-content: center;
+    position: relative;
+}
+
+.logo-dropzone:hover,
+.logo-dropzone:focus-visible,
+.logo-dropzone.dragging {
+    border-color: var(--signup-primary);
+    background: #eff6ff;
+    outline: none;
+}
+
+.logo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--signup-muted);
+}
+
+.logo-placeholder i {
+    font-size: 2rem;
+    color: var(--signup-primary);
+    margin-bottom: 0.25rem;
+}
+
+.logo-placeholder span {
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.92rem;
+}
+
+.logo-placeholder small {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+#previewLogo {
+    max-height: 110px;
+    max-width: 100%;
+    border-radius: 12px;
+    object-fit: contain;
+    box-shadow: 0 8px 18px -8px rgba(15, 23, 42, 0.18);
+}

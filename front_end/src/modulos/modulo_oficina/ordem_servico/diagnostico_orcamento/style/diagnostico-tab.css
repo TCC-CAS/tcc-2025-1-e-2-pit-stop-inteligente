@@ -1,0 +1,8 @@
+/*
+ * diagnostico-tab.css — entry CSS da aba "Diagnóstico / Orçamento".
+ * Estilos divididos em ./parts/* por responsabilidade.
+ */
+
+@import url("./parts/_tabela.css");
+@import url("./parts/_orcamento.css");
+@import url("./parts/_modal.css");

@@ -1,0 +1,96 @@
+/* _status-card.css — card de status do checklist (concluído / pendente) + botões CTA. */
+
+.checklist-container {
+    padding: 0.5rem 0;
+    animation: fadeIn 0.4s ease;
+}
+
+.checklist-status-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 2px 4px -1px rgba(0, 0, 0, 0.02);
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+}
+
+.checklist-status-card .status-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.status-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    background: #fee2e2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #dc2626;
+    transition: all 0.3s ease;
+}
+
+.checklist-status-card.completed .status-icon-wrapper {
+    background: #d1fae5;
+    color: #10b981;
+}
+
+.status-text h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    color: #0f172a;
+}
+
+.status-text p {
+    margin: 0;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.status-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* Botões CTA */
+.btn-primary,
+.btn-secondary,
+.btn-success {
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary { background-color: #2563eb; color: white; }
+.btn-primary:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.btn-secondary { background-color: #e2e8f0; color: #1e293b; }
+.btn-secondary:hover {
+    background-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.btn-success { background-color: #10b981; color: white; }
+.btn-success:hover { background-color: #059669; }

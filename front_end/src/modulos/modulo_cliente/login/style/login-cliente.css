@@ -1,0 +1,219 @@
+/* login-cliente.css — tela de acesso do cliente.
+   Layout centralizado, mobile-first, foco em legibilidade. */
+
+.login-cliente-body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(circle at top right, rgba(37, 99, 235, 0.18), transparent 45%),
+      radial-gradient(circle at bottom left, rgba(15, 23, 42, 0.18), transparent 45%),
+      linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 1.5rem;
+}
+
+.login-shell {
+    width: 100%;
+    max-width: 460px;
+    display: flex;
+    justify-content: center;
+}
+
+.login-card {
+    background: var(--bg-card, #fff);
+    border-radius: var(--radius-xl, 1rem);
+    box-shadow: 0 25px 50px -10px rgba(15, 23, 42, 0.45);
+    padding: 2.25rem 1.75rem;
+    width: 100%;
+    position: relative;
+}
+
+.login-back {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--text-secondary, #475569);
+    background: transparent;
+    transition: background 0.15s, color 0.15s;
+}
+.login-back:hover,
+.login-back:focus-visible {
+    background: var(--bg-muted, #f1f5f9);
+    color: var(--color-primary, #2563eb);
+    outline: none;
+}
+.login-back i { font-size: 0.85rem; }
+
+.login-card-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.login-card-header .brand {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+    font-size: 1.6rem;
+}
+
+.login-card-header h1 {
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.6rem);
+    margin: 0 0 0.4rem;
+    color: var(--text-primary, #0f172a);
+}
+
+.login-card-sub {
+    color: var(--text-secondary, #475569);
+    font-size: 0.95rem;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.login-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.form-feedback {
+    text-align: center;
+    font-size: 0.9rem;
+    min-height: 1.2em;
+    margin: 0;
+    line-height: 1.4;
+}
+.form-feedback.ok { color: var(--color-success, #16a34a); }
+.form-feedback.err { color: var(--color-danger, #dc2626); }
+
+.btn-block {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.login-help-line {
+    margin: 0.85rem 0 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #475569);
+}
+.login-help-line a {
+    color: var(--color-primary, #2563eb);
+    font-weight: 600;
+    text-decoration: none;
+}
+.login-help-line a:hover,
+.login-help-line a:focus-visible {
+    text-decoration: underline;
+    outline: none;
+}
+
+/* Campo de código grande e fácil de ler */
+.code-input {
+    font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+    font-size: 1.4rem !important;
+    letter-spacing: 0.35rem;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.code-input::placeholder {
+    letter-spacing: 0.25rem;
+    font-weight: 500;
+    color: var(--text-muted, #94a3b8);
+}
+.form-hint {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: flex-start;
+    margin-top: 0.4rem;
+    color: var(--text-secondary, #475569);
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+.form-hint i { margin-top: 0.15rem; color: var(--color-primary, #2563eb); }
+
+/* Permite ocultar o acesso legado "Número da OS" via atributo `hidden`
+   no HTML. Sem essa regra, alguns navegadores aplicam display especial
+   ao <details> e o atributo nao surtiria efeito visivel. Reativar e so
+   remover o `hidden` no HTML. */
+.legacy-toggle[hidden] { display: none !important; }
+
+/* Bloco "legacy" — colapsado por padrão */
+.legacy-toggle {
+    margin-top: 1rem;
+    border-top: 1px dashed var(--border-light, #e2e8f0);
+    padding-top: 0.85rem;
+}
+.legacy-toggle > summary {
+    cursor: pointer;
+    font-size: 0.82rem;
+    color: var(--text-secondary, #475569);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.legacy-toggle > summary::-webkit-details-marker { display: none; }
+.legacy-toggle > summary::before {
+    content: "▸";
+    transition: transform 0.15s;
+    color: var(--color-primary, #2563eb);
+}
+.legacy-toggle[open] > summary::before { transform: rotate(90deg); }
+.legacy-toggle > summary:hover { color: var(--color-primary, #2563eb); }
+.legacy-fields {
+    margin-top: 0.6rem;
+    padding: 0.65rem 0.85rem;
+    background: var(--bg-muted, #f1f5f9);
+    border-radius: 8px;
+}
+.form-label-sm {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--text-secondary, #475569);
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+}
+
+.login-card-footer {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-light, #e2e8f0);
+    text-align: center;
+    color: var(--text-muted, #94a3b8);
+    line-height: 1.45;
+    font-size: 0.78rem;
+}
+
+.login-card-footer {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-light, #e2e8f0);
+    text-align: center;
+    color: var(--text-muted, #94a3b8);
+    line-height: 1.45;
+    font-size: 0.78rem;
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 1.75rem 1.25rem;
+    }
+}

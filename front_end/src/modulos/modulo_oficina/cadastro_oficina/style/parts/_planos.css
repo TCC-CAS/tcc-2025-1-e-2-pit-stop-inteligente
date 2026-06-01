@@ -1,0 +1,111 @@
+/* _planos.css — cards de planos (Básico/Premium) com estado "selected". */
+
+.plan-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.plan-card {
+    position: relative;
+    background: white;
+    border: 2px solid var(--signup-border);
+    border-radius: var(--signup-radius-md);
+    padding: 1.5rem 1.25rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.plan-card:hover {
+    border-color: #93c5fd;
+    transform: translateY(-3px);
+    box-shadow: var(--signup-shadow-md);
+}
+
+.plan-card.selected {
+    border-color: var(--signup-primary);
+    background: linear-gradient(165deg, #eff6ff 0%, white 70%);
+    box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.12),
+        0 14px 30px -10px rgba(37, 99, 235, 0.45);
+}
+
+.plan-card .plan-tag {
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    background: linear-gradient(135deg, var(--signup-primary), var(--signup-primary-dark));
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 6px 14px -6px rgba(37, 99, 235, 0.5);
+}
+
+.plan-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--signup-text);
+}
+
+.plan-price {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--signup-text);
+    line-height: 1;
+}
+.plan-price small {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--signup-muted);
+    margin-left: 0.25rem;
+}
+
+.plan-features {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: #475569;
+}
+.plan-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.plan-features li i {
+    color: var(--signup-success);
+    font-size: 0.85rem;
+}
+
+.plan-select-label {
+    margin-top: auto;
+    padding-top: 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--signup-primary);
+    text-align: center;
+    border-top: 1px dashed var(--signup-border);
+    transition: color 0.25s, border-top-color 0.25s;
+}
+
+.plan-card.selected .plan-select-label {
+    color: var(--signup-success-dark);
+    border-top-color: var(--signup-success);
+}
+.plan-card.selected .plan-select-label::before {
+    content: "✓ ";
+    font-weight: 800;
+}

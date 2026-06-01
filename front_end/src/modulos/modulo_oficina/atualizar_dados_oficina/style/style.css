@@ -1,0 +1,12 @@
+/* ============================================================
+   style.css — Entry point da tela "Atualizar Dados da Oficina".
+   Importa os partials por responsabilidade. A ordem importa:
+   tokens primeiro, depois componentes, depois media queries.
+   ============================================================ */
+
+@import url("./base.css");
+@import url("./forms.css");
+@import url("./security.css");
+@import url("./users.css");
+@import url("./modals.css");
+@import url("./responsive.css");

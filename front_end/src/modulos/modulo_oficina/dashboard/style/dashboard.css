@@ -1,0 +1,14 @@
+/*
+ * dashboard.css — entry CSS do Dashboard Gerencial.
+ * Estilos divididos em ./parts/* por responsabilidade.
+ */
+
+@import url("./parts/_tokens.css");
+@import url("./parts/_layout.css");
+@import url("./parts/_kpis.css");
+@import url("./parts/_charts.css");
+@import url("./parts/_secoes.css");
+@import url("./parts/_responsive.css");
+@import url("./parts/_tabs.css");
+@import url("./parts/_analise.css");
+

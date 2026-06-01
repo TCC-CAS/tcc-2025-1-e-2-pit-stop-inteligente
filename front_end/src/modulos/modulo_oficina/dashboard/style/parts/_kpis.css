@@ -1,0 +1,90 @@
+/* _kpis.css — grid de KPIs principais com cards e tendências coloridas. */
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 1.25rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--color-primary);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.kpi-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--color-primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+/* No dark mode o primary-light fica azul escuro saturado — força o ícone
+   para branco para manter contraste suficiente (AA). */
+.dark-mode .kpi-icon { color: #ffffff; }
+
+.kpi-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.kpi-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    display: block;
+}
+
+.kpi-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-primary);
+    display: block;
+    margin: 0.25rem 0;
+}
+
+/* Tendência: cor depende de subir/descer */
+.kpi-trend {
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 20px;
+    background: var(--bg-muted);
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.kpi-trend.trend-up {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--color-success);
+}
+
+.kpi-trend.trend-down {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--color-danger);
+}
+.dark-mode .kpi-trend.trend-up { color: #6ee7b7; }
+.dark-mode .kpi-trend.trend-down { color: #fca5a5; }

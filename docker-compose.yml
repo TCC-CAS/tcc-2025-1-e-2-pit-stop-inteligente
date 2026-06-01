@@ -1,0 +1,66 @@
+# Pit Stop Inteligente — orquestração de produção (VPS).
+#
+# Serviços:
+#   db    -> PostgreSQL com volume persistente
+#   web   -> Django + gunicorn (não exposto direto; só via nginx)
+#   nginx -> proxy reverso: serve o front-end e roteia /api, /admin, /static, /media
+#
+# Uso (no VPS, dentro da pasta do projeto):
+#   cp .env.production.example .env   # e preencha os valores
+#   docker compose up -d --build
+#
+# As variáveis abaixo (${...}) e o env_file do serviço web vêm do .env
+# que fica NESTA pasta (mesma do docker-compose.yml).
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-pitstop_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-pitstop_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: ./back_end
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Garantem o ambiente correto independentemente do que houver no .env.
+      DJANGO_ENV: production
+      DB_HOST: db
+    volumes:
+      - static_data:/app/staticfiles
+      - media_data:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - "8000"
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      # Habilite quando configurar TLS (Let's Encrypt):
+      # - "443:443"
+    volumes:
+      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./front_end/src:/usr/share/nginx/front:ro
+      - static_data:/usr/share/nginx/static:ro
+      - media_data:/usr/share/nginx/media:ro
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  static_data:
+  media_data:

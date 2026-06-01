@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Acesso do cliente — informe o código de acesso e seu CPF para acompanhar sua O.S.">
+    <meta name="theme-color" content="#2563eb">
+    <title>Acesso do Cliente | Pit Stop Inteligente</title>
+
+    <link rel="stylesheet" href="../../../../shared/styles/variables.css">
+    <link rel="stylesheet" href="../../../../shared/styles/global.css">
+    <link rel="stylesheet" href="../style/login-cliente.css">
+    <link rel="stylesheet" href="../../../../shared/vendor/fontawesome/css/all.min.css">
+</head>
+<body class="login-cliente-body">
+
+    <a class="skip-link" href="#mainContent">Pular para o conteúdo</a>
+
+    <main class="login-shell" id="mainContent">
+        <section class="login-card" aria-labelledby="loginTitulo">
+            <a class="login-back" href="../../../../app/login/pages/login-page.html"
+               aria-label="Voltar para a tela inicial">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                <span>Voltar</span>
+            </a>
+
+            <header class="login-card-header">
+                <div class="brand" aria-hidden="true">
+                    <span class="brand-icon">🔧</span>
+                </div>
+                <h1 id="loginTitulo">Acompanhe sua O.S.</h1>
+                <p class="login-card-sub">
+                    Informe o <strong>código de acesso</strong> fornecido pela oficina
+                    e seu <strong>CPF/CNPJ</strong> para entrar no portal.
+                </p>
+            </header>
+
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <label for="codigoAcesso">Código de acesso</label>
+                    <input type="text" id="codigoAcesso" class="form-control code-input"
+                           autocomplete="one-time-code"
+                           inputmode="latin"
+                           maxlength="14"
+                           placeholder="Ex.: 7K2P-Q9XA"
+                           required aria-required="true"
+                           aria-describedby="erroCodigo dicaCodigo">
+                    <span class="error-msg" id="erroCodigo" role="alert"></span>
+                    <small class="form-hint" id="dicaCodigo">
+                        <i class="fas fa-info-circle" aria-hidden="true"></i>
+                        O código tem 8 letras/números e é entregue pela oficina (papel, WhatsApp ou e-mail).
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="cpfCnpj">Seu CPF/CNPJ</label>
+                    <input type="text" id="cpfCnpj" class="form-control"
+                           inputmode="numeric"
+                           autocomplete="username"
+                           placeholder="Apenas números"
+                           required aria-required="true"
+                           aria-describedby="erroCpf">
+                    <span class="error-msg" id="erroCpf" role="alert"></span>
+                </div>
+
+                <p class="form-feedback" id="feedbackGlobal" role="alert" aria-live="polite"></p>
+
+                <button class="btn btn-primary btn-block" type="submit" id="btnEntrar">
+                    <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+                    <span>Entrar</span>
+                </button>
+
+                <p class="login-help-line">
+                    Não tem o código?
+                    <a href="../../../../app/login/pages/recuperar-acesso.html?fluxo=cliente">
+                        Como solicitar à oficina
+                    </a>
+                </p>
+
+                <!--
+                    Acesso legado por "Número da OS" ocultado temporariamente
+                    (decisão do TCC). O JS de login-cliente.js continua aceitando
+                    o campo, mas o cliente agora SO entra pelo código de acesso
+                    gerado pela oficina. Para REATIVAR: remova o atributo
+                    `hidden` do <details> abaixo.
+                -->
+                <details class="legacy-toggle" hidden>
+                    <summary>Recebi apenas o número da OS (acesso antigo)</summary>
+                    <div class="legacy-fields">
+                        <label for="numeroOs" class="form-label-sm">Número da OS</label>
+                        <input type="text" id="numeroOs" class="form-control"
+                               inputmode="numeric" autocomplete="off"
+                               placeholder="Ex.: 123">
+                        <small class="form-hint">
+                            Use este campo apenas se a oficina ainda não gerou um código de acesso para sua OS.
+                        </small>
+                    </div>
+                </details>
+            </form>
+
+            <footer class="login-card-footer">
+                <small>
+                    Sua privacidade é importante: o portal mostra apenas dados da OS vinculada
+                    ao código informado. Em caso de dúvidas, fale com a oficina responsável.
+                </small>
+            </footer>
+        </section>
+    </main>
+
+    <script type="module" src="./login-cliente.js"></script>
+</body>
+</html>

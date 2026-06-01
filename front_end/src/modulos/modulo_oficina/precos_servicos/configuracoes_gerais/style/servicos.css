@@ -1,0 +1,11 @@
+/*
+ * servicos.css — entry CSS da tela "Preços e Serviços".
+ * Estilos divididos em ./parts/* por responsabilidade.
+ */
+
+@import url("./parts/_layout-tabs.css");
+@import url("./parts/_tabela.css");
+@import url("./parts/_valor-hora.css");
+@import url("./parts/_categorias.css");
+@import url("./parts/_modal.css");
+@import url("./parts/_actions.css");

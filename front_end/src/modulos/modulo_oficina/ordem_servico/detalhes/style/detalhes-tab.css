@@ -1,0 +1,223 @@
+/* ============================================
+   detalhes-tab.css
+   Versão moderna e organizada para os cards
+   ============================================ */
+
+:root {
+    --primary: #2563eb;
+    --primary-light: #eff6ff;
+    --primary-dark: #1d4ed8;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+    --radius-card: 1rem;
+    --radius-icon: 0.75rem;
+}
+
+/* ---- Card principal da aba ---- */
+.tab-card {
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.2s ease;
+}
+
+.tab-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.tab-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gray-50);
+}
+
+.tab-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.tab-card-title i {
+    color: var(--primary);
+    font-size: 1.3rem;
+}
+
+/* ---- Grid de cards modernos ---- */
+.info-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    padding: 1.75rem;
+}
+
+.modern-card {
+    background: white;
+    border-radius: var(--radius-card);
+    padding: 1.25rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.25s ease-in-out;
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-sm);
+}
+
+.modern-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Ícone circular com fundo suave */
+.card-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background: var(--primary-light);
+    border-radius: var(--radius-icon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.modern-card:hover .card-icon {
+    background: var(--primary);
+}
+
+.card-icon i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    transition: color 0.2s;
+}
+
+.modern-card:hover .card-icon i {
+    color: white;
+}
+
+/* Conteúdo textual */
+.card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.card-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--gray-600);
+}
+
+.card-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-900);
+    word-break: break-word;
+}
+
+/* ---- Tabela de checklist (mantida elegante) ---- */
+.table-container {
+    overflow-x: auto;
+    margin: 1.75rem;
+    border-radius: 1rem;
+    border: 1px solid var(--gray-200);
+    background: white;
+}
+
+#tabelaChecklistRecebimento {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+#tabelaChecklistRecebimento th {
+    text-align: left;
+    padding: 0.9rem 1.2rem;
+    background-color: var(--gray-50);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--gray-600);
+    border-bottom: 2px solid var(--gray-200);
+}
+
+#tabelaChecklistRecebimento td {
+    padding: 0.9rem 1.2rem;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: middle;
+}
+
+/* ---- Animações ---- */
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---- Responsividade para telas menores ---- */
+@media (max-width: 768px) {
+    .info-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1.25rem;
+    }
+
+    .modern-card {
+        padding: 1rem;
+    }
+
+    .card-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .card-icon i {
+        font-size: 1.2rem;
+    }
+
+    .card-value {
+        font-size: 0.9rem;
+    }
+
+    .tab-card-header {
+        padding: 1rem 1.25rem;
+    }
+
+    .table-container {
+        margin: 1.25rem;
+    }
+}

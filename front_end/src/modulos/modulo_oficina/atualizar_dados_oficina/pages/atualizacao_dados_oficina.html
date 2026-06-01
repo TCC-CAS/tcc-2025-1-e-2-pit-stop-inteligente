@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pit Stop Inteligente - Atualização de Dados</title>
+    
+    <link rel="stylesheet" href="../../../../shared/vendor/fontawesome/css/all.min.css">
+
+    <!-- Design system central (tokens de cor + tema claro/escuro). Precisa vir
+         antes do CSS local para que header e menu lateral herdem os mesmos
+         tokens do resto do app e o modo escuro fique consistente. -->
+    <link rel="stylesheet" href="../../../../shared/styles/variables.css">
+
+    <link rel="stylesheet" href="../style/style.css">
+</head>
+<body>
+
+    <oficina-header></oficina-header>
+
+    <div class="main-container">
+        <oficina-sidebar page="atualizacao"></oficina-sidebar>
+
+        <main class="content">
+            <div class="breadcrumb">
+                <i class="fas fa-home"></i> Dashboard > Configurações > Dados da Oficina
+            </div>
+
+            <div class="page-header">
+                <h1>Atualização Cadastral</h1>
+                <p>Mantenha os dados da sua oficina sempre atualizados</p>
+            </div>
+
+            <div class="status-grid">
+                <div class="status-card">
+                    <div class="icon-box info">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Dados Cadastrais</h3>
+                        <p id="statusDataUltimaAtualizacao">--/--/----</p>
+                        <span class="badge success">Completo</span>
+                    </div>
+                </div>
+
+                <div class="status-card">
+                    <div class="icon-box warning">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Horários</h3>
+                        <p id="statusHorarioConfig">Carregando...</p>
+                        <span class="badge warning">Atenção</span>
+                    </div>
+                </div>
+
+                <div class="status-card">
+                    <div class="icon-box success">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Plano Atual</h3>
+                        <p id="statusPlanoVencimento">--/--/----</p>
+                        <span class="badge success" id="statusPlanoNome">...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <nav class="tabs">
+                    <button class="tab-btn active" data-tab="basic">Dados Básicos</button>
+                    <button class="tab-btn" data-tab="address">Endereço</button>
+                    <button class="tab-btn" data-tab="hours">Horário de Funcionamento</button>
+                    <button class="tab-btn" data-tab="plan">Renovação de Plano</button>
+                    <button class="tab-btn" data-tab="history">Histórico</button>
+                    <button class="tab-btn" data-tab="security"><i class="fas fa-shield-alt"></i> Segurança</button>
+                    <button class="tab-btn" data-tab="users"><i class="fas fa-users"></i> Usuários</button>
+                </nav>
+
+                <div class="tab-content-wrapper">
+                    
+                    <!-- ABA DADOS BÁSICOS -->
+                    <div class="tab-content active" id="basic">
+                        <form id="formBasic">
+                            <div class="basic-layout">
+                                <div class="basic-fields">
+                                    <div class="form-grid two-cols">
+                                        <div class="form-group">
+                                            <label for="inputNomeOficina">Nome da Oficina</label>
+                                            <input type="text" id="inputNomeOficina" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputCnpj">CNPJ</label>
+                                            <input type="text" id="inputCnpj" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputEmail">E-mail de Contato</label>
+                                            <input type="email" id="inputEmail">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputTelefone">Telefone / WhatsApp</label>
+                                            <input type="tel" id="inputTelefone">
+                                        </div>
+                                        <div class="form-group span-2">
+                                            <label for="selectEspecialidade">Especialidade Principal</label>
+                                            <select id="selectEspecialidade">
+                                                <option value="">Selecione...</option>
+                                                <option value="geral">Mecânica Geral</option>
+                                                <option value="eletrica">Elétrica</option>
+                                                <option value="funilaria">Funilaria e Pintura</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="basic-logo">
+                                    <label>Logo da Oficina</label>
+                                    <div class="logo-upload-card" id="logoUploadArea">
+                                        <div class="logo-preview-container">
+                                            <img id="previewLogo" src="" alt="Preview Logo" style="display: none;">
+                                            <div class="logo-placeholder" id="logoPlaceholder">
+                                                <i class="fas fa-store-alt"></i>
+                                                <span>Sem logo</span>
+                                            </div>
+                                        </div>
+                                        <div class="logo-upload-info">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <p id="uploadText">Arraste uma imagem ou clique para selecionar</p>
+                                            <small>PNG, JPG ou SVG • Máx. 2MB</small>
+                                        </div>
+                                        <input type="file" id="inputLogo" hidden accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- ABA ENDEREÇO -->
+                    <div class="tab-content" id="address">
+                        <form id="formAddress">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="inputCep">CEP</label>
+                                    <div class="input-group">
+                                        <input type="text" id="inputCep" placeholder="00000-000" maxlength="9">
+                                        <button type="button" class="btn-icon" id="btnBuscarCep" title="Buscar CEP">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                    <small class="form-hint" style="text-align: left;">
+                                        <i class="fas fa-info-circle"></i> Digite o CEP e clique na lupa para preencher automaticamente
+                                    </small>
+                                </div>
+                                <div class="form-group span-2">
+                                    <label for="inputLogradouro">Logradouro</label>
+                                    <input type="text" id="inputLogradouro">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputNumero">Número</label>
+                                    <input type="text" id="inputNumero">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputComplemento">Complemento</label>
+                                    <input type="text" id="inputComplemento">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputBairro">Bairro</label>
+                                    <input type="text" id="inputBairro">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputCidade">Cidade</label>
+                                    <input type="text" id="inputCidade">
+                                </div>
+                                <div class="form-group">
+                                    <label for="selectEstado">Estado</label>
+                                    <select id="selectEstado">
+                                        <option value="">Selecione...</option>
+                                        <option value="AC">Acre</option>
+                                        <option value="AL">Alagoas</option>
+                                        <option value="AP">Amapá</option>
+                                        <option value="AM">Amazonas</option>
+                                        <option value="BA">Bahia</option>
+                                        <option value="CE">Ceará</option>
+                                        <option value="DF">Distrito Federal</option>
+                                        <option value="ES">Espírito Santo</option>
+                                        <option value="GO">Goiás</option>
+                                        <option value="MA">Maranhão</option>
+                                        <option value="MT">Mato Grosso</option>
+                                        <option value="MS">Mato Grosso do Sul</option>
+                                        <option value="MG">Minas Gerais</option>
+                                        <option value="PA">Pará</option>
+                                        <option value="PB">Paraíba</option>
+                                        <option value="PR">Paraná</option>
+                                        <option value="PE">Pernambuco</option>
+                                        <option value="PI">Piauí</option>
+                                        <option value="RJ">Rio de Janeiro</option>
+                                        <option value="RN">Rio Grande do Norte</option>
+                                        <option value="RS">Rio Grande do Sul</option>
+                                        <option value="RO">Rondônia</option>
+                                        <option value="RR">Roraima</option>
+                                        <option value="SC">Santa Catarina</option>
+                                        <option value="SP">São Paulo</option>
+                                        <option value="SE">Sergipe</option>
+                                        <option value="TO">Tocantins</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="cep-loading" id="cepLoading" style="display:none;">
+                                <i class="fas fa-spinner fa-spin"></i> Buscando endereço...
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- ABA HORÁRIOS -->
+                    <div class="tab-content" id="hours">
+                        <form id="formHours">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="inputAbertura">Horário de Abertura</label>
+                                    <input type="time" id="inputAbertura">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputFechamento">Horário de Fechamento</label>
+                                    <input type="time" id="inputFechamento">
+                                </div>
+                                <div class="form-group span-2">
+                                    <label>Dias de Funcionamento</label>
+                                    <div class="week-selector">
+                                        <input type="checkbox" id="dia-seg" class="week-checkbox" value="seg">
+                                        <label for="dia-seg" class="week-label">Seg</label>
+                                        <input type="checkbox" id="dia-ter" class="week-checkbox" value="ter">
+                                        <label for="dia-ter" class="week-label">Ter</label>
+                                        <input type="checkbox" id="dia-qua" class="week-checkbox" value="qua">
+                                        <label for="dia-qua" class="week-label">Qua</label>
+                                        <input type="checkbox" id="dia-qui" class="week-checkbox" value="qui">
+                                        <label for="dia-qui" class="week-label">Qui</label>
+                                        <input type="checkbox" id="dia-sex" class="week-checkbox" value="sex">
+                                        <label for="dia-sex" class="week-label">Sex</label>
+                                        <input type="checkbox" id="dia-sab" class="week-checkbox" value="sab">
+                                        <label for="dia-sab" class="week-label">Sáb</label>
+                                        <input type="checkbox" id="dia-dom" class="week-checkbox" value="dom">
+                                        <label for="dia-dom" class="week-label">Dom</label>
+                                    </div>
+                                    <small class="form-hint">Selecione os dias em que a oficina está aberta.</small>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- ABA PLANO (renderizada dinamicamente por pagamentos/components/plano-checkout.js) -->
+                    <div class="tab-content" id="plan">
+                        <p class="plano-loading">Carregando planos…</p>
+                    </div>
+
+                    <!-- ABA HISTÓRICO -->
+                    <div class="tab-content" id="history">
+                        <ul class="timeline" id="historyTimeline">
+                            <!-- Preenchido dinamicamente -->
+                        </ul>
+                    </div>
+
+                    <!-- ABA SEGURANÇA (somente alteração de senha) -->
+                    <div class="tab-content" id="security">
+                        <div class="security-container">
+                            <h3><i class="fas fa-lock"></i> Redefinir Senha de Acesso</h3>
+                            <p class="section-description">Crie uma nova senha forte para proteger o acesso à sua conta.</p>
+                            
+                            <form id="formSecurity">
+                                <div class="form-grid single-col">
+                                    <div class="form-group">
+                                        <label>Senha Atual</label>
+                                        <div class="password-wrapper">
+                                            <input type="password" id="currentPassword" placeholder="Digite sua senha atual" required>
+                                            <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('currentPassword', this)"></i>
+                                        </div>
+                                        <div class="form-hint"><a href="#" class="forgot-link">Esqueci minha senha</a></div>
+                                    </div>
+
+                                    <hr class="separator">
+
+                                    <div class="form-group">
+                                        <label>Nova Senha</label>
+                                        <div class="password-wrapper">
+                                            <input type="password" id="newPassword" placeholder="Mínimo 8 caracteres" required minlength="8">
+                                            <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('newPassword', this)"></i>
+                                        </div>
+                                        <div class="password-rules">
+                                            <span><i class="fas fa-circle"></i> Mínimo 8 caracteres</span>
+                                            <span><i class="fas fa-circle"></i> Letra maiúscula</span>
+                                            <span><i class="fas fa-circle"></i> Número</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Confirmar Nova Senha</label>
+                                        <div class="password-wrapper">
+                                            <input type="password" id="confirmPassword" placeholder="Repita a nova senha" required>
+                                            <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('confirmPassword', this)"></i>
+                                        </div>
+                                        <small id="passwordMatchError" class="error-msg" style="display:none;">As senhas não coincidem.</small>
+                                    </div>
+
+                                    <div class="form-actions-security">
+                                        <button type="button" class="btn btn-success" id="btnSavePassword">
+                                            <i class="fas fa-save"></i> Salvar Nova Senha
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- NOVA ABA: USUÁRIOS VINCULADOS À OFICINA -->
+                    <div class="tab-content" id="users">
+                        <div class="users-management">
+                            <div class="users-header">
+                                <div>
+                                    <h3><i class="fas fa-users-cog"></i> Usuários Vinculados à Oficina</h3>
+                                    <p class="section-description">
+                                        Gerencie os funcionários com acesso ao sistema. Cada usuário possui um nível de permissão específico.
+                                    </p>
+                                </div>
+                                <button type="button" class="btn btn-primary" id="btnAddUser">
+                                    <i class="fas fa-user-plus"></i> Adicionar Usuário
+                                </button>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="users-table" id="usersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>E-mail</th>
+                                            <th>Nível de Permissão</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTableBody">
+                                        <!-- Preenchido dinamicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="no-users-message" id="noUsersMessage" style="display:none;">
+                                <i class="fas fa-user-slash"></i>
+                                <p>Nenhum usuário vinculado. Clique em "Adicionar Usuário" para começar.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-outline" id="cancelButton">Cancelar</button>
+                    <button class="btn btn-primary" id="saveButton">
+                        <span class="btn-text">Salvar Alterações</span>
+                        <div class="loader"></div>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Sucesso -->
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content">
+            <div class="modal-icon success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Sucesso!</h2>
+            <p>Os dados foram atualizados com sucesso.</p>
+            <button class="btn btn-primary full-width" id="closeModalButton">Continuar</button>
+        </div>
+    </div>
+
+    <!-- Modal de Usuário (Adicionar / Editar) -->
+    <div class="modal" id="userModal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2 id="userModalTitle">Adicionar Usuário</h2>
+                <button type="button" class="modal-close" id="closeUserModal">&times;</button>
+            </div>
+            <form id="formUser">
+                <input type="hidden" id="userId" value="">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="userNome">Nome Completo *</label>
+                        <input type="text" id="userNome" required placeholder="Nome do funcionário">
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">E-mail *</label>
+                        <input type="email" id="userEmail" required placeholder="email@exemplo.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="userSenha">Senha <small>(apenas para novo usuário)</small></label>
+                        <input type="password" id="userSenha" placeholder="Mínimo 8 caracteres" minlength="8">
+                    </div>
+                    <div class="form-group">
+                        <label for="userPermissao">Nível de Permissão *</label>
+                        <select id="userPermissao" required>
+                            <option value="">Selecione o nível...</option>
+                            <option value="admin">Administrador</option>
+                            <option value="gerente">Gerente</option>
+                            <option value="mecanico">Mecânico</option>
+                            <option value="atendente">Atendente</option>
+                            <option value="visualizador">Visualizador</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="permission-info" id="permissionInfo">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="permissionDescription">Selecione um nível de permissão para ver a descrição.</span>
+                </div>
+                <div class="modal-footer-actions">
+                    <button type="button" class="btn btn-outline" id="btnCancelUser">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnSaveUser">
+                        <i class="fas fa-save"></i> Salvar Usuário
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="../../../../shared/components/oficina-header.js"></script>
+    <script type="module" src="../../../../shared/components/oficina-sidebar.js"></script>
+    <script type="module" src="../services/script.js"></script>
+</body>
+</html>

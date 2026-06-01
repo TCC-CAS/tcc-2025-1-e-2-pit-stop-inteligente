@@ -1,0 +1,11 @@
+/*
+ * aprovacao-tab.css — entry CSS da aba "Aprovação".
+ * Estilos divididos em ./parts/* por responsabilidade.
+ */
+
+@import url("./parts/_tokens.css");
+@import url("./parts/_card-tabela.css");
+@import url("./parts/_botoes-badges.css");
+@import url("./parts/_modal.css");
+@import url("./parts/_checkbox.css");
+@import url("./parts/_print-responsive.css");
